@@ -4,5 +4,4 @@
 
 [build.environment]
   NPM_CONFIG_PRODUCTION = "false"
-  NPM_FLAGS = "--include=dev"
   NODE_ENV = "production"
