@@ -4,12 +4,12 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "node ./node_modules/@sveltejs/kit/svelte-kit.js dev",
-    "build": "node ./node_modules/@sveltejs/kit/svelte-kit.js build",
-    "preview": "node ./node_modules/@sveltejs/kit/svelte-kit.js preview",
-    "check": "svelte-check --tsconfig tsconfig.json",
-    "lint": "eslint . --ext .svelte,.ts",
-    "format": "prettier --write ."
+    "dev": "npm exec -- svelte-kit dev",
+    "build": "npm exec -- svelte-kit build",
+    "preview": "npm exec -- svelte-kit preview",
+    "check": "npm exec -- svelte-check --tsconfig tsconfig.json",
+    "lint": "npm exec -- eslint . --ext .svelte,.ts",
+    "format": "npm exec -- prettier --write ."
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.0",
