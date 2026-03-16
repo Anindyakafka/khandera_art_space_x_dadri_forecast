@@ -4,9 +4,9 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "svelte-kit dev",
-    "build": "svelte-kit build",
-    "preview": "svelte-kit preview",
+    "dev": "node ./node_modules/@sveltejs/kit/svelte-kit.js dev",
+    "build": "node ./node_modules/@sveltejs/kit/svelte-kit.js build",
+    "preview": "node ./node_modules/@sveltejs/kit/svelte-kit.js preview",
     "check": "svelte-check --tsconfig tsconfig.json",
     "lint": "eslint . --ext .svelte,.ts",
     "format": "prettier --write ."
