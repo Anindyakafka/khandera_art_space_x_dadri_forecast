@@ -4,9 +4,9 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "npm exec -- svelte-kit dev",
-    "build": "npm exec -- svelte-kit build",
-    "preview": "npm exec -- svelte-kit preview",
+    "dev": "npm exec -- vite dev",
+    "build": "npm exec -- vite build",
+    "preview": "npm exec -- vite preview",
     "check": "npm exec -- svelte-check --tsconfig tsconfig.json",
     "lint": "npm exec -- eslint . --ext .svelte,.ts",
     "format": "npm exec -- prettier --write ."
