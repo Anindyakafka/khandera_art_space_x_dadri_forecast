@@ -1,7 +1,18 @@
 {
-	"/": [],
-	"/about": [],
-	"/artists": [],
-	"/events": [],
-	"/projects": []
+	"/": [
+		"src/routes/+layout.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/about": [
+		"src/routes/+layout.server.ts"
+	],
+	"/artists": [
+		"src/routes/+layout.server.ts"
+	],
+	"/events": [
+		"src/routes/+layout.server.ts"
+	],
+	"/projects": [
+		"src/routes/+layout.server.ts"
+	]
 }

@@ -94,6 +94,12 @@
       "_internal.js"
     ]
   },
+  "src/routes/+layout.server.ts": {
+    "file": "entries/pages/_layout.server.ts.js",
+    "name": "entries/pages/_layout.server.ts",
+    "src": "src/routes/+layout.server.ts",
+    "isEntry": true
+  },
   "src/routes/+layout.svelte": {
     "file": "entries/pages/_layout.svelte.js",
     "name": "entries/pages/_layout.svelte",

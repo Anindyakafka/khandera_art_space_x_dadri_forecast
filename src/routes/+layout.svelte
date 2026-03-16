@@ -1,5 +1,5 @@
 <script lang="ts">
-  export const prerender = true;
+  // no client data used here, prerender is handled in +layout.server.ts
 </script>
 
 <svelte:head>

@@ -1,9 +1,9 @@
-import { a3 as fallback, a4 as attr_class, e as escape_html, b as bind_props, a5 as attr_style, a6 as stringify, a7 as attr, a8 as ensure_array_like } from "../../chunks/index.js";
+import { a2 as fallback, a3 as attr_class, e as escape_html, a4 as bind_props, a5 as attr_style, a6 as stringify, a7 as attr, a8 as ensure_array_like } from "../../chunks/index.js";
 function Hero($$renderer, $$props) {
   let title = fallback($$props["title"], "Khandera Art Space");
   let subtitle = fallback($$props["subtitle"], "Radical collaborative art, performative codes, and venue-less media revolutions.");
   let glitch = false;
-  $$renderer.push(`<section class="hero svelte-1q37ri0"><div class="hero-overlay svelte-1q37ri0"></div> <div class="hero-content svelte-1q37ri0"><h1${attr_class("svelte-1q37ri0", void 0, { "glitch": glitch })}>${escape_html(title)}</h1> <p class="svelte-1q37ri0">${escape_html(subtitle)}</p> <a class="cta svelte-1q37ri0" href="#projects">View Radical Projects</a></div></section>`);
+  $$renderer.push(`<section class="hero svelte-1q37ri0" role="region" aria-label="Hero section"><div class="hero-overlay svelte-1q37ri0"></div> <div class="hero-content svelte-1q37ri0"><h1${attr_class("svelte-1q37ri0", void 0, { "glitch": glitch })}>${escape_html(title)}</h1> <p class="svelte-1q37ri0">${escape_html(subtitle)}</p> <a class="cta svelte-1q37ri0" href="#projects">View Radical Projects</a></div></section>`);
   bind_props($$props, { title, subtitle });
 }
 function ProjectCard($$renderer, $$props) {
