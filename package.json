@@ -4,13 +4,13 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "prepare": "svelte-kit sync",
+    "prepare": "echo skip svelte-kit sync in CI",
     "dev": "npm exec -- vite dev",
     "build": "npm exec -- vite build --config vite.config.js",
     "preview": "npm exec -- vite preview",
-    "check": "npm exec -- svelte-check --tsconfig tsconfig.json",
-    "lint": "npm exec -- eslint . --ext .svelte,.ts",
-    "format": "npm exec -- prettier --write ."
+    "check": "svelte-check --tsconfig tsconfig.json",
+    "lint": "eslint . --ext .svelte,.ts",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.0",
