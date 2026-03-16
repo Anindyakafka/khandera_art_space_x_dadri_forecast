@@ -1,6 +1,6 @@
 import { h as head, s as slot, b as bind_props } from "../../chunks/index.js";
 function _layout($$renderer, $$props) {
-  let data = $$props["data"];
+  const prerender = true;
   head("12qhfyh", $$renderer, ($$renderer2) => {
     $$renderer2.title(($$renderer3) => {
       $$renderer3.push(`<title>Khandera Art Space</title>`);
@@ -10,7 +10,7 @@ function _layout($$renderer, $$props) {
   $$renderer.push(`<!--[-->`);
   slot($$renderer, $$props, "default", {});
   $$renderer.push(`<!--]-->`);
-  bind_props($$props, { data });
+  bind_props($$props, { prerender });
 }
 export {
   _layout as default
