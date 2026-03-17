@@ -1,5 +1,5 @@
 [build]
-  command = "npm install --production=false && npm run build"
+  command = "rm -rf node_modules && npm ci --include=dev && npm run build"
   publish = "build"
 
 [build.environment]
