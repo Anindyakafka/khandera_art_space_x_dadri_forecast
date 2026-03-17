@@ -53,6 +53,12 @@ export function renderSimpleMarkdown(markdown: string): string {
       continue;
     }
 
+    if (/^(-{3,}|\*{3,}|_{3,})$/.test(line)) {
+      closeList();
+      html.push('<hr />');
+      continue;
+    }
+
     if (line.startsWith('- ')) {
       if (!inList) {
         html.push('<ul>');
