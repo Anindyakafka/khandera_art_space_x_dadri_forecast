@@ -1,9 +1,0 @@
-import "clsx";
-function _page($$renderer) {
-  $$renderer.push(`<article class="about-root svelte-cwls5q"><h1 class="svelte-cwls5q">About Khandera Art Space</h1> <p class="svelte-cwls5q">Khandera Art Space is a mobile collective of artists, coders, activists and urban shamans.
-    We make work that resists extraction and normalisation by using noise, ritual systems, and civic disobedience.</p> <h2 class="svelte-cwls5q">The practice</h2> <p class="svelte-cwls5q">Our practice blends low-fi video, AI interference, and site-responsive installations that use public memory as material.
-    We host experimental evenings, broadcast micro-festivals, and publish living archives.</p> <h2 class="svelte-cwls5q">Join</h2> <p class="svelte-cwls5q">If you build with fury, write with tenderness, and refuse the hierarchy of mainstream art, we want to hear from you.</p></article>`);
-}
-export {
-  _page as default
-};
