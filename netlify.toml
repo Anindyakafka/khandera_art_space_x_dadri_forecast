@@ -1,7 +1,6 @@
 [build]
-  command = "npm run build"
+  command = "npm install --production=false && npm run build"
   publish = "build"
 
 [build.environment]
-  NPM_CONFIG_PRODUCTION = "false"
-  NODE_ENV = "production"
+  NODE_ENV = "development"
