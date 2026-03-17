@@ -23,6 +23,10 @@
 <slot />
 
 <style>
+  :global(body) {
+    margin: 0;
+  }
+
   .site-header {
     position: sticky;
     top: 0;
