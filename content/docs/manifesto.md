@@ -1,186 +1,97 @@
 # Dadri Forecast
 
-**Dadri Forecast** is a collective research initiative examining the transformation of the Dadri locality in Gautam Buddha Nagar, Uttar Pradesh. It engages with pressing concerns around land, environmental degradation, caste and communal conflict, and capitalist expansion and extractivism.
+Dadri Forecast is a collective research initiative that examines the transformation of the Dadri locality in Gautam Buddha Nagar, Uttar Pradesh. It focuses on the region’s pressing concerns related to land, environmental degradation, caste and communal conflict, and capitalist expansion and extractivism. Instead of aligning with the narrative of developmental modernity or with primitivistic responses to the same, the initiative seeks to forecast the consequences of extractivist and exploitative growth in the region. As the existing developmental models prioritise elite and corporate interests over the lives and resources of subaltern and working-class communities, Dadri Forecast aims to shape and shelter a counter-space: the space of ‘militant researchers’.
 
-Rejecting both the narrative of developmental modernity and reactionary primitivism, the initiative seeks to **forecast the consequences of extractivist and exploitative growth**. In a context where dominant development models prioritize elite and corporate interests over subaltern and working-class communities, Dadri Forecast aims to build a **counter-space** — the space of *militant researchers*.
+The locality now known as Dadri lies within Gautam Buddha Nagar, a district formed in 1997. However, the area has a much longer history. It is characterised by its once-rich wetland ecosystems, agricultural commons, and village settlements, some of which are believed to date back to the Harappan period. Once a vibrant habitat teeming with wetland biodiversity, Dadri’s landscape has been irreversibly altered today. The destruction of its ecological fabric and the loss of species—such as numerous amphibians and aquatic flora and fauna—reflect the simultaneous dispossession of human communities. These communities have been rendered what might be called ‘surplus populations’, demarcated and excluded on the basis of caste, class, and religious differences.
 
----
-
-## Context: Dadri
-
-The locality now known as Dadri lies within Gautam Buddha Nagar, a district formed in 1997. However, its history extends far deeper.
-
-- Once home to rich wetland ecosystems, agricultural commons, and long-standing village settlements  
-- Some settlements are believed to date back to the **Harappan period**  
-- Previously a vibrant ecological habitat with diverse amphibians, aquatic flora, and fauna  
-
-Today, this landscape has been irreversibly altered.
-
-The destruction of ecological systems parallels the dispossession of human communities. These communities are increasingly rendered as **“surplus populations”**, excluded and marginalized along axes of caste, class, and religion.
-
-Dadri Forecast emerges from community networks built through **Khandera Art Space**, a weekly platform for children in Khandera village active for over two years.
+Dadri Forecast has emerged from the community networks built around Khandera Art Space, a weekly platform for the children of Khandera village which has been active for more than two years.
 
 ---
 
-# Dadri Forecast: A Manifesto for Militant Research
+# DADRI FORECAST: A MANIFESTO FOR MILITANT RESEARCH
 
-## We Declare
+We declare: Dadri is not a blank slate.  
+It is not a “backward” locality in need of rescue through glossy schemes of “development.”  
+It is not an empty zone waiting to be filled with cement, concrete, or capital.  
 
-Dadri is not a blank slate.  
-It is not a “backward” locality awaiting rescue through development.  
-It is not an empty zone for cement, concrete, or capital.
+Dadri is a palimpsest—a terrain where forgotten histories, submerged ecologies, stolen futures, and communities committed to a radical future meet each other.  
 
-**Dadri is a palimpsest** —  
-a terrain where:
+It is precisely here, beneath the ash and asphalt, that Dadri Forecast takes its flight.  
 
-- Forgotten histories  
-- Submerged ecologies  
-- Stolen futures  
-- Radical communities  
+Dadri Forecast is not a fantasy.  
+It is an uprising of thought.  
+A rupture in the sanitized narratives of the Bourgeois-Brahminical state.  
+A site of insurgent research.  
 
-intersect and persist.
+We are the Dadri Forecast—  
+the lightning before the cloudburst,  
+peafowls’ warning before the dust storm.  
 
----
+We speak from Dadri, but not only for it.  
 
-## What is Dadri Forecast?
+We speak against the violence of extractive capitalism that swallows soil, homes, and people alike.  
+We speak against the idea that only malls, highways, factories, and gated enclaves count as progress.  
 
-Dadri Forecast is:
+We seek to demolish the architecture of communalism that lynches in the name of gods and cows, that fractures lives and communities through the poison of hatred.  
 
-- An uprising of thought  
-- A rupture in sanitized narratives  
-- A site of insurgent research  
-
-> *The lightning before the cloudburst*  
-> *The peafowl’s warning before the dust storm*
-
-We speak from Dadri — but not only for it.
+We dream of a future forecasted not by corporate boardrooms or bureaucratic blueprints, but by the wisdom of wetlands, the memory of water, the dignity of labourers, and the laughter of children at Khandera.  
 
 ---
 
-## What We Stand Against
+## WHY DADRI?
 
-- Extractive capitalism that consumes land, homes, and lives  
-- Development models that equate progress with malls, highways, and gated enclaves  
-- Communal violence that fractures communities in the name of religion  
-- Bourgeois-Brahminical state narratives that erase lived realities  
+Because Dadri is a microcosm of ‘India unmade.’  
+Because Akhlaq was lynched and murdered here.  
+Because the larks don’t sing the way they used to.  
+Because the water tables are falling and the smoke stacks rise.  
+Because prehistoric ruins still breathe beneath the ground where bulldozers roam.  
+Because the commons have been seized, and the people are declared surplus.  
+Because this is not just a site of loss — it is also a place of novel possibilities.  
 
----
+Dadri Forecast is our response.  
 
-## What We Stand For
+Urgent. Unapologetic. Undisciplined.  
 
-We imagine futures grounded in:
+We align with villagers resisting land grabs, with children imagining otherwise,  
+with marshes gasping for survival, with forgotten archives of revolt.  
 
-- The wisdom of wetlands  
-- The memory of water  
-- The dignity of labour  
-- The imagination of children  
+We do not offer easy solutions. We pose difficult questions.  
+We do not represent. We assert presence.  
+We do not build consensus or seek permission.  
+We provoke dissensus and make space for the impermissible.  
 
----
+Refusing to be passive witnesses to disaster.  
+Refusing nostalgia that traps us in a mythical past.  
+Refusing developmentalism that erases the people.  
+Refusing liberalism that masks complicity with power.  
+Refusing the ivory tower of academia, corporate charity, and the “NGO-isation of resistance.”  
 
-## Why Dadri?
+We envision a militant research practice rooted in community, grounded in care, and fierce in its approach.  
+We aim to build an ecology of being and thinking that bridges artists, activists, students, children, workers, and elders.  
 
-Because Dadri is a microcosm of **“India unmade.”**
-
-Because:
-
-- **Mohammad Akhlaq** was lynched here  
-- The larks no longer sing as they once did  
-- Water tables are falling while smokestacks rise  
-- Prehistoric ruins lie beneath expanding infrastructure  
-- Commons are seized and communities rendered surplus  
-
-Yet Dadri is not only a site of loss —  
-it is also a site of **possibility**.
+We do not want to merely document Dadri — we want a space where the place can be seen, known, felt, and fought for.  
 
 ---
 
-## Our Position
+## OUR OBJECTIVES:
 
-Dadri Forecast is:
-
-- **Urgent**  
-- **Unapologetic**  
-- **Undisciplined**  
-
-We align with:
-
-- Villagers resisting land grabs  
-- Children imagining alternative futures  
-- Ecosystems struggling to survive  
-- Forgotten histories of resistance  
+- Zines, Booklets, Reports: as weapons of counter-knowledge.  
+- Residencies: for cultivating durational and embedded solidarities.  
+- Cinema School: as a way of seeing, remembering, reimagining.  
+- Libraries: as sanctuaries of learning and unlearning.  
+- Public Dialogues: as acts of insurgent pedagogy and polemics.  
+- Playgrounds, Picnics, Workshops: as spaces where resistance germinates in joy.  
 
 ---
-
-## What We Refuse
-
-We refuse:
-
-- Passive witnessing  
-- Nostalgia that romanticizes the past  
-- Developmentalism that erases people  
-- Liberal frameworks masking complicity  
-- The ivory towers of academia and NGO-ised resistance  
-
----
-
-## Our Approach: Militant Research
-
-We envision a practice that is:
-
-- Rooted in community  
-- Grounded in care  
-- Fierce in critique and imagination  
-
-We seek to build an **ecology of thinking and being** that connects:
-
-- Artists  
-- Activists  
-- Students  
-- Children  
-- Workers  
-- Elders  
-
-We do not merely document Dadri.  
-We create spaces where it can be:
-
-**seen, known, felt, and fought for.**
-
----
-
-## Our Objectives
-
-- **Zines, Booklets, Reports**  
-  → Tools of counter-knowledge  
-
-- **Residencies**  
-  → Long-term, embedded solidarities  
-
-- **Cinema School**  
-  → Practices of seeing, remembering, reimagining  
-
-- **Libraries**  
-  → Sanctuaries of learning and unlearning  
-
-- **Public Dialogues**  
-  → Insurgent pedagogy and critical discourse  
-
-- **Playgrounds, Picnics, Workshops**  
-  → Spaces where resistance grows through joy  
-
----
-
-## A Call
 
 This is not an art project with a deadline.  
-This is not a drizzle.
 
-**This is the coming monsoon.**
+This is a call to arm the imagination and to commit to the future.  
 
-We invite you to join us:
+This is not a drizzle. It is the coming monsoon.  
 
-- To co-author collective futures  
-- To cultivate spaces of care and justice  
-- To build a weather of resistance  
+Join us, to build a place where children, workers, artists, and students co-author a collective future.  
 
-> Forecasting not destruction —  
-> but awakening.
+To cultivate a weather of resistance — forecasting thunderstorms not of destruction, but of awakening.  
+
+We invite you to join us in shaping a future rooted in collective care, quest for justice, and unalloyed hope.
