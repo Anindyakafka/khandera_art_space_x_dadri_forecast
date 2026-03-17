@@ -1,5 +1,6 @@
 <script lang="ts">
   // no client data used here, prerender is handled in +layout.server.ts
+  import '../app.css';
 </script>
 
 <svelte:head>
@@ -8,11 +9,7 @@
   <title>Khandera Art Space</title>
 </svelte:head>
 
-<style global>
-  @import '../app.css';
-</style>
-
-<header class="site-header" role="banner">
+<header class="site-header">
   <a class="brand" href="/">Khandera Art Space</a>
   <nav aria-label="Main navigation">
     <a href="/about">About</a>
