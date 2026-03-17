@@ -1,17 +1,23 @@
 [
   {
     "id": "a-01",
-    "name": "Asha X",
-    "role": "Founder + Director",
-    "bio": "Dream alchemist, radical typographer and immersive space designer.",
-    "avatar": "/media/images/artists/asha-x.svg",
-    "instagram": "https://instagram.com/ashax.art"
+    "name": "Arzu Tarafdar",
+    "role": "Collective Artist",
+    "bio": "Artist profile text coming soon.",
+    "avatar": "/media/images/artists/arzu-tarafdar.svg"
   },
   {
     "id": "a-02",
-    "name": "Sahil Rai",
-    "role": "Generative Media",
-    "bio": "Firmware punk coding live visuals on low-wattage installations.",
-    "avatar": "/media/images/artists/sahil-rai.svg"
+    "name": "Tathagata Paul",
+    "role": "Collective Artist",
+    "bio": "Artist profile text coming soon.",
+    "avatar": "/media/images/artists/tathagata-paul.svg"
+  },
+  {
+    "id": "a-03",
+    "name": "Anupam Roy",
+    "role": "Collective Artist",
+    "bio": "Artist profile text coming soon.",
+    "avatar": "/media/images/artists/anupam-roy.svg"
   }
 ]

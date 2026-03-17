@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
+  <rect width="900" height="900" fill="#101726" />
+  <path d="M160 700 L450 140 L740 700 Z" fill="#6f5eff" opacity="0.8" />
+  <circle cx="450" cy="430" r="120" fill="#4fe3d4" opacity="0.75" />
+  <text x="50" y="840" fill="#f2ecff" font-family="Verdana" font-size="48">Tathagata Paul</text>
+</svg>

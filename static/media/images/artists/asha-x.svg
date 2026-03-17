@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
-  <rect width="900" height="900" fill="#160f2d"/>
-  <circle cx="450" cy="380" r="180" fill="#8f58ff"/>
-  <rect x="270" y="600" width="360" height="180" rx="90" fill="#4fc9ff" opacity="0.75"/>
-  <text x="80" y="840" fill="#f6ebff" font-family="Verdana" font-size="56">Asha X</text>
-</svg>
