@@ -1,19 +1,11 @@
 <script lang="ts">
-  import type { Event } from "$lib/data/content";
-  import cms from "$lib/data/cms";
-  import { onMount } from "svelte";
-
-  let events: Event[] = [];
-
-  onMount(async () => {
-    events = await cms.fetchEvents();
-  });
+  export let data;
 </script>
 
 <section class="section">
   <h1>Events</h1>
   <div class="grid">
-    {#each events as event}
+    {#each data.events as event}
       <article class="event-card">
         <h2>{event.title}</h2>
         <p>{new Date(event.date).toLocaleDateString()}</p>

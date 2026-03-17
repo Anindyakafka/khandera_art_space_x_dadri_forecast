@@ -1,30 +1,27 @@
 <script lang="ts">
   import Hero from "$lib/components/Hero.svelte";
   import ProjectCard from "$lib/components/ProjectCard.svelte";
-  import { projects } from "$lib/data/content";
+  export let data;
 </script>
 
 <main class="layout">
-  <Hero title="Khandera Art Space" subtitle="Radical art as spatial insurgency and collective ritual." />
+  <Hero title={data.site.heroTitle} subtitle={data.site.heroSubtitle} />
 
   <section id="projects" class="section">
-    <h2>Current Radical Projects</h2>
-    <p>Each project is a volatile intervention — a snapshot from our ongoing anti-institutional archive.</p>
+    <h2>{data.site.home.projectsHeading}</h2>
+    <p>{data.site.home.projectsIntro}</p>
 
     <div class="grid">
-      {#each projects as project}
+      {#each data.projects as project}
         <ProjectCard {project} />
       {/each}
     </div>
   </section>
 
   <section class="section" id="manifesto">
-    <h2>Manifesto</h2>
-    <p>
-      We are not a gallery. We are a catalyst. We gather in ruins of matter and signal with ephemeral code that refuses the status quo.
-      This website is a radical canvas: deep purple, noise, and generative forms that hint at chaos while anchored in intention.
-    </p>
-    <a class="secondary" href="/about">Read the full intent</a>
+    <h2>{data.site.home.manifestoHeading}</h2>
+    <p>{data.site.home.manifestoExcerpt}</p>
+    <a class="secondary" href="/manifesto">{data.site.home.manifestoLinkLabel}</a>
   </section>
 </main>
 

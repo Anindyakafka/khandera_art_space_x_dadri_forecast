@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
+  <rect width="900" height="900" fill="#0d142b"/>
+  <polygon points="450,120 760,700 140,700" fill="#4dd9ff" opacity="0.75"/>
+  <circle cx="450" cy="450" r="130" fill="#8b63ff" opacity="0.8"/>
+  <text x="80" y="840" fill="#f4ebff" font-family="Verdana" font-size="56">Sahil Rai</text>
+</svg>

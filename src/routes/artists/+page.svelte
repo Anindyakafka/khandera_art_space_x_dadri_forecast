@@ -1,19 +1,11 @@
 <script lang="ts">
-  import type { Artist } from "$lib/data/content";
-  import cms from "$lib/data/cms";
-  import { onMount } from "svelte";
-
-  let artists: Artist[] = [];
-
-  onMount(async () => {
-    artists = await cms.fetchArtists();
-  });
+  export let data;
 </script>
 
 <section class="section">
   <h1>Artists</h1>
   <div class="grid">
-    {#each artists as artist}
+    {#each data.artists as artist}
       <article class="artist-card">
         <img src={artist.avatar} alt={artist.name} loading="lazy" />
         <h2>{artist.name}</h2>

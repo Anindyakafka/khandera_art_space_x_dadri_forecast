@@ -1,0 +1,22 @@
+[
+  {
+    "id": "e-01",
+    "title": "Street Radar: Night Canvas",
+    "date": "2026-05-17",
+    "location": "Dadri Underground Factory",
+    "summary": "An immersive mapping session for experimental street painting and narrative projection.",
+    "slug": "street-radar-night-canvas",
+    "coverImage": "/media/images/events/street-radar.svg",
+    "ctaLabel": "RSVP",
+    "ctaUrl": "https://example.org/events/street-radar"
+  },
+  {
+    "id": "e-02",
+    "title": "Signal Break / Code Ritual",
+    "date": "2026-07-01",
+    "location": "Pop-up site, Sector 22",
+    "summary": "A day of performative sound sculptures and media assassins hacking premade narratives.",
+    "slug": "signal-break-code-ritual",
+    "coverImage": "/media/images/events/signal-break.svg"
+  }
+]

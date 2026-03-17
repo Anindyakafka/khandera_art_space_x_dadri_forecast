@@ -1,19 +1,11 @@
 <script lang="ts">
-  import type { Project } from "$lib/data/content";
-  import cms from "$lib/data/cms";
-  import { onMount } from "svelte";
-
-  let projects: Project[] = [];
-
-  onMount(async () => {
-    projects = await cms.fetchProjects();
-  });
+  export let data;
 </script>
 
 <section class="section">
   <h1>Projects</h1>
   <div class="grid">
-    {#each projects as project}
+    {#each data.projects as project}
       <article class="project-card">
         <h2>{project.title}</h2>
         <p>{project.excerpt}</p>

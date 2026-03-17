@@ -1,0 +1,17 @@
+[
+  {
+    "id": "a-01",
+    "name": "Asha X",
+    "role": "Founder + Director",
+    "bio": "Dream alchemist, radical typographer and immersive space designer.",
+    "avatar": "/media/images/artists/asha-x.svg",
+    "instagram": "https://instagram.com/ashax.art"
+  },
+  {
+    "id": "a-02",
+    "name": "Sahil Rai",
+    "role": "Generative Media",
+    "bio": "Firmware punk coding live visuals on low-wattage installations.",
+    "avatar": "/media/images/artists/sahil-rai.svg"
+  }
+]

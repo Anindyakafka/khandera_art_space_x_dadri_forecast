@@ -6,54 +6,50 @@
    - `npm install`
 2. Run dev server:
    - `npm run dev`
-3. Open `http://localhost:5173`
-4. Build:
+3. Build production output:
    - `npm run build`
 
-## What’s implemented
+## Content-driven workflow
 
-- SvelteKit scaffold with TypeScript and ESLint/Prettier configuration
-- Home page with interactive `Hero` component and project cards
-- About page
-- Theme variables in `src/app.css`
-- Static local dataset in `src/lib/data/content.ts`
-- Layout and metadata modules for page head integration
+Website content is now controlled from the `content/` and `static/media/` folders.
 
-## Next steps
+### Content files
 
-- Add CMS integration adapter (`src/lib/data/cms.ts`)
-- Add events and artists routes
-- Add a procedural canvas art component (`src/lib/components/AudioReactiveCanvas.svelte`)
-- Improve accessibility and keyboard navigation
+- `content/data/site.json` - global site copy (hero text, manifesto snippet, labels)
+- `content/data/projects.json` - project cards and project metadata
+- `content/data/artists.json` - artist cards and profile metadata
+- `content/data/events.json` - event listings
+- `content/docs/about.md` - about page text
+- `content/docs/manifesto.md` - manifesto page text
 
-## CMS integration
+### Media and documents
 
-The app supports two content sources:
+- `static/media/images/projects/` - project visuals
+- `static/media/images/artists/` - artist images
+- `static/media/images/events/` - event visuals
+- `static/media/docs/` - downloadable documents
+- `static/media/video/` - hosted video files
 
-- local fallback (default) using `src/lib/data/content.ts`
-- Sanity headless CMS via `src/lib/data/cms.ts` adapter
+Paths in JSON should point to `/media/...` URLs.
 
-To enable Sanity:
+## Editorial update guide
 
-1. Create `.env`:
-   - `VITE_CMS_PROVIDER=sanity`
-   - `VITE_SANITY_PROJECT_ID=<your-project-id>`
-   - `VITE_SANITY_DATASET=production`
-   - `VITE_SANITY_TOKEN=<read-only-token>`
-2. Start dev server (`npm run dev`).
-
-### Sanity content model (schema in `src/lib/data/sanitySchema.ts`)
-
-- Artist: name, role, bio, avatar, slug, instagram
-- Project: title, slug, excerpt, body, coverImage, year, tags, liveUrl, status
-- Event: title, slug, date, location, summary, coverImage, ctaLabel, ctaUrl
+1. Add/update an image in the correct `static/media/images/*` folder.
+2. Edit the matching JSON object in `content/data/*.json`.
+3. For long-form text, edit markdown files in `content/docs/`.
+4. Run `npm run dev` and verify pages.
+5. Commit and deploy.
 
 ## Available routes
 
 - `/` landing
 - `/about`
+- `/manifesto`
 - `/artists`
 - `/projects`
 - `/events`
 
-Our closest website and radical art research collective
+## Notes
+
+- Placeholder media files are included so routes render out of the box.
+- Replace `static/media/docs/manifesto.md` with your public document or update `content/data/site.json` to point to a PDF.

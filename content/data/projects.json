@@ -1,0 +1,21 @@
+[
+  {
+    "id": "p-01",
+    "title": "Phantom Frequency",
+    "slug": "phantom-frequency",
+    "excerpt": "A generative sound sculpture that reconfigures urban memory through spectral color and glitch imagery.",
+    "image": "/media/images/projects/phantom-frequency.svg",
+    "tags": ["sound", "generative", "installation"],
+    "liveUrl": "https://example.org/phantom-frequency",
+    "year": 2025
+  },
+  {
+    "id": "p-02",
+    "title": "Radical Cartography",
+    "slug": "radical-cartography",
+    "excerpt": "Tactile map painting collapsing official boundaries into live-action graffiti choreography.",
+    "image": "/media/images/projects/radical-cartography.svg",
+    "tags": ["street", "politics", "collage"],
+    "year": 2024
+  }
+]

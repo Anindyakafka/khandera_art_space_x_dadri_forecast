@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#1a091b"/>
+  <g fill="#ff6d8f" opacity="0.7">
+    <rect x="130" y="160" width="180" height="430"/>
+    <rect x="360" y="220" width="180" height="370"/>
+    <rect x="590" y="120" width="180" height="470"/>
+    <rect x="820" y="260" width="180" height="330"/>
+  </g>
+  <text x="55" y="740" fill="#f5ebff" font-family="Verdana" font-size="50">Signal Break</text>
+</svg>

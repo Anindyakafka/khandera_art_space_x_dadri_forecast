@@ -1,20 +1,17 @@
-<script lang="ts"></script>
+<script lang="ts">
+  import { renderSimpleMarkdown } from '$lib/content/markdown';
+  export let data;
+
+  const aboutHtml = renderSimpleMarkdown(data.aboutMarkdown);
+</script>
 
 <article class="about-root">
-  <h1>About Khandera Art Space</h1>
-  <p>
-    Khandera Art Space is a mobile collective of artists, coders, activists and urban shamans.
-    We make work that resists extraction and normalisation by using noise, ritual systems, and civic disobedience.
-  </p>
-  <h2>The practice</h2>
-  <p>
-    Our practice blends low-fi video, AI interference, and site-responsive installations that use public memory as material.
-    We host experimental evenings, broadcast micro-festivals, and publish living archives.
-  </p>
-  <h2>Join</h2>
-  <p>
-    If you build with fury, write with tenderness, and refuse the hierarchy of mainstream art, we want to hear from you.
-  </p>
+  <div class="about-card">
+    {@html aboutHtml}
+    <p class="jump-link">
+      <a href="/manifesto">Read full manifesto</a>
+    </p>
+  </div>
 </article>
 
 <style>
@@ -25,13 +22,24 @@
     color: var(--text);
   }
 
-  h1, h2 {
+  .about-card {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    background: rgba(7, 5, 16, 0.62);
+  }
+
+  .about-card :global(h1), .about-card :global(h2) {
     margin: 0.9rem 0 0.5rem;
     letter-spacing: 0.04em;
   }
 
-  p {
+  .about-card :global(p), .about-card :global(li) {
     line-height: 1.8;
     opacity: 0.93;
+  }
+
+  .jump-link {
+    margin-top: 1.2rem;
   }
 </style>

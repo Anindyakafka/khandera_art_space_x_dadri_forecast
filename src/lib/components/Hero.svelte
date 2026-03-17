@@ -8,7 +8,7 @@
   }
 </script>
 
-<section class="hero" role="region" aria-label="Hero section" on:mouseenter={toggleGlitch} on:mouseleave={toggleGlitch}>
+<section class="hero" aria-label="Hero section" on:mouseenter={toggleGlitch} on:mouseleave={toggleGlitch}>
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <h1 class:glitch={glitch}>{title}</h1>

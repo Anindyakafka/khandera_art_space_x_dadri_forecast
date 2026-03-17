@@ -1,0 +1,14 @@
+{
+  "name": "Khandera Art Space",
+  "tagline": "Radical collaborative art, performative codes, and venue-less media revolutions.",
+  "heroTitle": "Khandera Art Space",
+  "heroSubtitle": "Radical art as spatial insurgency and collective ritual.",
+  "home": {
+    "projectsHeading": "Current Radical Projects",
+    "projectsIntro": "Each project is a volatile intervention - a snapshot from our ongoing anti-institutional archive.",
+    "manifestoHeading": "Manifesto",
+    "manifestoExcerpt": "We are not a gallery. We are a catalyst. We gather in ruins of matter and signal with ephemeral code that refuses the status quo.",
+    "manifestoLinkLabel": "Read full manifesto"
+  },
+  "manifestoDocumentPath": "/media/docs/manifesto.md"
+}
