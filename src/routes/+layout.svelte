@@ -40,14 +40,18 @@
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
-    padding: 0.9rem 1.2rem;
+    min-height: 4.7rem;
+    padding: 1.15rem 1.35rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(4, 3, 9, 0.72);
     backdrop-filter: blur(8px);
+    overflow: visible;
   }
 
   .brand {
     font-weight: 800;
+    font-size: 1.08rem;
+    line-height: 1.15;
     text-decoration: none;
     letter-spacing: 0.04em;
     color: var(--text);
