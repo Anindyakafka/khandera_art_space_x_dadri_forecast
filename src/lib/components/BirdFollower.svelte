@@ -3,32 +3,74 @@
 
   export let perchTarget: HTMLElement | undefined;
 
-  const IDLE_DELAY = 1400;
-  const FLIGHT_DURATION = 760;
+  const IDLE_DELAY = 1450;
   const BIRD_SIZE = 102;
-  const MIN_Y = -72;
   const CURSOR_ANCHOR = { x: 44, y: 86 };
   const BRAND_ANCHOR = { x: 50, y: 86 };
+  const EXIT_MARGIN = BIRD_SIZE * 1.4;
+  const MIN_Y = -68;
+  const MAX_SPEED = 180;
+  const MAX_FORCE = 650;
+  const SLOW_RADIUS = 85;
+  const PERCH_DISTANCE = 10;
+  const PERCH_SPEED = 14;
+  const FIBONACCI_SPIRAL_RADIUS = 120;
+  const FIBONACCI_REVOLVE_TIME = 4200;
 
+  type Mode = 'hidden' | 'to-cursor' | 'to-brand' | 'perched-cursor' | 'perched-brand' | 'exiting';
+
+  let mode: Mode = 'hidden';
   let enabled = false;
   let visible = false;
   let flying = false;
   let perched = false;
-  let currentPerch: 'cursor' | 'brand' | null = null;
 
   let currentX = 0;
   let currentY = 0;
   let currentRotation = 0;
+  let velocityX = 0;
+  let velocityY = 0;
 
   let pointerX = 0;
   let pointerY = 0;
+  let exitTargetX = 0;
+  let exitTargetY = 0;
+
   let frameHandle = 0;
+  let lastFrameTime = 0;
   let reducedMotion = false;
+  let lookAngle = 0;
+  let wingDuration = 520;
   let idleTimer: ReturnType<typeof setTimeout> | undefined;
   let scrollIdleTimer: ReturnType<typeof setTimeout> | undefined;
+  let fibonacciIndex = 0;
+  let fibonacciSequence: number[] = [];
+  let spiralPhase = 0;
+  let spiralDirection = 1;
 
   function clamp(value: number, min: number, max: number) {
     return Math.min(Math.max(value, min), max);
+  }
+
+  function generateFibonacciSequence(count: number) {
+    const fib = [1, 1];
+    for (let i = 2; i < count; i++) {
+      fib.push(fib[i - 1] + fib[i - 2]);
+    }
+    return fib;
+  }
+
+  function computeSpiralOffset(phase: number, spiralIndex: number, coreX: number, coreY: number) {
+    const normalized = coreX > window.innerWidth * 0.5 ? 1 : -1;
+    const fibIndex = clamp(spiralIndex, 0, fibonacciSequence.length - 1);
+    const fibValue = fibonacciSequence[fibIndex] || 21;
+    const scaledRadius = (FIBONACCI_SPIRAL_RADIUS * fibValue) / 89;
+    const angle = phase * spiralDirection * normalized + (spiralIndex * Math.PI) / 3.8;
+
+    return {
+      x: coreX + Math.cos(angle) * scaledRadius,
+      y: coreY + Math.sin(angle) * scaledRadius * 0.72
+    };
   }
 
   function clearTimer(timer: ReturnType<typeof setTimeout> | undefined) {
@@ -39,208 +81,277 @@
     return undefined;
   }
 
-  function cancelFlight() {
+  function clearVectorIfTiny() {
+    if (Math.abs(velocityX) < 0.01) {
+      velocityX = 0;
+    }
+
+    if (Math.abs(velocityY) < 0.01) {
+      velocityY = 0;
+    }
+  }
+
+  function cancelLoop() {
     if (frameHandle) {
       cancelAnimationFrame(frameHandle);
       frameHandle = 0;
     }
+
+    lastFrameTime = 0;
   }
 
-  function fullyHideBird() {
+  function startLoop() {
+    if (!frameHandle) {
+      frameHandle = requestAnimationFrame(tick);
+    }
+  }
+
+  function hideBirdImmediately() {
     visible = false;
     flying = false;
     perched = false;
-    currentPerch = null;
+    mode = 'hidden';
+    velocityX = 0;
+    velocityY = 0;
     idleTimer = clearTimer(idleTimer);
     scrollIdleTimer = clearTimer(scrollIdleTimer);
-    cancelFlight();
+    cancelLoop();
   }
 
-  function getCursorPerch() {
+  function vectorLength(x: number, y: number) {
+    return Math.hypot(x, y);
+  }
+
+  function getCursorTarget() {
     return {
-      x: clamp(pointerX - CURSOR_ANCHOR.x, -BIRD_SIZE * 0.34, window.innerWidth - BIRD_SIZE * 0.72),
-      y: clamp(pointerY - CURSOR_ANCHOR.y, MIN_Y, window.innerHeight - BIRD_SIZE * 0.4),
-      rotation: 8
+      x: clamp(pointerX - CURSOR_ANCHOR.x, -BIRD_SIZE * 0.4, window.innerWidth - BIRD_SIZE * 0.68),
+      y: clamp(pointerY - CURSOR_ANCHOR.y, MIN_Y, window.innerHeight - BIRD_SIZE * 0.42),
+      rotation: 9
     };
   }
 
-  function getBrandPerch() {
+  function getBrandTarget() {
     if (!perchTarget) {
-      return getCursorPerch();
+      return getCursorTarget();
     }
 
     const rect = perchTarget.getBoundingClientRect();
-    const perchPointX = rect.left + rect.width * 0.62;
-    const perchPointY = rect.bottom + 3;
+    const perchPointX = rect.left + rect.width * 0.6;
+    const perchPointY = rect.bottom + 4;
 
     return {
-      x: clamp(perchPointX - BRAND_ANCHOR.x, -BIRD_SIZE * 0.4, window.innerWidth - BIRD_SIZE * 0.72),
-      y: clamp(perchPointY - BRAND_ANCHOR.y, MIN_Y, window.innerHeight - BIRD_SIZE * 0.44),
-      rotation: -7
+      x: clamp(perchPointX - BRAND_ANCHOR.x, -BIRD_SIZE * 0.42, window.innerWidth - BIRD_SIZE * 0.68),
+      y: clamp(perchPointY - BRAND_ANCHOR.y, MIN_Y, window.innerHeight - BIRD_SIZE * 0.42),
+      rotation: -8
     };
   }
 
-  function moveToCurrentPerch() {
-    if (!visible || flying) {
-      return;
-    }
+  function placeSpawnNear(targetX: number, targetY: number) {
+    const fromLeft = targetX > window.innerWidth * 0.5;
 
-    const target = currentPerch === 'brand' ? getBrandPerch() : getCursorPerch();
+    currentX = fromLeft ? -BIRD_SIZE * 1.15 : window.innerWidth + BIRD_SIZE * 0.2;
+    currentY = clamp(targetY + 24, MIN_Y, window.innerHeight - BIRD_SIZE * 0.4);
 
-    currentX = target.x;
-    currentY = target.y;
-    currentRotation = target.rotation;
+    velocityX = fromLeft ? 70 : -70;
+    velocityY = -14;
+    currentRotation = velocityX > 0 ? 8 : -8;
   }
 
-  function initializeStartPosition(targetX: number, targetY: number, targetRotation: number) {
-    const startFromLeft = targetX > window.innerWidth * 0.5;
+  function setModeToCursor() {
+    const target = getCursorTarget();
 
-    currentX = startFromLeft ? -BIRD_SIZE * 1.2 : window.innerWidth + BIRD_SIZE * 0.2;
-    currentY = clamp(targetY + 50, MIN_Y, window.innerHeight - BIRD_SIZE * 0.35);
-    currentRotation = targetRotation;
-  }
-
-  function easeInOutCubic(t: number) {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  }
-
-  function startFlight(options: {
-    x: number;
-    y: number;
-    rotation: number;
-    perch: 'cursor' | 'brand' | null;
-    hideAfter?: boolean;
-    duration?: number;
-    arc?: number;
-  }) {
-    const { x, y, rotation, perch, hideAfter = false, duration = FLIGHT_DURATION, arc = 72 } = options;
-
-    if (!visible) {
-      initializeStartPosition(x, y, rotation);
+    if (!visible || mode === 'hidden') {
+      placeSpawnNear(target.x, target.y);
       visible = true;
     }
 
-    cancelFlight();
-
-    perched = false;
-    flying = true;
-    currentPerch = null;
-
-    const startX = currentX;
-    const startY = currentY;
-    const dx = x - startX;
-    const direction = dx >= 0 ? 1 : -1;
-
-    const controlX = (startX + x) / 2;
-    const controlY = Math.min(startY, y) - arc;
-    const animationDuration = reducedMotion ? 140 : duration;
-
-    let startedAt = 0;
-
-    const step = (timestamp: number) => {
-      if (!startedAt) {
-        startedAt = timestamp;
-      }
-
-      const elapsed = timestamp - startedAt;
-      const rawT = clamp(elapsed / animationDuration, 0, 1);
-      const t = easeInOutCubic(rawT);
-      const oneMinus = 1 - t;
-
-      // Quadratic bezier flight for a natural curved path.
-      currentX = oneMinus * oneMinus * startX + 2 * oneMinus * t * controlX + t * t * x;
-      currentY = oneMinus * oneMinus * startY + 2 * oneMinus * t * controlY + t * t * y;
-
-      const tangentX = 2 * oneMinus * (controlX - startX) + 2 * t * (x - controlX);
-      const tangentY = 2 * oneMinus * (controlY - startY) + 2 * t * (y - controlY);
-      const tangentRotation = (Math.atan2(tangentY, tangentX) * 180) / Math.PI;
-      currentRotation = clamp(tangentRotation * 0.45 + direction * 5, -20, 20);
-
-      if (rawT < 1) {
-        frameHandle = requestAnimationFrame(step);
-        return;
-      }
-
-      frameHandle = 0;
-      flying = false;
-      currentX = x;
-      currentY = y;
-      currentRotation = rotation;
-
-      if (hideAfter) {
-        visible = false;
-        perched = false;
-        currentPerch = null;
-        return;
-      }
-
-      perched = perch !== null;
-      currentPerch = perch;
-    };
-
-    frameHandle = requestAnimationFrame(step);
+    fibonacciSequence = generateFibonacciSequence(24);
+    fibonacciIndex = 0;
+    spiralPhase = 0;
+    spiralDirection = 1;
+    mode = 'to-cursor';
+    startLoop();
   }
 
-  function flyToCursor() {
-    const target = getCursorPerch();
+  function setModeToBrand() {
+    const target = getBrandTarget();
 
-    startFlight({
-      ...target,
-      perch: 'cursor',
-      arc: 66
-    });
+    if (!visible || mode === 'hidden') {
+      placeSpawnNear(target.x, target.y);
+      visible = true;
+    }
+
+    fibonacciSequence = generateFibonacciSequence(24);
+    fibonacciIndex = 0;
+    spiralPhase = 0;
+    spiralDirection = 1;
+    mode = 'to-brand';
+    startLoop();
   }
 
-  function flyToBrand() {
-    const target = getBrandPerch();
-
-    startFlight({
-      ...target,
-      perch: 'brand',
-      arc: 58
-    });
-  }
-
-  function flyOutToSideline() {
-    if (!visible) {
+  function setModeToExit() {
+    if (!visible || mode === 'hidden' || mode === 'exiting') {
       return;
     }
 
     const toRight = pointerX < window.innerWidth * 0.5;
-    const sideX = toRight ? window.innerWidth + BIRD_SIZE * 0.35 : -BIRD_SIZE * 1.25;
-    const sideY = clamp(currentY - 20, MIN_Y + 8, window.innerHeight - BIRD_SIZE * 0.45);
 
-    startFlight({
-      x: sideX,
-      y: sideY,
-      rotation: toRight ? 12 : -12,
-      perch: null,
-      hideAfter: true,
-      arc: 88,
-      duration: 700
-    });
+    exitTargetX = toRight ? window.innerWidth + EXIT_MARGIN : -EXIT_MARGIN;
+    exitTargetY = clamp(currentY - 24, MIN_Y + 8, window.innerHeight - BIRD_SIZE * 0.42);
+    mode = 'exiting';
+    startLoop();
   }
 
-  function scheduleIdlePerch() {
+  function scheduleIdleToCursor() {
     idleTimer = clearTimer(idleTimer);
 
     idleTimer = setTimeout(() => {
       if (enabled) {
-        flyToCursor();
+        setModeToCursor();
       }
     }, IDLE_DELAY);
   }
 
-  function handleActiveInput() {
+  function onActiveInput() {
     if (!enabled) {
       return;
     }
 
-    if (visible && !flying) {
-      flyOutToSideline();
+    setModeToExit();
+    scheduleIdleToCursor();
+  }
+
+  function getDynamicTarget() {
+    if (mode === 'to-cursor' || mode === 'perched-cursor') {
+      return getCursorTarget();
     }
 
-    scheduleIdlePerch();
+    if (mode === 'to-brand' || mode === 'perched-brand') {
+      return getBrandTarget();
+    }
+
+    return { x: exitTargetX, y: exitTargetY, rotation: currentRotation };
+  }
+
+  function updateSteering(dt: number) {
+    const target = getDynamicTarget();
+    
+    let effectiveTargetX = target.x;
+    let effectiveTargetY = target.y;
+
+    if ((mode === 'to-cursor' || mode === 'to-brand') && !perched) {
+      spiralPhase += (dt / FIBONACCI_REVOLVE_TIME) * Math.PI * 2;
+      const spiralOffset = computeSpiralOffset(spiralPhase, fibonacciIndex, target.x, target.y);
+      effectiveTargetX = spiralOffset.x;
+      effectiveTargetY = spiralOffset.y;
+      
+      const revolutionProgress = (spiralPhase % (Math.PI * 2)) / (Math.PI * 2);
+      if (revolutionProgress < 0.1 && fibonacciIndex % 10 === 0 && fibonacciIndex > 0) {
+        spiralDirection *= -1;
+      }
+      
+      if (spiralPhase > Math.PI * 2 * 0.95 && fibonacciIndex < fibonacciSequence.length - 1) {
+        fibonacciIndex++;
+        spiralPhase = 0;
+      }
+    }
+
+    const deltaX = effectiveTargetX - currentX;
+    const deltaY = effectiveTargetY - currentY;
+    const distance = vectorLength(deltaX, deltaY);
+
+    const modeMaxSpeed = mode === 'exiting' ? MAX_SPEED * 1.12 : MAX_SPEED;
+    const slowRadius = mode === 'exiting' ? SLOW_RADIUS * 1.35 : SLOW_RADIUS;
+
+    let desiredSpeed = modeMaxSpeed;
+
+    if (distance < slowRadius) {
+      desiredSpeed = clamp((modeMaxSpeed * distance) / slowRadius, 18, modeMaxSpeed);
+    }
+
+    const desiredVX = distance > 0 ? (deltaX / distance) * desiredSpeed : 0;
+    const desiredVY = distance > 0 ? (deltaY / distance) * desiredSpeed : 0;
+
+    let steerX = desiredVX - velocityX;
+    let steerY = desiredVY - velocityY;
+
+    const steerMagnitude = vectorLength(steerX, steerY);
+    const maxSteerThisFrame = MAX_FORCE * dt;
+
+    if (steerMagnitude > maxSteerThisFrame && steerMagnitude > 0) {
+      steerX = (steerX / steerMagnitude) * maxSteerThisFrame;
+      steerY = (steerY / steerMagnitude) * maxSteerThisFrame;
+    }
+
+    velocityX += steerX;
+    velocityY += steerY;
+
+    const velocityMagnitude = vectorLength(velocityX, velocityY);
+
+    if (velocityMagnitude > modeMaxSpeed && velocityMagnitude > 0) {
+      velocityX = (velocityX / velocityMagnitude) * modeMaxSpeed;
+      velocityY = (velocityY / velocityMagnitude) * modeMaxSpeed;
+    }
+
+    currentX += velocityX * dt;
+    currentY += velocityY * dt;
+
+    const speed = vectorLength(velocityX, velocityY);
+    const velocityAngle = speed > 1 ? (Math.atan2(velocityY, velocityX) * 180) / Math.PI : target.rotation;
+    const baseRotation = clamp(velocityAngle * 0.4, -20, 20);
+    const desiredRotation = mode === 'perched-brand' ? -8 : mode === 'perched-cursor' ? 9 : baseRotation;
+
+    currentRotation += (desiredRotation - currentRotation) * (reducedMotion ? 0.28 : 0.16);
+
+    const reachedPerch = distance < PERCH_DISTANCE && speed < PERCH_SPEED;
+
+    if (mode === 'to-cursor' && reachedPerch) {
+      mode = 'perched-cursor';
+    }
+
+    if (mode === 'to-brand' && reachedPerch) {
+      mode = 'perched-brand';
+    }
+
+    if (mode === 'exiting') {
+      const leftGone = exitTargetX < 0 && currentX < -EXIT_MARGIN * 0.95;
+      const rightGone = exitTargetX > window.innerWidth && currentX > window.innerWidth + EXIT_MARGIN * 0.2;
+
+      if (leftGone || rightGone) {
+        hideBirdImmediately();
+        return;
+      }
+    }
+
+    flying = mode === 'to-cursor' || mode === 'to-brand' || mode === 'exiting';
+    perched = mode === 'perched-cursor' || mode === 'perched-brand';
+
+    const speedRatio = clamp(speed / (MAX_SPEED * 1.1), 0, 1);
+    wingDuration = Math.round(620 - speedRatio * 270);
+
+    if (perched) {
+      lookAngle = Math.sin(performance.now() * 0.0014) * 2.2 + Math.sin(performance.now() * 0.0005 + 1) * 1.1;
+    } else {
+      lookAngle = Math.sin(performance.now() * 0.004) * 0.8;
+    }
+
+    clearVectorIfTiny();
+  }
+
+  function tick(timestamp: number) {
+    if (!visible || !enabled) {
+      cancelLoop();
+      return;
+    }
+
+    const dt = lastFrameTime ? Math.min((timestamp - lastFrameTime) / 1000, 0.033) : 1 / 60;
+    lastFrameTime = timestamp;
+
+    updateSteering(dt);
+
+    if (visible) {
+      frameHandle = requestAnimationFrame(tick);
+    }
   }
 
   onMount(() => {
@@ -249,17 +360,17 @@
     const syncMotionPreference = () => {
       reducedMotion = motionQuery.matches;
       enabled = true;
-      scheduleIdlePerch();
+      scheduleIdleToCursor();
     };
 
     const updatePointer = (event: PointerEvent) => {
       pointerX = event.clientX;
       pointerY = event.clientY;
-      handleActiveInput();
+      onActiveInput();
     };
 
     const handlePointerDown = () => {
-      handleActiveInput();
+      onActiveInput();
     };
 
     const handleScroll = () => {
@@ -270,17 +381,13 @@
       idleTimer = clearTimer(idleTimer);
       scrollIdleTimer = clearTimer(scrollIdleTimer);
 
-      if (currentPerch !== 'brand' || !visible || !perched) {
-        flyToBrand();
-      } else {
-        moveToCurrentPerch();
-      }
+      setModeToBrand();
 
       scrollIdleTimer = setTimeout(() => {
         if (enabled) {
-          scheduleIdlePerch();
+          scheduleIdleToCursor();
         }
-      }, 240);
+      }, 300);
     };
 
     const handleResize = () => {
@@ -290,23 +397,14 @@
 
       pointerX = clamp(pointerX, 0, window.innerWidth);
       pointerY = clamp(pointerY, 0, window.innerHeight);
-      moveToCurrentPerch();
     };
 
     const handleKeydown = () => {
-      if (!enabled) {
-        return;
-      }
-
-      if (visible && !flying) {
-        flyOutToSideline();
-      }
-
-      scheduleIdlePerch();
+      onActiveInput();
     };
 
     pointerX = window.innerWidth * 0.5;
-    pointerY = window.innerHeight * 0.36;
+    pointerY = window.innerHeight * 0.38;
 
     syncMotionPreference();
 
@@ -324,7 +422,7 @@
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('keydown', handleKeydown);
-      fullyHideBird();
+      hideBirdImmediately();
     };
   });
 </script>
@@ -335,9 +433,11 @@
   class:perched
   class="bird-layer"
   aria-hidden="true"
-  style={`transform: translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentRotation}deg);`}
+  style={`transform: translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentRotation}deg); --wing-duration: ${wingDuration}ms; --look-angle: ${lookAngle}deg;`}
 >
-  <img class="bird-image" src="/media/images/bird-sketch.svg" alt="" />
+  <div class="bird-body">
+    <img class="bird-image" src="/media/images/bird-sketch.svg" alt="" />
+  </div>
 </div>
 
 <style>
@@ -361,56 +461,83 @@
     filter: none;
   }
 
+  .bird-body {
+    width: 100%;
+    height: 100%;
+  }
+
   .bird-image {
     width: 100%;
     height: 100%;
-    filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.3));
     object-fit: contain;
+    filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.3));
+    transform: rotate(var(--look-angle));
     transform-origin: 50px 78px;
   }
 
+  .bird-layer.flying .bird-body {
+    animation: body-float 980ms ease-in-out infinite alternate;
+  }
+
   .bird-layer.flying .bird-image {
-    animation: bird-float 1s ease-in-out infinite alternate, flap 560ms ease-in-out infinite;
+    animation: wing-flutter var(--wing-duration) ease-in-out infinite;
+  }
+
+  .bird-layer.perched .bird-body {
+    animation: perched-breathe 2400ms ease-in-out infinite;
   }
 
   .bird-layer.perched .bird-image {
-    animation: settle 2.2s ease-in-out infinite;
+    animation: perched-look 2600ms ease-in-out infinite;
   }
 
-  @keyframes flap {
+  @keyframes body-float {
     0% {
-      transform: rotate(-9deg) translateY(0) scaleX(0.995);
+      transform: translateY(-2px);
     }
 
     100% {
-      transform: rotate(10deg) translateY(-2px) scaleX(1.005);
+      transform: translateY(2px);
     }
   }
 
-  @keyframes bird-float {
+  @keyframes wing-flutter {
     0% {
-      transform: translateY(-3px);
+      transform: rotate(calc(var(--look-angle) - 7deg)) scaleX(0.992);
     }
 
     100% {
-      transform: translateY(3px);
+      transform: rotate(calc(var(--look-angle) + 9deg)) scaleX(1.008);
     }
   }
 
-  @keyframes settle {
+  @keyframes perched-breathe {
     0%,
     100% {
-      transform: translateY(0) rotate(-2deg);
+      transform: translateY(0);
     }
 
     50% {
-      transform: translateY(-2px) rotate(1deg);
+      transform: translateY(-1.5px);
+    }
+  }
+
+  @keyframes perched-look {
+    0%,
+    100% {
+      transform: rotate(calc(var(--look-angle) - 1deg));
+    }
+
+    50% {
+      transform: rotate(calc(var(--look-angle) + 2.2deg));
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .bird-layer,
+    .bird-layer.flying .bird-body,
     .bird-layer.flying .bird-image,
+    .bird-layer.perched .bird-body,
     .bird-layer.perched .bird-image {
       animation: none;
       transition: none;
