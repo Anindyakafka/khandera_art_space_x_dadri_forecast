@@ -6,7 +6,8 @@
   const IDLE_DELAY = 1500;
   const POSITION_EASE = 0.16;
   const ROTATION_EASE = 0.14;
-  const CURSOR_OFFSET = { x: 18, y: -26 };
+  const CURSOR_OFFSET = { x: 22, y: -44 };
+  const BIRD_SIZE = 144;
 
   let enabled = false;
   let visible = false;
@@ -52,8 +53,8 @@
   }
 
   function positionForCursor() {
-    targetX = clamp(pointerX + CURSOR_OFFSET.x, 12, window.innerWidth - 120);
-    targetY = clamp(pointerY + CURSOR_OFFSET.y, 12, window.innerHeight - 120);
+    targetX = clamp(pointerX + CURSOR_OFFSET.x, 12, window.innerWidth - BIRD_SIZE);
+    targetY = clamp(pointerY + CURSOR_OFFSET.y, 12, window.innerHeight - BIRD_SIZE);
     targetRotation = 12;
   }
 
@@ -64,8 +65,8 @@
 
     const rect = perchTarget.getBoundingClientRect();
 
-    targetX = clamp(rect.left + rect.width * 0.62, 12, window.innerWidth - 120);
-    targetY = clamp(rect.top - 16, 10, window.innerHeight - 120);
+    targetX = clamp(rect.left + rect.width * 0.56, 12, window.innerWidth - BIRD_SIZE);
+    targetY = clamp(rect.top - 28, 10, window.innerHeight - BIRD_SIZE);
     targetRotation = -8;
   }
 
@@ -135,14 +136,10 @@
 
   onMount(() => {
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const pointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
     const syncCapability = () => {
-      enabled = !motionQuery.matches && pointerQuery.matches;
-
-      if (!enabled) {
-        hideBird();
-      }
+      enabled = true;
+      scheduleIdlePerch();
     };
 
     const updatePointer = (event: PointerEvent) => {
@@ -194,10 +191,12 @@
       hideBird();
     };
 
+    pointerX = window.innerWidth * 0.5;
+    pointerY = window.innerHeight * 0.38;
+
     syncCapability();
 
     motionQuery.addEventListener('change', syncCapability);
-    pointerQuery.addEventListener('change', syncCapability);
     window.addEventListener('pointermove', updatePointer, { passive: true });
     window.addEventListener('pointerdown', handlePointerDown, { passive: true });
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -206,7 +205,6 @@
 
     return () => {
       motionQuery.removeEventListener('change', syncCapability);
-      pointerQuery.removeEventListener('change', syncCapability);
       window.removeEventListener('pointermove', updatePointer);
       window.removeEventListener('pointerdown', handlePointerDown);
       window.removeEventListener('scroll', handleScroll);
@@ -230,17 +228,7 @@
   aria-hidden="true"
   style={`transform: translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentRotation}deg);`}
 >
-  <svg viewBox="0 0 120 96" class="bird" role="presentation">
-    <g class="bird-mark">
-      <path class="stroke body" d="M18 58C28 37 57 28 78 37C89 42 96 53 96 61C96 71 89 79 77 79C60 79 47 67 39 67C31 67 28 74 17 74C11 74 8 70 8 65C8 61 11 58 18 58Z" />
-      <path class="stroke wing" d="M45 50C34 37 39 20 63 18C74 18 81 24 83 32C71 28 57 34 45 50Z" />
-      <path class="stroke head" d="M82 38C91 31 102 31 108 38C113 44 112 53 105 58" />
-      <path class="stroke beak" d="M108 38L118 35M108 42L117 43" />
-      <path class="stroke tail" d="M17 59L4 52M17 64L3 62M19 68L7 72" />
-      <path class="stroke legs" d="M56 78L54 90M66 78L67 89M51 90L59 90M63 89L72 89" />
-      <circle class="eye" cx="95" cy="42" r="1.8" />
-    </g>
-  </svg>
+  <img class="bird-image" src="/media/images/bird-sketch.svg" alt="" />
 </div>
 
 <style>
@@ -248,68 +236,48 @@
     position: fixed;
     left: 0;
     top: 0;
-    width: 96px;
-    height: 96px;
+    width: 144px;
+    height: 144px;
     pointer-events: none;
     opacity: 0;
-    z-index: 40;
+    z-index: 60;
     transform-origin: 48px 58px;
-    transition: opacity 180ms ease;
+    transition: opacity 220ms ease, filter 220ms ease;
     will-change: transform, opacity;
+    filter: blur(1px);
   }
 
   .bird-layer.visible {
     opacity: 1;
+    filter: none;
   }
 
-  .bird {
+  .bird-image {
     width: 100%;
     height: 100%;
-    overflow: visible;
-    filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.25));
+    filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.28));
+    object-fit: contain;
   }
 
-  .bird-mark {
+  .bird-image {
     transform-origin: 54px 54px;
   }
 
-  .bird-layer.flying .bird-mark {
-    animation: bird-float 1.1s ease-in-out infinite alternate;
+  .bird-layer.flying .bird-image {
+    animation: bird-float 1.1s ease-in-out infinite alternate, flap 540ms ease-in-out infinite;
   }
 
-  .bird-layer.flying .wing {
-    transform-box: fill-box;
-    transform-origin: 56px 48px;
-    animation: flap 540ms ease-in-out infinite;
-  }
-
-  .bird-layer.perched .bird-mark {
+  .bird-layer.perched .bird-image {
     animation: settle 2.4s ease-in-out infinite;
-  }
-
-  .stroke {
-    fill: none;
-    stroke: rgba(255, 243, 214, 0.96);
-    stroke-width: 2.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .body {
-    fill: rgba(255, 243, 214, 0.08);
-  }
-
-  .eye {
-    fill: rgba(255, 243, 214, 0.96);
   }
 
   @keyframes flap {
     0% {
-      transform: rotate(-9deg) translateY(0);
+      transform: rotate(-9deg) translateY(0) scaleX(0.995);
     }
 
     100% {
-      transform: rotate(11deg) translateY(-2px);
+      transform: rotate(10deg) translateY(-2px) scaleX(1.005);
     }
   }
 
@@ -336,9 +304,8 @@
 
   @media (prefers-reduced-motion: reduce) {
     .bird-layer,
-    .bird-layer.flying .bird-mark,
-    .bird-layer.flying .wing,
-    .bird-layer.perched .bird-mark {
+    .bird-layer.flying .bird-image,
+    .bird-layer.perched .bird-image {
       animation: none;
       transition: none;
     }
