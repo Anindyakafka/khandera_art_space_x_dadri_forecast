@@ -14,8 +14,10 @@
   const SLOW_RADIUS = 85;
   const PERCH_DISTANCE = 10;
   const PERCH_SPEED = 14;
-  const FIBONACCI_SPIRAL_RADIUS = 120;
-  const FIBONACCI_REVOLVE_TIME = 4200;
+  const FIBONACCI_SPIRAL_RADIUS = 96;
+  const FIBONACCI_REVOLVE_TIME = 3600;
+  const SPIRAL_TIGHTEN_DISTANCE = 260;
+  const RANDOM_SWAY_RADIUS = 20;
 
   type Mode = 'hidden' | 'to-cursor' | 'to-brand' | 'perched-cursor' | 'perched-brand' | 'exiting';
 
@@ -47,6 +49,7 @@
   let fibonacciSequence: number[] = [];
   let spiralPhase = 0;
   let spiralDirection = 1;
+  let spiralTurnCount = 0;
 
   function clamp(value: number, min: number, max: number) {
     return Math.min(Math.max(value, min), max);
@@ -60,16 +63,24 @@
     return fib;
   }
 
-  function computeSpiralOffset(phase: number, spiralIndex: number, coreX: number, coreY: number) {
+  function computeSpiralOffset(phase: number, spiralIndex: number, coreX: number, coreY: number, approachScale: number) {
     const normalized = coreX > window.innerWidth * 0.5 ? 1 : -1;
     const fibIndex = clamp(spiralIndex, 0, fibonacciSequence.length - 1);
-    const fibValue = fibonacciSequence[fibIndex] || 21;
-    const scaledRadius = (FIBONACCI_SPIRAL_RADIUS * fibValue) / 89;
-    const angle = phase * spiralDirection * normalized + (spiralIndex * Math.PI) / 3.8;
+    const fibValue = fibonacciSequence[fibIndex] || 34;
+    const maxFib = fibonacciSequence[fibonacciSequence.length - 1] || 34;
+    const fibScale = 0.55 + (fibValue / maxFib) * 0.85;
+    const scaledRadius = FIBONACCI_SPIRAL_RADIUS * fibScale * approachScale;
+    const angle = phase * spiralDirection * normalized + (spiralIndex * Math.PI) / 4.4;
+    const noiseTime = performance.now() * 0.001;
+    const noiseScale = RANDOM_SWAY_RADIUS * approachScale;
+    const noiseX = Math.sin(noiseTime * 1.6 + spiralIndex * 0.37) * noiseScale
+      + Math.sin(noiseTime * 3.05 + 1.3) * noiseScale * 0.35;
+    const noiseY = Math.cos(noiseTime * 1.25 + spiralIndex * 0.41) * noiseScale * 0.75
+      + Math.cos(noiseTime * 2.7 + 0.7) * noiseScale * 0.28;
 
     return {
-      x: coreX + Math.cos(angle) * scaledRadius,
-      y: coreY + Math.sin(angle) * scaledRadius * 0.72
+      x: coreX + Math.cos(angle) * scaledRadius + noiseX,
+      y: coreY + Math.sin(angle) * scaledRadius * 0.72 + noiseY
     };
   }
 
@@ -165,10 +176,11 @@
       visible = true;
     }
 
-    fibonacciSequence = generateFibonacciSequence(24);
+    fibonacciSequence = generateFibonacciSequence(18);
     fibonacciIndex = 0;
     spiralPhase = 0;
     spiralDirection = 1;
+    spiralTurnCount = 0;
     mode = 'to-cursor';
     startLoop();
   }
@@ -181,10 +193,11 @@
       visible = true;
     }
 
-    fibonacciSequence = generateFibonacciSequence(24);
+    fibonacciSequence = generateFibonacciSequence(18);
     fibonacciIndex = 0;
     spiralPhase = 0;
     spiralDirection = 1;
+    spiralTurnCount = 0;
     mode = 'to-brand';
     startLoop();
   }
@@ -235,24 +248,27 @@
 
   function updateSteering(dt: number) {
     const target = getDynamicTarget();
-    
+
     let effectiveTargetX = target.x;
     let effectiveTargetY = target.y;
 
     if ((mode === 'to-cursor' || mode === 'to-brand') && !perched) {
       spiralPhase += (dt / FIBONACCI_REVOLVE_TIME) * Math.PI * 2;
-      const spiralOffset = computeSpiralOffset(spiralPhase, fibonacciIndex, target.x, target.y);
+      const coreDistance = vectorLength(target.x - currentX, target.y - currentY);
+      const approachScale = clamp(coreDistance / SPIRAL_TIGHTEN_DISTANCE, 0, 1);
+      const spiralOffset = computeSpiralOffset(spiralPhase, fibonacciIndex, target.x, target.y, approachScale);
       effectiveTargetX = spiralOffset.x;
       effectiveTargetY = spiralOffset.y;
-      
-      const revolutionProgress = (spiralPhase % (Math.PI * 2)) / (Math.PI * 2);
-      if (revolutionProgress < 0.1 && fibonacciIndex % 10 === 0 && fibonacciIndex > 0) {
-        spiralDirection *= -1;
-      }
-      
-      if (spiralPhase > Math.PI * 2 * 0.95 && fibonacciIndex < fibonacciSequence.length - 1) {
-        fibonacciIndex++;
-        spiralPhase = 0;
+
+      const turns = Math.floor(Math.abs(spiralPhase) / (Math.PI * 2));
+
+      if (turns > spiralTurnCount) {
+        spiralTurnCount = turns;
+        fibonacciIndex = (fibonacciIndex + 1) % fibonacciSequence.length;
+
+        if ((fibonacciIndex + 1) % 10 === 0) {
+          spiralDirection *= -1;
+        }
       }
     }
 
