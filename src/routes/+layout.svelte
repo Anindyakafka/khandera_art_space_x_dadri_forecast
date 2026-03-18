@@ -1,6 +1,9 @@
 <script lang="ts">
   // no client data used here, prerender is handled in +layout.server.ts
   import '../app.css';
+  import BirdFollower from '$lib/components/BirdFollower.svelte';
+
+  let brandLink: HTMLAnchorElement | undefined;
 </script>
 
 <svelte:head>
@@ -9,8 +12,10 @@
   <title>Khandera Art Space</title>
 </svelte:head>
 
+<BirdFollower perchTarget={brandLink} />
+
 <header class="site-header">
-  <a class="brand" href="/">Khandera Art Space</a>
+  <a class="brand" href="/" bind:this={brandLink}>Khandera Art Space</a>
   <nav aria-label="Main navigation">
     <a href="/about">About</a>
     <a href="/manifesto">Manifesto</a>
