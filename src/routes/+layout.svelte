@@ -86,107 +86,138 @@
     pointer-events: none;
     z-index: 34;
     overflow: hidden;
+    animation: canopy-drift 12s ease-in-out infinite alternate;
   }
 
   .leaf {
     --base-rotate: 0deg;
     --base-scale: 1;
-    --leaf-opacity: 0.24;
+    --leaf-opacity: 0.22;
+    --leaf-blur: 4px;
+    --drift-x: 46px;
+    --drift-y: -26px;
+    --drift-rotate: 2.4deg;
     position: absolute;
     width: clamp(560px, 72vw, 1240px);
     aspect-ratio: 1.35 / 1;
     background:
-      radial-gradient(ellipse 7% 3.6% at 6% 13%, color-mix(in srgb, var(--text) 42%, transparent) 0 56%, transparent 64%),
-      radial-gradient(ellipse 8% 3.8% at 14% 24%, color-mix(in srgb, var(--text) 39%, transparent) 0 57%, transparent 65%),
-      radial-gradient(ellipse 7.2% 3.5% at 23% 16%, color-mix(in srgb, var(--text) 44%, transparent) 0 56%, transparent 64%),
-      radial-gradient(ellipse 8.2% 3.8% at 31% 28%, color-mix(in srgb, var(--text) 40%, transparent) 0 57%, transparent 65%),
-      radial-gradient(ellipse 7.5% 3.6% at 40% 12%, color-mix(in srgb, var(--text) 43%, transparent) 0 56%, transparent 64%),
-      radial-gradient(ellipse 8.4% 3.9% at 49% 25%, color-mix(in srgb, var(--text) 38%, transparent) 0 57%, transparent 65%),
-      radial-gradient(ellipse 7.6% 3.5% at 57% 15%, color-mix(in srgb, var(--text) 44%, transparent) 0 56%, transparent 64%),
-      radial-gradient(ellipse 8.5% 3.9% at 66% 28%, color-mix(in srgb, var(--text) 40%, transparent) 0 57%, transparent 65%),
-      radial-gradient(ellipse 7.2% 3.4% at 75% 14%, color-mix(in srgb, var(--text) 45%, transparent) 0 56%, transparent 64%),
-      radial-gradient(ellipse 8.3% 3.9% at 84% 27%, color-mix(in srgb, var(--text) 39%, transparent) 0 57%, transparent 65%),
-      radial-gradient(ellipse 7.4% 3.4% at 93% 16%, color-mix(in srgb, var(--text) 42%, transparent) 0 56%, transparent 64%),
-      radial-gradient(ellipse 7.8% 3.7% at 12% 46%, color-mix(in srgb, var(--text) 40%, transparent) 0 57%, transparent 65%),
-      radial-gradient(ellipse 8.6% 3.9% at 24% 61%, color-mix(in srgb, var(--text) 37%, transparent) 0 57%, transparent 65%),
-      radial-gradient(ellipse 7.5% 3.5% at 38% 50%, color-mix(in srgb, var(--text) 42%, transparent) 0 56%, transparent 64%),
-      radial-gradient(ellipse 8.7% 4% at 52% 63%, color-mix(in srgb, var(--text) 38%, transparent) 0 57%, transparent 65%),
-      radial-gradient(ellipse 7.4% 3.5% at 67% 49%, color-mix(in srgb, var(--text) 41%, transparent) 0 56%, transparent 64%),
-      radial-gradient(ellipse 8.5% 3.9% at 81% 62%, color-mix(in srgb, var(--text) 37%, transparent) 0 57%, transparent 65%),
-      radial-gradient(ellipse 7.2% 3.4% at 92% 50%, color-mix(in srgb, var(--text) 40%, transparent) 0 56%, transparent 64%),
-      linear-gradient(126deg, transparent 16%, color-mix(in srgb, var(--text) 23%, transparent) 30% 32%, transparent 36%),
-      linear-gradient(116deg, transparent 41%, color-mix(in srgb, var(--text) 20%, transparent) 53% 55%, transparent 60%),
-      linear-gradient(132deg, transparent 66%, color-mix(in srgb, var(--text) 17%, transparent) 74% 76%, transparent 80%);
+      radial-gradient(ellipse 4.4% 2.7% at 6% 12%, color-mix(in srgb, var(--text) 54%, transparent) 0 62%, transparent 71%),
+      radial-gradient(ellipse 3.8% 2.3% at 11% 21%, color-mix(in srgb, var(--text) 46%, transparent) 0 61%, transparent 70%),
+      radial-gradient(ellipse 4.6% 2.6% at 18% 15%, color-mix(in srgb, var(--text) 56%, transparent) 0 62%, transparent 71%),
+      radial-gradient(ellipse 4.2% 2.4% at 24% 25%, color-mix(in srgb, var(--text) 47%, transparent) 0 61%, transparent 70%),
+      radial-gradient(ellipse 4.8% 2.7% at 31% 14%, color-mix(in srgb, var(--text) 55%, transparent) 0 62%, transparent 71%),
+      radial-gradient(ellipse 4.1% 2.3% at 38% 24%, color-mix(in srgb, var(--text) 46%, transparent) 0 61%, transparent 70%),
+      radial-gradient(ellipse 5% 2.8% at 46% 16%, color-mix(in srgb, var(--text) 54%, transparent) 0 62%, transparent 71%),
+      radial-gradient(ellipse 4.2% 2.4% at 53% 27%, color-mix(in srgb, var(--text) 45%, transparent) 0 61%, transparent 70%),
+      radial-gradient(ellipse 4.7% 2.7% at 61% 15%, color-mix(in srgb, var(--text) 55%, transparent) 0 62%, transparent 71%),
+      radial-gradient(ellipse 4.1% 2.3% at 68% 25%, color-mix(in srgb, var(--text) 46%, transparent) 0 61%, transparent 70%),
+      radial-gradient(ellipse 4.8% 2.8% at 76% 15%, color-mix(in srgb, var(--text) 56%, transparent) 0 62%, transparent 71%),
+      radial-gradient(ellipse 4.2% 2.4% at 83% 26%, color-mix(in srgb, var(--text) 45%, transparent) 0 61%, transparent 70%),
+      radial-gradient(ellipse 4.4% 2.5% at 90% 16%, color-mix(in srgb, var(--text) 52%, transparent) 0 62%, transparent 71%),
+      radial-gradient(ellipse 3.6% 2.2% at 14% 47%, color-mix(in srgb, var(--text) 43%, transparent) 0 60%, transparent 69%),
+      radial-gradient(ellipse 4.2% 2.5% at 27% 61%, color-mix(in srgb, var(--text) 39%, transparent) 0 60%, transparent 69%),
+      radial-gradient(ellipse 3.8% 2.3% at 41% 51%, color-mix(in srgb, var(--text) 44%, transparent) 0 60%, transparent 69%),
+      radial-gradient(ellipse 4.4% 2.5% at 57% 64%, color-mix(in srgb, var(--text) 38%, transparent) 0 60%, transparent 69%),
+      radial-gradient(ellipse 3.9% 2.3% at 72% 52%, color-mix(in srgb, var(--text) 44%, transparent) 0 60%, transparent 69%),
+      radial-gradient(ellipse 4.3% 2.5% at 86% 64%, color-mix(in srgb, var(--text) 39%, transparent) 0 60%, transparent 69%),
+      linear-gradient(122deg, transparent 18%, color-mix(in srgb, var(--text) 26%, transparent) 29% 30.2%, transparent 33%),
+      linear-gradient(114deg, transparent 38%, color-mix(in srgb, var(--text) 22%, transparent) 50.5% 51.5%, transparent 56%),
+      linear-gradient(131deg, transparent 64%, color-mix(in srgb, var(--text) 20%, transparent) 74% 75.1%, transparent 79%),
+      linear-gradient(120deg, transparent 9%, color-mix(in srgb, var(--text) 18%, transparent) 16.8% 17.6%, transparent 21.5%);
     background-repeat: no-repeat;
     background-size: 100% 100%;
-    filter: blur(6px);
+    filter: blur(var(--leaf-blur));
     opacity: var(--leaf-opacity);
     mix-blend-mode: multiply;
     transform-origin: 50% 50%;
     will-change: transform;
-    animation: leaf-drift 34s ease-in-out infinite;
+    animation: leaf-drift 20s ease-in-out infinite;
   }
 
   .leaf-a {
     --base-rotate: -8deg;
-    --base-scale: 1.02;
-    --leaf-opacity: 0.2;
-    left: -24vw;
-    top: -20vh;
+    --base-scale: 0.96;
+    --leaf-opacity: 0.28;
+    --leaf-blur: 1.25px;
+    --drift-x: 62px;
+    --drift-y: -34px;
+    --drift-rotate: 3.2deg;
+    left: -22vw;
+    top: -18vh;
   }
 
   .leaf-b {
-    --base-rotate: 7deg;
-    --base-scale: 1.07;
-    --leaf-opacity: 0.23;
-    right: -26vw;
+    --base-rotate: 6deg;
+    --base-scale: 1.06;
+    --leaf-opacity: 0.22;
+    --leaf-blur: 3.9px;
+    --drift-x: -48px;
+    --drift-y: -26px;
+    --drift-rotate: 2.2deg;
+    right: -24vw;
     top: -14vh;
     width: clamp(620px, 76vw, 1320px);
-    animation-duration: 38s;
+    animation-duration: 18s;
     animation-delay: -11s;
   }
 
   .leaf-c {
-    --base-rotate: -4deg;
-    --base-scale: 0.98;
-    --leaf-opacity: 0.21;
+    --base-rotate: -3deg;
+    --base-scale: 1.02;
+    --leaf-opacity: 0.15;
+    --leaf-blur: 9.5px;
+    --drift-x: 36px;
+    --drift-y: -18px;
+    --drift-rotate: 1.6deg;
     left: -8vw;
     top: 25vh;
     width: clamp(560px, 68vw, 1160px);
-    animation-duration: 31s;
+    animation-duration: 22s;
     animation-delay: -15s;
   }
 
   .leaf-d {
-    --base-rotate: 8deg;
-    --base-scale: 1.05;
-    --leaf-opacity: 0.22;
+    --base-rotate: 10deg;
+    --base-scale: 1.04;
+    --leaf-opacity: 0.27;
+    --leaf-blur: 1.6px;
+    --drift-x: -58px;
+    --drift-y: 28px;
+    --drift-rotate: 3deg;
     right: -22vw;
     bottom: -7vh;
     width: clamp(640px, 78vw, 1360px);
-    animation-duration: 39s;
+    animation-duration: 16.5s;
     animation-delay: -8s;
   }
 
   .leaf-e {
     --base-rotate: -11deg;
-    --base-scale: 1.1;
-    --leaf-opacity: 0.2;
+    --base-scale: 1.12;
+    --leaf-opacity: 0.13;
+    --leaf-blur: 12px;
+    --drift-x: 28px;
+    --drift-y: -14px;
+    --drift-rotate: 1.3deg;
     left: -28vw;
     bottom: -25vh;
     width: clamp(680px, 82vw, 1420px);
-    animation-duration: 42s;
+    animation-duration: 26s;
     animation-delay: -21s;
   }
 
   .leaf-f {
     --base-rotate: 5deg;
-    --base-scale: 0.95;
-    --leaf-opacity: 0.18;
+    --base-scale: 0.93;
+    --leaf-opacity: 0.19;
+    --leaf-blur: 5.5px;
+    --drift-x: -42px;
+    --drift-y: 24px;
+    --drift-rotate: 2deg;
     right: -4vw;
     top: 55vh;
     width: clamp(500px, 64vw, 1140px);
-    animation-duration: 33s;
+    animation-duration: 21s;
     animation-delay: -13s;
   }
 
@@ -303,11 +334,21 @@
     }
 
     33% {
-      transform: translate3d(24px, -14px, 0) rotate(calc(var(--base-rotate) + 1.8deg)) scale(calc(var(--base-scale) + 0.02));
+      transform: translate3d(var(--drift-x), var(--drift-y), 0) rotate(calc(var(--base-rotate) + var(--drift-rotate))) scale(calc(var(--base-scale) + 0.02));
     }
 
     66% {
-      transform: translate3d(-18px, 12px, 0) rotate(calc(var(--base-rotate) - 1.5deg)) scale(calc(var(--base-scale) - 0.02));
+      transform: translate3d(calc(var(--drift-x) * -0.62), calc(var(--drift-y) * -0.58), 0) rotate(calc(var(--base-rotate) - var(--drift-rotate))) scale(calc(var(--base-scale) - 0.02));
+    }
+  }
+
+  @keyframes canopy-drift {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+      transform: translate3d(0, -6px, 0);
     }
   }
 
@@ -333,9 +374,13 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .atmosphere {
+      animation: none;
+    }
+
     .leaf {
       animation: none;
-      opacity: 0.18;
+      opacity: 0.16;
     }
   }
 </style>
