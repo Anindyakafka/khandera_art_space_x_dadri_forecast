@@ -84,71 +84,76 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 55;
+    z-index: 34;
     overflow: hidden;
   }
 
   .leaf {
     position: absolute;
-    width: clamp(260px, 30vw, 520px);
-    aspect-ratio: 3 / 2;
-    border-radius: 64% 36% 60% 40% / 58% 42% 66% 34%;
-    background: radial-gradient(
-      ellipse at center,
-      rgba(20, 31, 25, 0.56) 0%,
-      rgba(20, 31, 25, 0.34) 42%,
-      rgba(20, 31, 25, 0) 76%
-    );
-    filter: blur(10px);
-    opacity: 0.5;
-    mix-blend-mode: normal;
+    width: clamp(460px, 58vw, 920px);
+    aspect-ratio: 1.35 / 1;
+    background:
+      radial-gradient(ellipse 17% 9% at 8% 17%, color-mix(in srgb, var(--text) 38%, transparent) 0 58%, transparent 64%),
+      radial-gradient(ellipse 16% 8% at 18% 31%, color-mix(in srgb, var(--text) 35%, transparent) 0 59%, transparent 65%),
+      radial-gradient(ellipse 14% 8% at 30% 14%, color-mix(in srgb, var(--text) 36%, transparent) 0 60%, transparent 66%),
+      radial-gradient(ellipse 16% 8% at 37% 34%, color-mix(in srgb, var(--text) 34%, transparent) 0 58%, transparent 65%),
+      radial-gradient(ellipse 15% 9% at 48% 18%, color-mix(in srgb, var(--text) 37%, transparent) 0 58%, transparent 64%),
+      radial-gradient(ellipse 18% 9% at 58% 36%, color-mix(in srgb, var(--text) 33%, transparent) 0 60%, transparent 66%),
+      radial-gradient(ellipse 15% 8% at 69% 17%, color-mix(in srgb, var(--text) 36%, transparent) 0 58%, transparent 64%),
+      radial-gradient(ellipse 16% 8% at 81% 33%, color-mix(in srgb, var(--text) 35%, transparent) 0 57%, transparent 64%),
+      radial-gradient(ellipse 13% 8% at 92% 19%, color-mix(in srgb, var(--text) 32%, transparent) 0 59%, transparent 65%),
+      linear-gradient(128deg, transparent 12%, color-mix(in srgb, var(--text) 20%, transparent) 35%, transparent 38%),
+      linear-gradient(116deg, transparent 45%, color-mix(in srgb, var(--text) 18%, transparent) 52%, transparent 55%);
+    filter: blur(3px);
+    opacity: 0.32;
+    mix-blend-mode: multiply;
     transform-origin: 50% 50%;
-    animation: leaf-drift 22s ease-in-out infinite;
+    animation: leaf-drift 32s ease-in-out infinite;
   }
 
   .leaf-a {
-    left: -4vw;
-    top: 6vh;
+    left: -18vw;
+    top: -12vh;
   }
 
   .leaf-b {
-    right: -4vw;
-    top: 15vh;
-    width: clamp(300px, 34vw, 580px);
-    animation-duration: 24s;
-    animation-delay: -7s;
+    right: -15vw;
+    top: -7vh;
+    width: clamp(520px, 60vw, 980px);
+    animation-duration: 34s;
+    animation-delay: -9s;
   }
 
   .leaf-c {
-    left: 20vw;
-    top: 40vh;
-    width: clamp(260px, 29vw, 500px);
-    animation-duration: 19s;
-    animation-delay: -12s;
+    left: 10vw;
+    top: 22vh;
+    width: clamp(470px, 56vw, 920px);
+    animation-duration: 29s;
+    animation-delay: -14s;
   }
 
   .leaf-d {
-    right: 9vw;
-    bottom: 8vh;
-    width: clamp(280px, 32vw, 560px);
-    animation-duration: 23s;
-    animation-delay: -4s;
+    right: -10vw;
+    bottom: 3vh;
+    width: clamp(520px, 63vw, 1020px);
+    animation-duration: 35s;
+    animation-delay: -6s;
   }
 
   .leaf-e {
-    left: 2vw;
-    bottom: -4vh;
-    width: clamp(300px, 35vw, 620px);
-    animation-duration: 26s;
-    animation-delay: -15s;
+    left: -12vw;
+    bottom: -18vh;
+    width: clamp(520px, 64vw, 1060px);
+    animation-duration: 37s;
+    animation-delay: -19s;
   }
 
   .leaf-f {
-    right: 24vw;
-    top: -4vh;
-    width: clamp(260px, 28vw, 460px);
-    animation-duration: 21s;
-    animation-delay: -9s;
+    right: 2vw;
+    top: 52vh;
+    width: clamp(460px, 54vw, 860px);
+    animation-duration: 31s;
+    animation-delay: -12s;
   }
 
   .site-header {
@@ -264,11 +269,11 @@
     }
 
     33% {
-      transform: translate3d(42px, -56px, 0) rotate(8deg) scale(1.08);
+      transform: translate3d(30px, -18px, 0) rotate(2.4deg) scale(1.03);
     }
 
     66% {
-      transform: translate3d(-34px, 48px, 0) rotate(-7deg) scale(0.94);
+      transform: translate3d(-22px, 16px, 0) rotate(-1.7deg) scale(0.98);
     }
   }
 
@@ -296,7 +301,7 @@
   @media (prefers-reduced-motion: reduce) {
     .leaf {
       animation: none;
-      opacity: 0.4;
+      opacity: 0.28;
     }
   }
 </style>
