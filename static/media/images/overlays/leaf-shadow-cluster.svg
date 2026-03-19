@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-label="Leaf shadow clusters">
+  <g fill="#000" fill-opacity="0.82">
+    <ellipse cx="72" cy="120" rx="26" ry="13" transform="rotate(-20 72 120)"/>
+    <ellipse cx="138" cy="165" rx="24" ry="12" transform="rotate(15 138 165)"/>
+    <ellipse cx="198" cy="112" rx="28" ry="14" transform="rotate(-8 198 112)"/>
+    <ellipse cx="264" cy="178" rx="25" ry="12" transform="rotate(28 264 178)"/>
+    <ellipse cx="322" cy="124" rx="27" ry="13" transform="rotate(-26 322 124)"/>
+    <ellipse cx="392" cy="172" rx="24" ry="12" transform="rotate(19 392 172)"/>
+    <ellipse cx="454" cy="120" rx="27" ry="13" transform="rotate(-11 454 120)"/>
+    <ellipse cx="520" cy="166" rx="24" ry="11" transform="rotate(21 520 166)"/>
+    <ellipse cx="586" cy="118" rx="27" ry="13" transform="rotate(-18 586 118)"/>
+    <ellipse cx="652" cy="164" rx="25" ry="12" transform="rotate(16 652 164)"/>
+    <ellipse cx="714" cy="112" rx="28" ry="13" transform="rotate(-7 714 112)"/>
+    <ellipse cx="780" cy="176" rx="25" ry="12" transform="rotate(24 780 176)"/>
+    <ellipse cx="844" cy="122" rx="27" ry="13" transform="rotate(-23 844 122)"/>
+    <ellipse cx="908" cy="168" rx="25" ry="12" transform="rotate(17 908 168)"/>
+    <ellipse cx="972" cy="116" rx="28" ry="14" transform="rotate(-9 972 116)"/>
+    <ellipse cx="1038" cy="172" rx="25" ry="12" transform="rotate(22 1038 172)"/>
+    <ellipse cx="1102" cy="124" rx="27" ry="13" transform="rotate(-24 1102 124)"/>
+    <ellipse cx="1168" cy="170" rx="24" ry="12" transform="rotate(15 1168 170)"/>
+    <ellipse cx="1232" cy="118" rx="27" ry="13" transform="rotate(-13 1232 118)"/>
+    <ellipse cx="1298" cy="166" rx="24" ry="12" transform="rotate(18 1298 166)"/>
+    <ellipse cx="1362" cy="114" rx="27" ry="13" transform="rotate(-10 1362 114)"/>
+    <ellipse cx="1428" cy="176" rx="26" ry="12" transform="rotate(25 1428 176)"/>
+    <ellipse cx="1492" cy="124" rx="28" ry="13" transform="rotate(-22 1492 124)"/>
+
+    <ellipse cx="120" cy="300" rx="19" ry="10" transform="rotate(12 120 300)"/>
+    <ellipse cx="194" cy="332" rx="20" ry="10" transform="rotate(-16 194 332)"/>
+    <ellipse cx="266" cy="282" rx="18" ry="9" transform="rotate(23 266 282)"/>
+    <ellipse cx="338" cy="330" rx="20" ry="10" transform="rotate(-14 338 330)"/>
+    <ellipse cx="416" cy="286" rx="19" ry="9" transform="rotate(18 416 286)"/>
+    <ellipse cx="494" cy="334" rx="20" ry="10" transform="rotate(-22 494 334)"/>
+    <ellipse cx="566" cy="284" rx="19" ry="9" transform="rotate(15 566 284)"/>
+    <ellipse cx="644" cy="332" rx="20" ry="10" transform="rotate(-17 644 332)"/>
+    <ellipse cx="718" cy="286" rx="19" ry="9" transform="rotate(20 718 286)"/>
+    <ellipse cx="796" cy="334" rx="20" ry="10" transform="rotate(-21 796 334)"/>
+    <ellipse cx="868" cy="286" rx="19" ry="9" transform="rotate(14 868 286)"/>
+    <ellipse cx="946" cy="332" rx="20" ry="10" transform="rotate(-16 946 332)"/>
+    <ellipse cx="1020" cy="286" rx="19" ry="9" transform="rotate(19 1020 286)"/>
+    <ellipse cx="1098" cy="334" rx="20" ry="10" transform="rotate(-24 1098 334)"/>
+    <ellipse cx="1170" cy="286" rx="19" ry="9" transform="rotate(16 1170 286)"/>
+    <ellipse cx="1248" cy="332" rx="20" ry="10" transform="rotate(-18 1248 332)"/>
+    <ellipse cx="1322" cy="284" rx="19" ry="9" transform="rotate(22 1322 284)"/>
+    <ellipse cx="1398" cy="334" rx="20" ry="10" transform="rotate(-20 1398 334)"/>
+
+    <ellipse cx="92" cy="516" rx="16" ry="8" transform="rotate(-8 92 516)"/>
+    <ellipse cx="170" cy="556" rx="17" ry="8" transform="rotate(11 170 556)"/>
+    <ellipse cx="246" cy="510" rx="15" ry="7" transform="rotate(-14 246 510)"/>
+    <ellipse cx="322" cy="550" rx="16" ry="8" transform="rotate(9 322 550)"/>
+    <ellipse cx="400" cy="508" rx="15" ry="7" transform="rotate(-18 400 508)"/>
+    <ellipse cx="478" cy="552" rx="16" ry="8" transform="rotate(13 478 552)"/>
+    <ellipse cx="556" cy="512" rx="15" ry="7" transform="rotate(-12 556 512)"/>
+    <ellipse cx="634" cy="548" rx="16" ry="8" transform="rotate(10 634 548)"/>
+    <ellipse cx="710" cy="510" rx="15" ry="7" transform="rotate(-16 710 510)"/>
+    <ellipse cx="788" cy="552" rx="16" ry="8" transform="rotate(12 788 552)"/>
+    <ellipse cx="866" cy="510" rx="15" ry="7" transform="rotate(-15 866 510)"/>
+    <ellipse cx="944" cy="550" rx="16" ry="8" transform="rotate(9 944 550)"/>
+    <ellipse cx="1020" cy="510" rx="15" ry="7" transform="rotate(-17 1020 510)"/>
+    <ellipse cx="1098" cy="552" rx="16" ry="8" transform="rotate(11 1098 552)"/>
+    <ellipse cx="1178" cy="510" rx="15" ry="7" transform="rotate(-14 1178 510)"/>
+    <ellipse cx="1256" cy="548" rx="16" ry="8" transform="rotate(10 1256 548)"/>
+    <ellipse cx="1332" cy="512" rx="15" ry="7" transform="rotate(-16 1332 512)"/>
+    <ellipse cx="1410" cy="552" rx="16" ry="8" transform="rotate(12 1410 552)"/>
+
+    <ellipse cx="134" cy="732" rx="14" ry="6" transform="rotate(18 134 732)"/>
+    <ellipse cx="228" cy="772" rx="15" ry="7" transform="rotate(-15 228 772)"/>
+    <ellipse cx="320" cy="724" rx="14" ry="6" transform="rotate(19 320 724)"/>
+    <ellipse cx="414" cy="768" rx="15" ry="7" transform="rotate(-18 414 768)"/>
+    <ellipse cx="506" cy="724" rx="14" ry="6" transform="rotate(16 506 724)"/>
+    <ellipse cx="600" cy="770" rx="15" ry="7" transform="rotate(-14 600 770)"/>
+    <ellipse cx="692" cy="726" rx="14" ry="6" transform="rotate(18 692 726)"/>
+    <ellipse cx="786" cy="768" rx="15" ry="7" transform="rotate(-17 786 768)"/>
+    <ellipse cx="878" cy="724" rx="14" ry="6" transform="rotate(15 878 724)"/>
+    <ellipse cx="972" cy="772" rx="15" ry="7" transform="rotate(-16 972 772)"/>
+    <ellipse cx="1066" cy="724" rx="14" ry="6" transform="rotate(18 1066 724)"/>
+    <ellipse cx="1158" cy="770" rx="15" ry="7" transform="rotate(-18 1158 770)"/>
+    <ellipse cx="1252" cy="726" rx="14" ry="6" transform="rotate(15 1252 726)"/>
+    <ellipse cx="1346" cy="772" rx="15" ry="7" transform="rotate(-16 1346 772)"/>
+
+    <path d="M168 418c13-11 34-9 46 4c11 12 9 32-5 44c-14 11-35 10-46-4c-11-13-9-33 5-44z"/>
+    <path d="M748 404c14-12 36-11 49 2c12 13 10 34-4 46c-15 12-37 11-49-2c-12-13-10-34 4-46z"/>
+    <path d="M1228 420c14-12 35-11 48 3c12 13 9 33-5 45c-15 12-36 10-48-3c-12-13-9-33 5-45z"/>
+    <path d="M430 654c11-9 27-8 37 3c9 10 7 26-4 35c-11 9-28 8-37-2c-9-11-7-27 4-36z"/>
+    <path d="M984 676c11-9 28-8 37 3c9 10 7 26-4 35c-11 9-27 8-37-2c-9-11-7-27 4-36z"/>
+  </g>
+</svg>
