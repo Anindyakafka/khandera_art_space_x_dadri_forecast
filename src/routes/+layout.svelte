@@ -84,69 +84,69 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 24;
+    z-index: 55;
     overflow: hidden;
   }
 
   .leaf {
     position: absolute;
-    width: clamp(220px, 27vw, 460px);
+    width: clamp(260px, 30vw, 520px);
     aspect-ratio: 3 / 2;
     border-radius: 64% 36% 60% 40% / 58% 42% 66% 34%;
     background: radial-gradient(
       ellipse at center,
-      rgba(19, 28, 23, 0.23) 0%,
-      rgba(19, 28, 23, 0.12) 45%,
-      rgba(19, 28, 23, 0) 78%
+      rgba(20, 31, 25, 0.56) 0%,
+      rgba(20, 31, 25, 0.34) 42%,
+      rgba(20, 31, 25, 0) 76%
     );
-    filter: blur(18px);
-    opacity: 0.35;
-    mix-blend-mode: multiply;
+    filter: blur(10px);
+    opacity: 0.5;
+    mix-blend-mode: normal;
     transform-origin: 50% 50%;
     animation: leaf-drift 22s ease-in-out infinite;
   }
 
   .leaf-a {
-    left: -8vw;
-    top: 2vh;
+    left: -4vw;
+    top: 6vh;
   }
 
   .leaf-b {
-    right: -7vw;
-    top: 11vh;
-    width: clamp(260px, 30vw, 500px);
+    right: -4vw;
+    top: 15vh;
+    width: clamp(300px, 34vw, 580px);
     animation-duration: 24s;
     animation-delay: -7s;
   }
 
   .leaf-c {
-    left: 25vw;
-    top: 35vh;
-    width: clamp(210px, 24vw, 420px);
+    left: 20vw;
+    top: 40vh;
+    width: clamp(260px, 29vw, 500px);
     animation-duration: 19s;
     animation-delay: -12s;
   }
 
   .leaf-d {
-    right: 14vw;
-    bottom: 6vh;
-    width: clamp(240px, 27vw, 450px);
+    right: 9vw;
+    bottom: 8vh;
+    width: clamp(280px, 32vw, 560px);
     animation-duration: 23s;
     animation-delay: -4s;
   }
 
   .leaf-e {
-    left: 6vw;
-    bottom: -8vh;
-    width: clamp(280px, 32vw, 540px);
+    left: 2vw;
+    bottom: -4vh;
+    width: clamp(300px, 35vw, 620px);
     animation-duration: 26s;
     animation-delay: -15s;
   }
 
   .leaf-f {
-    right: 28vw;
-    top: -10vh;
-    width: clamp(220px, 24vw, 410px);
+    right: 24vw;
+    top: -4vh;
+    width: clamp(260px, 28vw, 460px);
     animation-duration: 21s;
     animation-delay: -9s;
   }
@@ -296,7 +296,7 @@
   @media (prefers-reduced-motion: reduce) {
     .leaf {
       animation: none;
-      opacity: 0.2;
+      opacity: 0.4;
     }
   }
 </style>
