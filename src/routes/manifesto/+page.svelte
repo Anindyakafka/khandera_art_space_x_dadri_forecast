@@ -22,11 +22,11 @@
   }
 
   .doc-card {
-    border: 1px solid var(--line);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
-    box-shadow: 0 18px 36px -30px var(--shadow);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    padding: 1.25rem 0;
+    background: transparent;
   }
 
   .doc-card :global(h1),

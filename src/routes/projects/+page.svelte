@@ -36,11 +36,11 @@
   }
 
   .project-card {
-    background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
-    border: 1px solid var(--line);
-    border-radius: 0.8rem;
+    background: transparent;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
     padding: 1rem;
-    box-shadow: 0 16px 34px -30px var(--shadow);
   }
 
   .cta {

@@ -38,6 +38,11 @@
     padding: 0 0.2rem;
   }
 
+  .section + .section {
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+  }
+
   .section p {
     max-width: 68ch;
     color: color-mix(in srgb, var(--text) 90%, transparent);
@@ -53,14 +58,6 @@
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.05rem;
     margin-top: 1.3rem;
-  }
-
-  #manifesto {
-    border: 1px solid var(--line);
-    border-radius: 1.2rem;
-    background: color-mix(in srgb, var(--surface-solid) 86%, transparent);
-    box-shadow: 0 16px 38px -30px var(--shadow);
-    padding: clamp(1rem, 3.2vw, 1.5rem);
   }
 
   .secondary {

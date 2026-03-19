@@ -23,18 +23,17 @@
   .project-card {
     display: grid;
     gap: 0;
-    border: 1px solid var(--line);
-    background: color-mix(in srgb, var(--surface-solid) 92%, transparent);
-    border-radius: 1.1rem;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    border-radius: 0;
     overflow: hidden;
-    box-shadow: 0 16px 38px -30px var(--shadow);
-    transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+    transition: border-color 220ms ease, background-color 220ms ease;
   }
 
   .project-card:hover {
-    transform: translateY(-4px);
     border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
-    box-shadow: 0 24px 48px -30px var(--shadow);
+    background: color-mix(in srgb, var(--surface-solid) 45%, transparent);
   }
 
   .visual {
@@ -55,7 +54,7 @@
   }
 
   .details {
-    padding: 0.95rem 1rem 1.05rem;
+    padding: 0.95rem 0.15rem 1.05rem;
   }
 
   h3 {

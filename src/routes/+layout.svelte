@@ -39,6 +39,8 @@
   <span class="leaf leaf-b"></span>
   <span class="leaf leaf-c"></span>
   <span class="leaf leaf-d"></span>
+  <span class="leaf leaf-e"></span>
+  <span class="leaf leaf-f"></span>
 </div>
 
 <header class="site-header">
@@ -82,49 +84,71 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 0;
+    z-index: 24;
     overflow: hidden;
   }
 
   .leaf {
     position: absolute;
-    width: clamp(180px, 19vw, 320px);
+    width: clamp(220px, 27vw, 460px);
     aspect-ratio: 3 / 2;
-    border-radius: 58% 42% 66% 34% / 60% 43% 57% 40%;
-    background: color-mix(in srgb, var(--accent-2) 12%, transparent);
-    filter: blur(30px);
-    opacity: 0.24;
+    border-radius: 64% 36% 60% 40% / 58% 42% 66% 34%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(19, 28, 23, 0.23) 0%,
+      rgba(19, 28, 23, 0.12) 45%,
+      rgba(19, 28, 23, 0) 78%
+    );
+    filter: blur(18px);
+    opacity: 0.35;
+    mix-blend-mode: multiply;
     transform-origin: 50% 50%;
-    animation: leaf-drift 16s ease-in-out infinite;
+    animation: leaf-drift 22s ease-in-out infinite;
   }
 
   .leaf-a {
-    left: -6vw;
-    top: 10vh;
+    left: -8vw;
+    top: 2vh;
   }
 
   .leaf-b {
-    right: 2vw;
-    top: 22vh;
-    width: clamp(220px, 24vw, 360px);
-    animation-duration: 18.5s;
-    animation-delay: -6.5s;
+    right: -7vw;
+    top: 11vh;
+    width: clamp(260px, 30vw, 500px);
+    animation-duration: 24s;
+    animation-delay: -7s;
   }
 
   .leaf-c {
-    left: 27vw;
-    bottom: -9vh;
-    width: clamp(240px, 25vw, 380px);
-    animation-duration: 20s;
-    animation-delay: -10.5s;
+    left: 25vw;
+    top: 35vh;
+    width: clamp(210px, 24vw, 420px);
+    animation-duration: 19s;
+    animation-delay: -12s;
   }
 
   .leaf-d {
-    right: -4vw;
-    bottom: 18vh;
-    width: clamp(170px, 18vw, 290px);
-    animation-duration: 15.2s;
-    animation-delay: -3.8s;
+    right: 14vw;
+    bottom: 6vh;
+    width: clamp(240px, 27vw, 450px);
+    animation-duration: 23s;
+    animation-delay: -4s;
+  }
+
+  .leaf-e {
+    left: 6vw;
+    bottom: -8vh;
+    width: clamp(280px, 32vw, 540px);
+    animation-duration: 26s;
+    animation-delay: -15s;
+  }
+
+  .leaf-f {
+    right: 28vw;
+    top: -10vh;
+    width: clamp(220px, 24vw, 410px);
+    animation-duration: 21s;
+    animation-delay: -9s;
   }
 
   .site-header {
@@ -141,7 +165,6 @@
     background: color-mix(in srgb, var(--surface) 92%, transparent);
     backdrop-filter: blur(9px);
     overflow: visible;
-    box-shadow: 0 10px 30px -24px var(--shadow);
   }
 
   .brand-row {
@@ -227,7 +250,6 @@
   .theme-picker button.active {
     color: var(--text-inverse);
     background: color-mix(in srgb, var(--accent) 82%, black 8%);
-    box-shadow: 0 7px 18px -10px color-mix(in srgb, var(--accent) 48%, black);
   }
 
   .page-shell {
@@ -242,11 +264,11 @@
     }
 
     33% {
-      transform: translate3d(10px, -20px, 0) rotate(6deg) scale(1.05);
+      transform: translate3d(42px, -56px, 0) rotate(8deg) scale(1.08);
     }
 
     66% {
-      transform: translate3d(-12px, 18px, 0) rotate(-5deg) scale(0.96);
+      transform: translate3d(-34px, 48px, 0) rotate(-7deg) scale(0.94);
     }
   }
 
@@ -274,6 +296,7 @@
   @media (prefers-reduced-motion: reduce) {
     .leaf {
       animation: none;
+      opacity: 0.2;
     }
   }
 </style>
