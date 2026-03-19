@@ -20,6 +20,16 @@
 </section>
 
 <style>
+  .section {
+    max-width: min(1080px, 94vw);
+    margin: clamp(2rem, 4.8vw, 4rem) auto;
+  }
+
+  h1 {
+    margin-bottom: 0.9rem;
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+  }
+
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -27,10 +37,11 @@
   }
 
   .artist-card {
-    background: rgba(10, 5, 26, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
+    border: 1px solid var(--line);
     border-radius: 0.8rem;
     padding: 1rem;
+    box-shadow: 0 16px 34px -30px var(--shadow);
   }
 
   .artist-card img {
@@ -42,6 +53,6 @@
 
   .role {
     margin-top: .2rem;
-    color: #b8b3cc;
+    color: var(--muted);
   }
 </style>

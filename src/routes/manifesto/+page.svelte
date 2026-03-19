@@ -22,10 +22,11 @@
   }
 
   .doc-card {
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--line);
     border-radius: 1rem;
     padding: 1.5rem;
-    background: rgba(7, 5, 16, 0.62);
+    background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
+    box-shadow: 0 18px 36px -30px var(--shadow);
   }
 
   .doc-card :global(h1),
@@ -39,12 +40,13 @@
   .doc-card :global(p),
   .doc-card :global(li) {
     line-height: 1.8;
+    color: color-mix(in srgb, var(--text) 90%, transparent);
   }
 
   .download-row {
     margin-top: 1.6rem;
     padding-top: 1rem;
-    border-top: 1px dashed rgba(255, 255, 255, 0.25);
+    border-top: 1px dashed color-mix(in srgb, var(--line) 85%, transparent);
   }
 
   .download-row a {

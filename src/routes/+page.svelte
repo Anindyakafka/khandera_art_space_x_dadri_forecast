@@ -29,30 +29,45 @@
   .layout {
     color: var(--text);
     min-height: 100vh;
-    background: radial-gradient(circle at 15% 20%, #0f0720 0%, #06040d 60%, #020104 100%);
+    padding-bottom: 1.5rem;
   }
 
   .section {
-    max-width: 72ch;
-    margin: 3rem auto;
-    padding: 0 1.1rem;
+    max-width: min(1080px, 94vw);
+    margin: clamp(2.2rem, 5vw, 4.4rem) auto;
+    padding: 0 0.2rem;
+  }
+
+  .section p {
+    max-width: 68ch;
+    color: color-mix(in srgb, var(--text) 90%, transparent);
   }
 
   h2 {
-    font-size: clamp(1.35rem, 2.2vw, 2.35rem);
+    font-size: clamp(1.4rem, 2.8vw, 2.65rem);
     margin-bottom: 0.8rem;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1rem;
-    margin-top: 1.2rem;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.05rem;
+    margin-top: 1.3rem;
+  }
+
+  #manifesto {
+    border: 1px solid var(--line);
+    border-radius: 1.2rem;
+    background: color-mix(in srgb, var(--surface-solid) 86%, transparent);
+    box-shadow: 0 16px 38px -30px var(--shadow);
+    padding: clamp(1rem, 3.2vw, 1.5rem);
   }
 
   .secondary {
-    color: var(--accent);
+    color: color-mix(in srgb, var(--accent) 84%, var(--text));
     font-weight: 700;
-    text-decoration: underline;
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    padding-bottom: 0.12rem;
   }
 </style>

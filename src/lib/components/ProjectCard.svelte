@@ -1,6 +1,7 @@
 <script lang="ts">
-  import type { Project } from "$lib/data/content";
-  export let project: Project;
+  import type { ProjectContent } from '$lib/content/types';
+
+  export let project: ProjectContent;
 </script>
 
 <article class="project-card">
@@ -21,55 +22,68 @@
 <style>
   .project-card {
     display: grid;
-    gap: 1rem;
-    border: 1px solid rgba(255,255,255,0.14);
-    background: rgba(8, 4, 24, 0.6);
-    border-radius: 1rem;
+    gap: 0;
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--surface-solid) 92%, transparent);
+    border-radius: 1.1rem;
     overflow: hidden;
-    transition: transform 220ms ease, box-shadow 220ms ease;
+    box-shadow: 0 16px 38px -30px var(--shadow);
+    transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
   }
 
   .project-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45);
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+    box-shadow: 0 24px 48px -30px var(--shadow);
   }
 
   .visual {
     width: 100%;
-    min-height: 170px;
+    min-height: 188px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    filter: saturate(1.2) contrast(1.1);
+    filter: saturate(1.05) contrast(1.02);
+    position: relative;
+  }
+
+  .visual::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 30%, color-mix(in srgb, var(--surface-solid) 34%, transparent));
   }
 
   .details {
-    padding: 1rem;
+    padding: 0.95rem 1rem 1.05rem;
   }
 
   h3 {
-    margin: 0 0 .4rem;
+    margin: 0 0 0.4rem;
+    font-size: 1.2rem;
   }
 
   p {
-    margin: 0 0 .8rem;
-    opacity: .9;
+    margin: 0 0 0.8rem;
+    opacity: 0.9;
   }
 
   .meta {
     display: flex;
     flex-wrap: wrap;
-    gap: .75rem;
-    color: #b5b5ff;
-    font-size: .85rem;
+    gap: 0.75rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+    letter-spacing: 0.01em;
   }
 
   a {
-    margin-top: .8rem;
+    margin-top: 0.8rem;
     display: inline-block;
-    color: #f3e7ff;
+    color: color-mix(in srgb, var(--accent) 86%, var(--text));
     font-weight: 700;
     text-decoration: none;
-    border-bottom: 1px solid rgba(255,255,255,0.38);
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    padding-bottom: 0.1rem;
   }
 </style>
