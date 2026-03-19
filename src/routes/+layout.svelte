@@ -35,10 +35,10 @@
 <BirdFollower perchTarget={brandLink} />
 
 <div class="atmosphere" aria-hidden="true">
-  <span class="shadow-layer clusters far"></span>
-  <span class="shadow-layer branches mid"></span>
-  <span class="shadow-layer clusters near"></span>
-  <span class="shadow-layer clusters near-detail"></span>
+  <span class="shadow-layer branch far"></span>
+  <span class="shadow-layer branch mid"></span>
+  <span class="shadow-layer branch near"></span>
+  <span class="shadow-layer branch near-detail"></span>
 </div>
 
 <header class="site-header">
@@ -89,26 +89,25 @@
   }
 
   .shadow-layer {
+    --tile-size: 1450px auto;
+    --bg-pos: center;
     position: absolute;
     inset: -6vh -6vw;
     transform-origin: 50% 35%;
     background-repeat: repeat;
-    background-position: center;
-    background-size: 1450px auto;
+    background-position: var(--bg-pos);
+    background-size: var(--tile-size);
     mix-blend-mode: multiply;
     will-change: transform;
   }
 
-  .clusters {
-    background-image: url('/media/images/overlays/leaf-shadow-cluster.svg');
-  }
-
-  .branches {
-    background-image: url('/media/images/overlays/leaf-shadow-branches.svg');
-    background-size: 1700px auto;
+  .branch {
+    background-image: url('/media/images/overlays/overlay_branch.svg');
   }
 
   .shadow-layer.far {
+    --tile-size: 2380px auto;
+    --bg-pos: 10% 18%;
     opacity: 0.14;
     filter: blur(11px);
     transform: rotate(-4deg) scale(1.12);
@@ -116,6 +115,8 @@
   }
 
   .shadow-layer.mid {
+    --tile-size: 1860px auto;
+    --bg-pos: 60% 32%;
     opacity: 0.16;
     filter: blur(6.5px);
     transform: rotate(3deg) scale(1.08);
@@ -123,6 +124,8 @@
   }
 
   .shadow-layer.near {
+    --tile-size: 1420px auto;
+    --bg-pos: 26% 56%;
     opacity: 0.23;
     filter: blur(2.2px);
     transform: rotate(-6deg) scale(1.03);
@@ -130,10 +133,11 @@
   }
 
   .shadow-layer.near-detail {
+    --tile-size: 1080px auto;
+    --bg-pos: 78% 72%;
     opacity: 0.28;
     filter: blur(0.85px);
     transform: rotate(8deg) scale(0.96);
-    background-size: 1120px auto;
     animation: branch-sway-detail 8.8s ease-in-out infinite;
   }
 
