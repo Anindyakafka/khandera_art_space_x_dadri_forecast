@@ -85,7 +85,7 @@
     z-index: 26;
     overflow: hidden;
     transform-origin: 50% 30%;
-    animation: canopy-drift 9s ease-in-out infinite alternate;
+    animation: canopy-drift 14s ease-in-out infinite alternate;
   }
 
   .shadow-layer {
@@ -108,37 +108,37 @@
   .shadow-layer.far {
     --tile-size: 2380px auto;
     --bg-pos: 10% 18%;
-    opacity: 0.14;
-    filter: blur(11px);
+    opacity: 0.1;
+    filter: blur(14px);
     transform: rotate(-4deg) scale(1.12);
-    animation: branch-sway-far 18s ease-in-out infinite;
+    animation: branch-sway-far 24s ease-in-out infinite;
   }
 
   .shadow-layer.mid {
     --tile-size: 1860px auto;
     --bg-pos: 60% 32%;
-    opacity: 0.16;
-    filter: blur(6.5px);
+    opacity: 0.12;
+    filter: blur(8px);
     transform: rotate(3deg) scale(1.08);
-    animation: branch-sway-mid 14s ease-in-out infinite;
+    animation: branch-sway-mid 19s ease-in-out infinite;
   }
 
   .shadow-layer.near {
     --tile-size: 1420px auto;
     --bg-pos: 26% 56%;
-    opacity: 0.23;
-    filter: blur(2.2px);
+    opacity: 0.29;
+    filter: blur(1.9px);
     transform: rotate(-6deg) scale(1.03);
-    animation: branch-sway-near 10.5s ease-in-out infinite;
+    animation: branch-sway-near 9s ease-in-out infinite;
   }
 
   .shadow-layer.near-detail {
     --tile-size: 1080px auto;
     --bg-pos: 78% 72%;
-    opacity: 0.28;
-    filter: blur(0.85px);
+    opacity: 0.36;
+    filter: blur(0.55px);
     transform: rotate(8deg) scale(0.96);
-    animation: branch-sway-detail 8.8s ease-in-out infinite;
+    animation: branch-sway-detail 7.4s ease-in-out infinite;
   }
 
   .site-header {
@@ -254,11 +254,11 @@
     }
 
     40% {
-      transform: translate3d(18px, -12px, 0) rotate(-1.5deg) scale(1.14);
+      transform: translate3d(10px, -7px, 0) rotate(-2.4deg) scale(1.125);
     }
 
     72% {
-      transform: translate3d(-14px, 8px, 0) rotate(-6deg) scale(1.1);
+      transform: translate3d(-9px, 6px, 0) rotate(-5.1deg) scale(1.11);
     }
   }
 
@@ -269,11 +269,11 @@
     }
 
     35% {
-      transform: translate3d(-24px, 14px, 0) rotate(6deg) scale(1.1);
+      transform: translate3d(-15px, 9px, 0) rotate(4.6deg) scale(1.095);
     }
 
     70% {
-      transform: translate3d(20px, -12px, 0) rotate(1deg) scale(1.06);
+      transform: translate3d(13px, -8px, 0) rotate(1.8deg) scale(1.07);
     }
   }
 
@@ -283,16 +283,16 @@
       transform: translate3d(0, 0, 0) rotate(-6deg) scale(1.03);
     }
 
-    28% {
-      transform: translate3d(30px, -18px, 0) rotate(-2deg) scale(1.06);
+    24% {
+      transform: translate3d(42px, -24px, 0) rotate(-0.4deg) scale(1.07);
     }
 
-    58% {
-      transform: translate3d(-26px, 16px, 0) rotate(-9deg) scale(1.01);
+    54% {
+      transform: translate3d(-36px, 22px, 0) rotate(-10.5deg) scale(1.005);
     }
 
-    82% {
-      transform: translate3d(14px, -9px, 0) rotate(-4deg) scale(1.04);
+    80% {
+      transform: translate3d(20px, -13px, 0) rotate(-3.2deg) scale(1.045);
     }
   }
 
@@ -302,12 +302,16 @@
       transform: translate3d(0, 0, 0) rotate(8deg) scale(0.96);
     }
 
-    30% {
-      transform: translate3d(-16px, 10px, 0) rotate(10.5deg) scale(0.99);
+    28% {
+      transform: translate3d(-28px, 16px, 0) rotate(12.2deg) scale(1.01);
     }
 
-    62% {
-      transform: translate3d(22px, -14px, 0) rotate(5deg) scale(0.94);
+    60% {
+      transform: translate3d(30px, -18px, 0) rotate(3.2deg) scale(0.93);
+    }
+
+    86% {
+      transform: translate3d(-12px, 8px, 0) rotate(9deg) scale(0.97);
     }
   }
 
@@ -318,7 +322,7 @@
     }
 
     50% {
-      transform: translate3d(0, -8px, 0);
+      transform: translate3d(0, -4px, 0);
     }
   }
 
