@@ -17,8 +17,8 @@
 <style>
   .doc-root {
     max-width: 78ch;
-    margin: 2.5rem auto;
-    padding: 0 1.25rem;
+    margin: clamp(1.2rem, 4vw, 2.5rem) auto;
+    padding: 0 clamp(0.85rem, 3.2vw, 1.25rem);
   }
 
   .doc-card {
@@ -33,14 +33,16 @@
   .doc-card :global(h2),
   .doc-card :global(h3) {
     letter-spacing: 0.04em;
-    margin-top: 1.25rem;
-    margin-bottom: 0.5rem;
+    margin-top: 1.05rem;
+    margin-bottom: 0.45rem;
+    font-size: clamp(1.05rem, 2.4vw, 1.8rem);
   }
 
   .doc-card :global(p),
   .doc-card :global(li) {
-    line-height: 1.8;
+    line-height: 1.72;
     color: color-mix(in srgb, var(--text) 90%, transparent);
+    font-size: clamp(0.92rem, 1.6vw, 1.02rem);
   }
 
   .download-row {
@@ -51,5 +53,16 @@
 
   .download-row a {
     font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .doc-card {
+      padding: 0.85rem 0;
+    }
+
+    .download-row {
+      margin-top: 1.1rem;
+      padding-top: 0.75rem;
+    }
   }
 </style>

@@ -20,7 +20,7 @@
 
 <style>
   .hero {
-    min-height: 66vh;
+    min-height: clamp(52vh, 66vh, 74vh);
     display: grid;
     place-items: center;
     position: relative;
@@ -52,7 +52,7 @@
     position: relative;
     z-index: 1;
     max-width: 72ch;
-    padding: clamp(2rem, 5vw, 5rem) 1.2rem;
+    padding: clamp(1.7rem, 4.6vw, 4.6rem) clamp(0.9rem, 3vw, 1.3rem);
   }
 
   .eyebrow {
@@ -60,12 +60,12 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
-    font-size: 0.77rem;
+    font-size: clamp(0.68rem, 1.4vw, 0.8rem);
     font-weight: 700;
   }
 
   h1 {
-    font-size: clamp(2rem, 6vw, 4.2rem);
+    font-size: clamp(1.8rem, 6.3vw, 4.2rem);
     line-height: 1.05;
     margin: 0.8rem 0 1rem;
     letter-spacing: 0.02em;
@@ -78,7 +78,7 @@
   }
 
   .subtitle {
-    font-size: clamp(1rem, 1.6vw, 1.3rem);
+    font-size: clamp(0.96rem, 1.8vw, 1.22rem);
     margin: 0 0 1.5rem;
     opacity: 0.95;
     color: color-mix(in srgb, var(--text) 92%, transparent);
@@ -92,8 +92,8 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    font-size: 0.78rem;
-    padding: 0.8rem 1.4rem;
+    font-size: clamp(0.68rem, 1.8vw, 0.78rem);
+    padding: 0.72rem 1.15rem;
     border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
     background: transparent;
     color: color-mix(in srgb, var(--text) 90%, var(--accent));
@@ -108,11 +108,15 @@
 
   @media (max-width: 680px) {
     .hero {
-      min-height: 58vh;
+      min-height: 51vh;
     }
 
     .hero-content {
-      padding: 1.7rem 1rem 2rem;
+      padding: 1.25rem 0.92rem 1.5rem;
+    }
+
+    .subtitle {
+      margin-bottom: 1rem;
     }
   }
 

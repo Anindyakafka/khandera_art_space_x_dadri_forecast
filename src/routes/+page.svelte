@@ -29,13 +29,13 @@
   .layout {
     color: var(--text);
     min-height: 100vh;
-    padding-bottom: 1.5rem;
+    padding-bottom: clamp(1.4rem, 3.8vw, 2.6rem);
   }
 
   .section {
-    max-width: min(1080px, 94vw);
-    margin: clamp(2.2rem, 5vw, 4.4rem) auto;
-    padding: 0 0.2rem;
+    max-width: min(1080px, 95vw);
+    margin: clamp(1.4rem, 5vw, 4rem) auto;
+    padding: 0 0.3rem;
   }
 
   .section + .section {
@@ -49,15 +49,15 @@
   }
 
   h2 {
-    font-size: clamp(1.4rem, 2.8vw, 2.65rem);
-    margin-bottom: 0.8rem;
+    font-size: clamp(1.25rem, 3.1vw, 2.4rem);
+    margin-bottom: 0.65rem;
   }
 
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.05rem;
-    margin-top: 1.3rem;
+    gap: clamp(0.68rem, 2vw, 1.05rem);
+    margin-top: 1rem;
   }
 
   .secondary {
@@ -66,5 +66,25 @@
     text-decoration: none;
     border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
     padding-bottom: 0.12rem;
+  }
+
+  @media (max-width: 640px) {
+    .section {
+      margin: 1rem auto 2rem;
+    }
+
+    h2 {
+      font-size: clamp(1.2rem, 7vw, 1.7rem);
+      margin-bottom: 0.5rem;
+    }
+
+    .section p {
+      font-size: 0.95rem;
+    }
+
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 0.62rem;
+    }
   }
 </style>

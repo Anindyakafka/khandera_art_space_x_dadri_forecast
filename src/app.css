@@ -75,6 +75,7 @@ html[data-theme='lagoon'] {
 body {
   margin: 0;
   font-family: 'Space Grotesk', 'Avenir Next', 'Segoe UI', sans-serif;
+  font-size: clamp(15px, 0.42vw + 13.5px, 18px);
   color: var(--text);
   background:
     radial-gradient(circle at 13% 18%, color-mix(in srgb, var(--hero-a) 54%, transparent), transparent 44%),
@@ -83,6 +84,10 @@ body {
   text-rendering: optimizeLegibility;
   line-height: 1.6;
   min-height: 100vh;
+}
+
+p {
+  margin-block: 0 1rem;
 }
 
 a {
@@ -96,6 +101,7 @@ h4 {
   font-family: 'Fraunces', 'Iowan Old Style', 'Times New Roman', serif;
   font-weight: 600;
   line-height: 1.12;
+  text-wrap: balance;
 }
 
 button, input, textarea {
@@ -128,4 +134,10 @@ select:focus-visible {
 
 main, section {
   -webkit-font-smoothing: antialiased;
+}
+
+@media (max-width: 640px) {
+  body {
+    line-height: 1.55;
+  }
 }

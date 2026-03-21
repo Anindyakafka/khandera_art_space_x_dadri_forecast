@@ -1,16 +1,32 @@
 <script lang="ts">
   // no client data used here, prerender is handled in +layout.server.ts
   import { onMount } from 'svelte';
+  import { page } from '$app/stores';
   import '../app.css';
   import BirdFollower from '$lib/components/BirdFollower.svelte';
 
   let brandLink: HTMLAnchorElement | undefined;
   const themeOptions = [
-    { id: 'meadow', label: 'Meadow' },
-    { id: 'sunset', label: 'Sunset' },
-    { id: 'lagoon', label: 'Lagoon' }
+    { id: 'meadow', label: 'Meadow', tone: '#b56a4f' },
+    { id: 'sunset', label: 'Sunset', tone: '#be4f4a' },
+    { id: 'lagoon', label: 'Lagoon', tone: '#2f8d92' }
+  ];
+  const navLinks = [
+    { href: '/about', label: 'About' },
+    { href: '/manifesto', label: 'Manifesto' },
+    { href: '/artists', label: 'Artists' },
+    { href: '/projects', label: 'Projects' },
+    { href: '/events', label: 'Events' }
   ];
   let activeTheme = themeOptions[0].id;
+
+  function isCurrentRoute(href: string, pathname: string) {
+    if (href === '/') {
+      return pathname === '/';
+    }
+
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
 
   function applyTheme(theme: string) {
     activeTheme = theme;
@@ -48,11 +64,15 @@
   </div>
   <div class="header-controls">
     <nav aria-label="Main navigation">
-      <a href="/about">About</a>
-      <a href="/manifesto">Manifesto</a>
-      <a href="/artists">Artists</a>
-      <a href="/projects">Projects</a>
-      <a href="/events">Events</a>
+      {#each navLinks as link}
+        <a
+          href={link.href}
+          class:current={isCurrentRoute(link.href, $page.url.pathname)}
+          aria-current={isCurrentRoute(link.href, $page.url.pathname) ? 'page' : undefined}
+        >
+          {link.label}
+        </a>
+      {/each}
     </nav>
     <div class="theme-picker" role="group" aria-label="Select color palette">
       {#each themeOptions as option}
@@ -61,8 +81,11 @@
           class:active={activeTheme === option.id}
           on:click={() => applyTheme(option.id)}
           aria-pressed={activeTheme === option.id}
+          aria-label={`Activate ${option.label} theme`}
+          title={option.label}
         >
-          {option.label}
+          <span class="swatch" style={`--swatch-tone: ${option.tone};`} aria-hidden="true"></span>
+          <span class="sr-only">{option.label}</span>
         </button>
       {/each}
     </div>
@@ -198,11 +221,17 @@
   nav a {
     color: color-mix(in srgb, var(--text) 92%, transparent);
     text-decoration: none;
-    font-size: 0.88rem;
+    font-size: clamp(0.82rem, 1vw, 0.9rem);
     border: 1px solid transparent;
     border-radius: 999px;
     padding: 0.35rem 0.7rem;
     background: transparent;
+  }
+
+  nav a.current {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    background: color-mix(in srgb, var(--surface-solid) 82%, transparent);
+    color: var(--text);
   }
 
   nav a:hover {
@@ -221,15 +250,17 @@
   }
 
   .theme-picker button {
-    border: none;
+    border: 1px solid transparent;
     border-radius: 999px;
-    padding: 0.35rem 0.65rem;
-    font-size: 0.76rem;
+    padding: 0.26rem;
+    width: 1.85rem;
+    height: 1.85rem;
     font-weight: 700;
-    letter-spacing: 0.02em;
     background: transparent;
     color: var(--muted);
     cursor: pointer;
+    display: grid;
+    place-items: center;
   }
 
   .theme-picker button:hover {
@@ -238,8 +269,30 @@
   }
 
   .theme-picker button.active {
-    color: var(--text-inverse);
-    background: color-mix(in srgb, var(--accent) 82%, black 8%);
+    border-color: color-mix(in srgb, var(--accent) 65%, var(--line));
+    background: color-mix(in srgb, var(--surface-solid) 86%, transparent);
+  }
+
+  .swatch {
+    width: 0.95rem;
+    height: 0.95rem;
+    border-radius: 50%;
+    display: inline-block;
+    background:
+      radial-gradient(circle at 30% 28%, color-mix(in srgb, white 42%, var(--swatch-tone)), var(--swatch-tone));
+    border: 1px solid color-mix(in srgb, var(--swatch-tone) 55%, black);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .page-shell {
@@ -344,6 +397,16 @@
     nav a {
       padding: 0.3rem 0.62rem;
       font-size: 0.83rem;
+    }
+
+    .theme-picker {
+      gap: 0.28rem;
+      padding: 0.26rem;
+    }
+
+    .theme-picker button {
+      width: 1.7rem;
+      height: 1.7rem;
     }
   }
 

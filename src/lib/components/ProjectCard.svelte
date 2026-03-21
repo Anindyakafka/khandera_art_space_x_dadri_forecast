@@ -38,7 +38,7 @@
 
   .visual {
     width: 100%;
-    min-height: 188px;
+    min-height: clamp(148px, 26vw, 188px);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -54,17 +54,18 @@
   }
 
   .details {
-    padding: 0.95rem 0.15rem 1.05rem;
+    padding: 0.78rem 0.15rem 0.92rem;
   }
 
   h3 {
     margin: 0 0 0.4rem;
-    font-size: 1.2rem;
+    font-size: clamp(1.02rem, 2.2vw, 1.2rem);
   }
 
   p {
     margin: 0 0 0.8rem;
     opacity: 0.9;
+    font-size: clamp(0.9rem, 1.3vw, 0.98rem);
   }
 
   .meta {
@@ -72,7 +73,7 @@
     flex-wrap: wrap;
     gap: 0.75rem;
     color: var(--muted);
-    font-size: 0.82rem;
+    font-size: clamp(0.74rem, 1.15vw, 0.82rem);
     letter-spacing: 0.01em;
   }
 
@@ -84,5 +85,15 @@
     text-decoration: none;
     border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
     padding-bottom: 0.1rem;
+  }
+
+  @media (max-width: 640px) {
+    .details {
+      padding: 0.64rem 0 0.8rem;
+    }
+
+    .visual {
+      min-height: 152px;
+    }
   }
 </style>
