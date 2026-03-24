@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-label="Branch shadow lines">
+  <g fill="none" stroke="#000" stroke-linecap="round" stroke-opacity="0.68">
+    <path d="M-80 190 C 180 120, 430 230, 690 170 C 930 114, 1190 220, 1680 142" stroke-width="9"/>
+    <path d="M-120 350 C 160 276, 410 386, 700 324 C 980 262, 1270 372, 1720 308" stroke-width="8"/>
+    <path d="M-60 528 C 220 460, 500 580, 760 516 C 1030 448, 1300 568, 1700 500" stroke-width="8"/>
+    <path d="M-130 702 C 140 640, 420 750, 700 692 C 980 632, 1260 744, 1740 676" stroke-width="7"/>
+    <path d="M-90 858 C 180 802, 480 900, 760 852 C 1030 806, 1330 892, 1710 844" stroke-width="7"/>
+
+    <path d="M180 120 C 188 150, 202 172, 225 192" stroke-width="5"/>
+    <path d="M354 140 C 362 170, 378 190, 401 214" stroke-width="5"/>
+    <path d="M542 154 C 550 184, 568 208, 592 230" stroke-width="5"/>
+    <path d="M738 136 C 744 164, 756 186, 782 208" stroke-width="5"/>
+    <path d="M930 158 C 938 190, 954 214, 980 238" stroke-width="5"/>
+    <path d="M1118 136 C 1126 166, 1140 189, 1166 212" stroke-width="5"/>
+    <path d="M1306 154 C 1314 186, 1330 210, 1358 236" stroke-width="5"/>
+
+    <path d="M222 306 C 230 336, 246 360, 272 382" stroke-width="5"/>
+    <path d="M424 318 C 434 348, 448 372, 476 396" stroke-width="5"/>
+    <path d="M622 300 C 630 330, 648 356, 672 380" stroke-width="5"/>
+    <path d="M812 320 C 820 350, 838 374, 864 398" stroke-width="5"/>
+    <path d="M1008 304 C 1016 336, 1034 362, 1060 388" stroke-width="5"/>
+    <path d="M1210 322 C 1218 352, 1234 374, 1260 398" stroke-width="5"/>
+
+    <path d="M292 506 C 298 532, 314 554, 338 576" stroke-width="4"/>
+    <path d="M518 522 C 526 548, 542 570, 568 592" stroke-width="4"/>
+    <path d="M748 504 C 756 530, 772 552, 798 576" stroke-width="4"/>
+    <path d="M980 522 C 986 548, 1004 572, 1028 594" stroke-width="4"/>
+    <path d="M1210 508 C 1218 536, 1232 560, 1258 586" stroke-width="4"/>
+
+    <path d="M242 684 C 248 710, 264 732, 288 754" stroke-width="4"/>
+    <path d="M472 698 C 480 724, 498 748, 522 770" stroke-width="4"/>
+    <path d="M706 684 C 714 710, 730 734, 756 758" stroke-width="4"/>
+    <path d="M940 702 C 946 728, 964 750, 988 772" stroke-width="4"/>
+    <path d="M1174 688 C 1182 714, 1198 736, 1224 760" stroke-width="4"/>
+  </g>
+</svg>

@@ -1,11 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap');
+
 :root {
-  --bg: #06040d;
-  --surface: #120827;
-  --text: #f4eeff;
-  --text-inverse: #08080b;
-  --accent: #dd70ff;
-  --accent-2: #70d0ff;
-  --muted: #a8a1bd;
+  --bg: #f4efe4;
+  --bg-deep: #e8dfcd;
+  --surface: rgba(255, 249, 236, 0.78);
+  --surface-solid: #fff7ea;
+  --text: #1f2c2e;
+  --text-inverse: #fff9ee;
+  --accent: #bf5f45;
+  --accent-2: #2f8a7a;
+  --muted: #5d6d6f;
+  --line: rgba(32, 48, 50, 0.16);
+  --shadow: rgba(58, 43, 20, 0.2);
+  --hero-a: #f5cbb7;
+  --hero-b: #d6e6c7;
+  --hero-c: #cfe5df;
+}
+
+html[data-theme='meadow'] {
+  --bg: #f4efe4;
+  --bg-deep: #e8dfcd;
+  --surface: rgba(255, 249, 236, 0.78);
+  --surface-solid: #fff7ea;
+  --text: #1f2c2e;
+  --text-inverse: #fff9ee;
+  --accent: #bf5f45;
+  --accent-2: #2f8a7a;
+  --muted: #5d6d6f;
+  --line: rgba(32, 48, 50, 0.16);
+  --shadow: rgba(58, 43, 20, 0.2);
+  --hero-a: #f5cbb7;
+  --hero-b: #d6e6c7;
+  --hero-c: #cfe5df;
+}
+
+html[data-theme='sunset'] {
+  --bg: #f7e7dd;
+  --bg-deep: #ead4c2;
+  --surface: rgba(255, 241, 231, 0.82);
+  --surface-solid: #fff0e7;
+  --text: #372324;
+  --text-inverse: #fff2eb;
+  --accent: #b3403c;
+  --accent-2: #9c6e2f;
+  --muted: #745759;
+  --line: rgba(72, 40, 42, 0.16);
+  --shadow: rgba(87, 42, 34, 0.22);
+  --hero-a: #f6b8b0;
+  --hero-b: #f8d8b5;
+  --hero-c: #f5c5d7;
+}
+
+html[data-theme='lagoon'] {
+  --bg: #e6f0ee;
+  --bg-deep: #d4e4e3;
+  --surface: rgba(239, 249, 247, 0.8);
+  --surface-solid: #f4fcfb;
+  --text: #1c3235;
+  --text-inverse: #f4fffd;
+  --accent: #1e7f86;
+  --accent-2: #d06f4a;
+  --muted: #4f6d71;
+  --line: rgba(22, 64, 68, 0.16);
+  --shadow: rgba(16, 61, 64, 0.18);
+  --hero-a: #a7dfe2;
+  --hero-b: #c6ebd4;
+  --hero-c: #f7d8a9;
 }
 
 * {
@@ -14,21 +74,70 @@
 
 body {
   margin: 0;
-  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Space Grotesk', 'Avenir Next', 'Segoe UI', sans-serif;
+  font-size: clamp(15px, 0.42vw + 13.5px, 18px);
   color: var(--text);
-  background: var(--bg);
+  background:
+    radial-gradient(circle at 13% 18%, color-mix(in srgb, var(--hero-a) 54%, transparent), transparent 44%),
+    radial-gradient(circle at 85% 2%, color-mix(in srgb, var(--hero-c) 46%, transparent), transparent 40%),
+    linear-gradient(165deg, var(--bg) 0%, var(--bg-deep) 100%);
   text-rendering: optimizeLegibility;
   line-height: 1.6;
+  min-height: 100vh;
+}
+
+p {
+  margin-block: 0 1rem;
 }
 
 a {
   color: var(--accent);
 }
 
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Fraunces', 'Iowan Old Style', 'Times New Roman', serif;
+  font-weight: 600;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
 button, input, textarea {
   font: inherit;
 }
 
+button,
+input,
+textarea,
+select {
+  color: inherit;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 25%, white);
+  color: var(--text);
+}
+
+a,
+button {
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+a:focus-visible,
+button:focus-visible,
+select:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, white);
+  outline-offset: 2px;
+}
+
 main, section {
   -webkit-font-smoothing: antialiased;
+}
+
+@media (max-width: 640px) {
+  body {
+    line-height: 1.55;
+  }
 }

@@ -21,7 +21,7 @@
   <section class="section" id="manifesto">
     <h2>{data.site.home.manifestoHeading}</h2>
     <p>{data.site.home.manifestoExcerpt}</p>
-    <a class="secondary" href="/manifesto">{data.site.home.manifestoLinkLabel}</a>
+    <a class="secondary" href="/dadri-forecast">{data.site.home.manifestoLinkLabel}</a>
   </section>
 </main>
 
@@ -29,30 +29,69 @@
   .layout {
     color: var(--text);
     min-height: 100vh;
-    background: radial-gradient(circle at 15% 20%, #0f0720 0%, #06040d 60%, #020104 100%);
+    padding-bottom: clamp(1.4rem, 3.8vw, 2.6rem);
+  }
+
+  .layout > :first-child {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .section {
-    max-width: 72ch;
-    margin: 3rem auto;
-    padding: 0 1.1rem;
+    max-width: min(1080px, 95vw);
+    margin: clamp(1.4rem, 5vw, 4rem) auto;
+    padding: 0 0.3rem;
+  }
+
+  .section + .section {
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+  }
+
+  .section p {
+    max-width: 68ch;
+    color: color-mix(in srgb, var(--text) 90%, transparent);
   }
 
   h2 {
-    font-size: clamp(1.35rem, 2.2vw, 2.35rem);
-    margin-bottom: 0.8rem;
+    font-size: clamp(1.25rem, 3.1vw, 2.4rem);
+    margin-bottom: 0.65rem;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1rem;
-    margin-top: 1.2rem;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: clamp(0.68rem, 2vw, 1.05rem);
+    margin-top: 1rem;
   }
 
   .secondary {
-    color: var(--accent);
+    color: color-mix(in srgb, var(--accent) 84%, var(--text));
     font-weight: 700;
-    text-decoration: underline;
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    padding-bottom: 0.12rem;
+  }
+
+  @media (max-width: 640px) {
+    .section {
+      margin: 1rem auto 2rem;
+    }
+
+    h2 {
+      font-size: clamp(1.2rem, 7vw, 1.7rem);
+      margin-bottom: 0.5rem;
+    }
+
+    .section p {
+      font-size: 0.95rem;
+    }
+
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 0.62rem;
+    }
   }
 </style>
