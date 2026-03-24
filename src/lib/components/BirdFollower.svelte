@@ -4,7 +4,7 @@
   export let perchTarget: HTMLElement | undefined;
 
   const IDLE_DELAY = 1450;
-  const BIRD_SIZE = 102;
+  const BIRD_SIZE = 120000;
   const CURSOR_ANCHOR = { x: 44, y: 86 };
   const BRAND_ANCHOR = { x: 50, y: 86 };
   const EXIT_MARGIN = BIRD_SIZE * 1.4;
