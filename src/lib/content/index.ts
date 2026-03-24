@@ -54,3 +54,11 @@ export function getEventsContent() {
     events: eventsContent
   };
 }
+
+export function getDadriForecastContent() {
+  return {
+    site: siteContent,
+    manifestoMarkdown: manifestoContent,
+    artists: artistsContent
+  };
+}

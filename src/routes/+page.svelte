@@ -21,7 +21,7 @@
   <section class="section" id="manifesto">
     <h2>{data.site.home.manifestoHeading}</h2>
     <p>{data.site.home.manifestoExcerpt}</p>
-    <a class="secondary" href="/manifesto">{data.site.home.manifestoLinkLabel}</a>
+    <a class="secondary" href="/dadri-forecast">{data.site.home.manifestoLinkLabel}</a>
   </section>
 </main>
 
@@ -30,6 +30,13 @@
     color: var(--text);
     min-height: 100vh;
     padding-bottom: clamp(1.4rem, 3.8vw, 2.6rem);
+  }
+
+  .layout > :first-child {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .section {

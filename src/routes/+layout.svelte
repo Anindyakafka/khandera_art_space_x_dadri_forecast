@@ -13,8 +13,7 @@
   ];
   const navLinks = [
     { href: '/about', label: 'About' },
-    { href: '/manifesto', label: 'Manifesto' },
-    { href: '/artists', label: 'Artists' },
+    { href: '/dadri-forecast', label: 'Dadri Forecast' },
     { href: '/projects', label: 'Projects' },
     { href: '/events', label: 'Events' }
   ];
