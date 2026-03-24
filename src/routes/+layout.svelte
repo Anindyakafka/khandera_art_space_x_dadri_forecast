@@ -19,6 +19,7 @@
     { href: '/events', label: 'Events' }
   ];
   let activeTheme = themeOptions[0].id;
+  let mobileMenuOpen = false;
 
   function isCurrentRoute(href: string, pathname: string) {
     if (href === '/') {
@@ -34,11 +35,34 @@
     localStorage.setItem('khandera-theme', theme);
   }
 
+  function toggleMobileMenu() {
+    mobileMenuOpen = !mobileMenuOpen;
+  }
+
+  $: if ($page.url.pathname) {
+    mobileMenuOpen = false;
+  }
+
   onMount(() => {
     const storedTheme = localStorage.getItem('khandera-theme');
     const validStoredTheme = themeOptions.some((option) => option.id === storedTheme);
     const defaultTheme = validStoredTheme && storedTheme ? storedTheme : themeOptions[0].id;
     applyTheme(defaultTheme);
+
+    const mediaQuery = window.matchMedia('(min-width: 901px)');
+    const closeMenuOnDesktop = () => {
+      if (mediaQuery.matches) {
+        mobileMenuOpen = false;
+      }
+    };
+
+    mediaQuery.addEventListener('change', closeMenuOnDesktop);
+
+    closeMenuOnDesktop();
+
+    return () => {
+      mediaQuery.removeEventListener('change', closeMenuOnDesktop);
+    };
   });
 </script>
 
@@ -63,7 +87,19 @@
     <p class="brand-subtitle">Dadri Forecast Residency</p>
   </div>
   <div class="header-controls">
-    <nav aria-label="Main navigation">
+    <button
+      type="button"
+      class="menu-toggle"
+      aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+      aria-controls="main-nav"
+      aria-expanded={mobileMenuOpen}
+      on:click={toggleMobileMenu}
+    >
+      <span class="menu-toggle-label">Menu</span>
+      <span class="menu-toggle-icon" aria-hidden="true"></span>
+    </button>
+
+    <nav id="main-nav" aria-label="Main navigation" class:open={mobileMenuOpen}>
       {#each navLinks as link}
         <a
           href={link.href}
@@ -210,6 +246,40 @@
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: flex-end;
+  }
+
+  .menu-toggle {
+    display: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface-solid) 72%, transparent);
+    color: var(--text);
+    padding: 0.4rem 0.7rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 700;
+    align-items: center;
+    gap: 0.42rem;
+    cursor: pointer;
+  }
+
+  .menu-toggle-icon {
+    width: 0.88rem;
+    height: 0.68rem;
+    display: inline-block;
+    position: relative;
+    border-top: 1.8px solid currentColor;
+    border-bottom: 1.8px solid currentColor;
+  }
+
+  .menu-toggle-icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 45%;
+    border-top: 1.8px solid currentColor;
   }
 
   nav {
@@ -386,20 +456,44 @@
     }
 
     .header-controls {
+      display: grid;
+      grid-template-columns: auto auto;
+      align-items: start;
       width: 100%;
       justify-content: space-between;
+      row-gap: 0.5rem;
+      column-gap: 0.55rem;
+    }
+
+    .menu-toggle {
+      display: inline-flex;
+      grid-column: 1;
+      justify-self: start;
     }
 
     nav {
+      grid-column: 1 / -1;
+      display: none;
+      width: 100%;
       gap: 0.35rem;
+      padding-top: 0.35rem;
+    }
+
+    nav.open {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.4rem;
     }
 
     nav a {
-      padding: 0.3rem 0.62rem;
-      font-size: 0.83rem;
+      padding: 0.4rem 0.62rem;
+      font-size: 0.8rem;
+      text-align: center;
     }
 
     .theme-picker {
+      grid-column: 2;
+      justify-self: end;
       gap: 0.28rem;
       padding: 0.26rem;
     }
@@ -407,6 +501,12 @@
     .theme-picker button {
       width: 1.7rem;
       height: 1.7rem;
+    }
+  }
+
+  @media (max-width: 520px) {
+    nav.open {
+      grid-template-columns: 1fr;
     }
   }
 
