@@ -5,7 +5,9 @@
 </script>
 
 <main class="layout">
-  <Hero title={data.site.heroTitle} subtitle={data.site.heroSubtitle} />
+  <section class="hero-stage">
+    <Hero title={data.site.heroTitle} subtitle={data.site.heroSubtitle} />
+  </section>
 
   <section id="projects" class="section">
     <h2>{data.site.home.projectsHeading}</h2>
@@ -32,11 +34,12 @@
     padding-bottom: clamp(1.4rem, 3.8vw, 2.6rem);
   }
 
-  .layout > :first-child {
-    min-height: 100vh;
+  .hero-stage {
+    min-height: calc(100svh - 7rem);
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0;
   }
 
   .section {
@@ -76,6 +79,10 @@
   }
 
   @media (max-width: 640px) {
+    .hero-stage {
+      min-height: calc(100svh - 6.2rem);
+    }
+
     .section {
       margin: 1rem auto 2rem;
     }

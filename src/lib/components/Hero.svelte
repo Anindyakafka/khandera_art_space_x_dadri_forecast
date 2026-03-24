@@ -20,7 +20,8 @@
 
 <style>
   .hero {
-    min-height: clamp(52vh, 66vh, 74vh);
+    min-height: 100%;
+    height: 100%;
     display: grid;
     place-items: center;
     position: relative;
@@ -107,10 +108,6 @@
   }
 
   @media (max-width: 680px) {
-    .hero {
-      min-height: 51vh;
-    }
-
     .hero-content {
       padding: 1.25rem 0.92rem 1.5rem;
     }

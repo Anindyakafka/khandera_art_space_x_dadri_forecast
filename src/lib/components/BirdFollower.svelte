@@ -4,7 +4,8 @@
   export let perchTarget: HTMLElement | undefined;
 
   const IDLE_DELAY = 1450;
-  const BIRD_SIZE = 120000;
+  const ACTIVATION_DELAY = 120000;
+  const BIRD_SIZE = 102;
   const CURSOR_ANCHOR = { x: 44, y: 86 };
   const BRAND_ANCHOR = { x: 50, y: 86 };
   const EXIT_MARGIN = BIRD_SIZE * 1.4;
@@ -45,6 +46,7 @@
   let wingDuration = 520;
   let idleTimer: ReturnType<typeof setTimeout> | undefined;
   let scrollIdleTimer: ReturnType<typeof setTimeout> | undefined;
+  let activationTimer: ReturnType<typeof setTimeout> | undefined;
   let fibonacciIndex = 0;
   let fibonacciSequence: number[] = [];
   let spiralPhase = 0;
@@ -126,6 +128,7 @@
     velocityY = 0;
     idleTimer = clearTimer(idleTimer);
     scrollIdleTimer = clearTimer(scrollIdleTimer);
+    activationTimer = clearTimer(activationTimer);
     cancelLoop();
   }
 
@@ -375,8 +378,6 @@
 
     const syncMotionPreference = () => {
       reducedMotion = motionQuery.matches;
-      enabled = true;
-      scheduleIdleToCursor();
     };
 
     const updatePointer = (event: PointerEvent) => {
@@ -423,6 +424,10 @@
     pointerY = window.innerHeight * 0.38;
 
     syncMotionPreference();
+    activationTimer = setTimeout(() => {
+      enabled = true;
+      setModeToCursor();
+    }, ACTIVATION_DELAY);
 
     motionQuery.addEventListener('change', syncMotionPreference);
     window.addEventListener('pointermove', updatePointer, { passive: true });
