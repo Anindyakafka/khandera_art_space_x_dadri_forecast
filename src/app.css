@@ -15,7 +15,7 @@
   --hero-a: #f5cbb7;
   --hero-b: #d6e6c7;
   --hero-c: #cfe5df;
-  --grain-opacity: 0.06;
+  --grain-opacity: 0.08;
 }
 
 html[data-theme='meadow'] {
