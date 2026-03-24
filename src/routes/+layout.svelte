@@ -83,10 +83,6 @@
 
 <header class="site-header">
   <div class="brand-row">
-    <a class="brand" href="/" bind:this={brandLink}>Khandera Art Space</a>
-    <p class="brand-subtitle">Dadri Forecast Residency</p>
-  </div>
-  <div class="header-controls">
     <button
       type="button"
       class="menu-toggle"
@@ -95,21 +91,10 @@
       aria-expanded={mobileMenuOpen}
       on:click={toggleMobileMenu}
     >
-      <span class="menu-toggle-label">Menu</span>
       <span class="menu-toggle-icon" aria-hidden="true"></span>
+      <span class="sr-only">Menu</span>
     </button>
-
-    <nav id="main-nav" aria-label="Main navigation" class:open={mobileMenuOpen}>
-      {#each navLinks as link}
-        <a
-          href={link.href}
-          class:current={isCurrentRoute(link.href, $page.url.pathname)}
-          aria-current={isCurrentRoute(link.href, $page.url.pathname) ? 'page' : undefined}
-        >
-          {link.label}
-        </a>
-      {/each}
-    </nav>
+    <a class="brand" href="/" bind:this={brandLink}>Khandera Art Space</a>
     <div class="theme-picker" role="group" aria-label="Select color palette">
       {#each themeOptions as option}
         <button
@@ -125,6 +110,20 @@
         </button>
       {/each}
     </div>
+  </div>
+  <p class="brand-subtitle">Dadri Forecast Residency</p>
+  <div class="header-controls">
+    <nav id="main-nav" aria-label="Main navigation" class:open={mobileMenuOpen}>
+      {#each navLinks as link}
+        <a
+          href={link.href}
+          class:current={isCurrentRoute(link.href, $page.url.pathname)}
+          aria-current={isCurrentRoute(link.href, $page.url.pathname) ? 'page' : undefined}
+        >
+          {link.label}
+        </a>
+      {/each}
+    </nav>
   </div>
 </header>
 
@@ -204,9 +203,9 @@
     position: sticky;
     top: 0;
     z-index: 30;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: start;
     gap: 1.3rem;
     min-height: 5rem;
     padding: 1rem clamp(1rem, 2.4vw, 2rem);
@@ -217,9 +216,10 @@
   }
 
   .brand-row {
-    display: grid;
-    align-items: end;
-    gap: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: 100%;
   }
 
   .brand {
@@ -233,7 +233,7 @@
   }
 
   .brand-subtitle {
-    margin: 0;
+    margin: -0.75rem 0 0;
     font-size: 0.78rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -243,24 +243,24 @@
   .header-controls {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.6rem;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: flex-start;
+    width: 100%;
   }
 
   .menu-toggle {
-    display: none;
+    display: inline-flex;
     border: 1px solid var(--line);
     border-radius: 999px;
     background: color-mix(in srgb, var(--surface-solid) 72%, transparent);
     color: var(--text);
-    padding: 0.4rem 0.7rem;
-    font-size: 0.78rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    padding: 0.38rem;
+    width: 2rem;
+    height: 2rem;
     font-weight: 700;
     align-items: center;
-    gap: 0.42rem;
+    justify-content: center;
     cursor: pointer;
   }
 
@@ -311,6 +311,7 @@
 
   .theme-picker {
     display: inline-flex;
+    margin-left: auto;
     align-items: center;
     gap: 0.38rem;
     padding: 0.32rem;
@@ -451,32 +452,19 @@
 
   @media (max-width: 900px) {
     .site-header {
-      align-items: flex-start;
-      flex-direction: column;
+      gap: 0.65rem;
     }
 
     .header-controls {
-      display: grid;
-      grid-template-columns: auto auto;
-      align-items: start;
+      display: block;
       width: 100%;
-      justify-content: space-between;
-      row-gap: 0.5rem;
-      column-gap: 0.55rem;
-    }
-
-    .menu-toggle {
-      display: inline-flex;
-      grid-column: 1;
-      justify-self: start;
     }
 
     nav {
-      grid-column: 1 / -1;
       display: none;
       width: 100%;
       gap: 0.35rem;
-      padding-top: 0.35rem;
+      padding-top: 0.1rem;
     }
 
     nav.open {
@@ -492,10 +480,9 @@
     }
 
     .theme-picker {
-      grid-column: 2;
-      justify-self: end;
       gap: 0.28rem;
       padding: 0.26rem;
+      margin-left: auto;
     }
 
     .theme-picker button {
@@ -505,6 +492,15 @@
   }
 
   @media (max-width: 520px) {
+    .brand {
+      font-size: 1.02rem;
+    }
+
+    .brand-subtitle {
+      margin-top: -0.5rem;
+      font-size: 0.72rem;
+    }
+
     nav.open {
       grid-template-columns: 1fr;
     }
