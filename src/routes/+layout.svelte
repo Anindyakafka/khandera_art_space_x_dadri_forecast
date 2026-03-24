@@ -94,8 +94,11 @@
       <span class="menu-toggle-icon" aria-hidden="true"></span>
       <span class="sr-only">Menu</span>
     </button>
-    <a class="brand" href="/" bind:this={brandLink}>Khandera Art Space</a>
-    <div class="theme-picker" role="group" aria-label="Select color palette">
+    <div class="brand-stack">
+      <a class="brand" href="/" bind:this={brandLink}>Khandera Art Space</a>
+      <p class="brand-subtitle">Dadri Forecast Residency</p>
+    </div>
+    <div class="theme-picker mobile-theme-picker" role="group" aria-label="Select color palette">
       {#each themeOptions as option}
         <button
           type="button"
@@ -111,7 +114,6 @@
       {/each}
     </div>
   </div>
-  <p class="brand-subtitle">Dadri Forecast Residency</p>
   <div class="header-controls">
     <nav id="main-nav" aria-label="Main navigation" class:open={mobileMenuOpen}>
       {#each navLinks as link}
@@ -124,6 +126,21 @@
         </a>
       {/each}
     </nav>
+    <div class="theme-picker desktop-theme-picker" role="group" aria-label="Select color palette">
+      {#each themeOptions as option}
+        <button
+          type="button"
+          class:active={activeTheme === option.id}
+          on:click={() => applyTheme(option.id)}
+          aria-pressed={activeTheme === option.id}
+          aria-label={`Activate ${option.label} theme`}
+          title={option.label}
+        >
+          <span class="swatch" style={`--swatch-tone: ${option.tone};`} aria-hidden="true"></span>
+          <span class="sr-only">{option.label}</span>
+        </button>
+      {/each}
+    </div>
   </div>
 </header>
 
@@ -203,9 +220,9 @@
     position: sticky;
     top: 0;
     z-index: 30;
-    display: grid;
-    grid-template-columns: 1fr;
-    align-items: start;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     gap: 1.3rem;
     min-height: 5rem;
     padding: 1rem clamp(1rem, 2.4vw, 2rem);
@@ -217,9 +234,15 @@
 
   .brand-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.55rem;
-    width: 100%;
+    min-width: 0;
+  }
+
+  .brand-stack {
+    display: grid;
+    align-items: end;
+    gap: 0.2rem;
   }
 
   .brand {
@@ -233,7 +256,7 @@
   }
 
   .brand-subtitle {
-    margin: -0.75rem 0 0;
+    margin: 0;
     font-size: 0.78rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -243,21 +266,20 @@
   .header-controls {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 1rem;
     flex-wrap: wrap;
-    justify-content: flex-start;
-    width: 100%;
+    justify-content: flex-end;
   }
 
   .menu-toggle {
-    display: inline-flex;
+    display: none;
     border: 1px solid var(--line);
     border-radius: 999px;
     background: color-mix(in srgb, var(--surface-solid) 72%, transparent);
     color: var(--text);
     padding: 0.38rem;
-    width: 2rem;
-    height: 2rem;
+    width: 2.05rem;
+    height: 2.05rem;
     font-weight: 700;
     align-items: center;
     justify-content: center;
@@ -311,13 +333,21 @@
 
   .theme-picker {
     display: inline-flex;
-    margin-left: auto;
     align-items: center;
     gap: 0.38rem;
     padding: 0.32rem;
     border-radius: 999px;
     border: 1px solid var(--line);
     background: color-mix(in srgb, var(--surface-solid) 68%, transparent);
+  }
+
+  .mobile-theme-picker {
+    display: none;
+    margin-left: auto;
+  }
+
+  .desktop-theme-picker {
+    display: inline-flex;
   }
 
   .theme-picker button {
@@ -452,12 +482,38 @@
 
   @media (max-width: 900px) {
     .site-header {
+      display: grid;
+      grid-template-columns: 1fr;
+      align-items: start;
       gap: 0.65rem;
+    }
+
+    .brand-row {
+      width: 100%;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-stack {
+      min-width: 0;
+      gap: 0.12rem;
     }
 
     .header-controls {
       display: block;
       width: 100%;
+    }
+
+    .menu-toggle {
+      display: inline-flex;
+    }
+
+    .desktop-theme-picker {
+      display: none;
+    }
+
+    .mobile-theme-picker {
+      display: inline-flex;
     }
 
     nav {
@@ -482,7 +538,6 @@
     .theme-picker {
       gap: 0.28rem;
       padding: 0.26rem;
-      margin-left: auto;
     }
 
     .theme-picker button {
@@ -497,7 +552,6 @@
     }
 
     .brand-subtitle {
-      margin-top: -0.5rem;
       font-size: 0.72rem;
     }
 
