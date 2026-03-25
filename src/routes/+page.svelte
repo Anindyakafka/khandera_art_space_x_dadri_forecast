@@ -13,8 +13,6 @@
 <style>
   .layout {
     color: var(--text);
-    min-height: 100vh;
-    padding-bottom: clamp(1.4rem, 3.8vw, 2.6rem);
   }
 
   .hero-stage {
