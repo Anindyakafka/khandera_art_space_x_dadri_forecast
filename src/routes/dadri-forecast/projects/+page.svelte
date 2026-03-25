@@ -1,36 +1,110 @@
 <script lang="ts">
-  const projectTitle = 'Socho Toh';
-  const projectDate = '8 June';
-  const projectPlace = 'Khandera village';
-  const facilitator = 'Susanta Das';
+  type Project = {
+    id: string;
+    title: string;
+    format: string;
+    date?: string;
+    location?: string;
+    facilitator?: string;
+    warning: string;
+    lead: string;
+    excerpt: string;
+    folder: string;
+    galleryFiles: string[];
+    writeup: string[];
+  };
 
-  const folder = '/media/images/dadri-forecast/projects/Mime Workshop 2_Socho To_Susanta Das_for_upload';
-  const galleryFiles = [
-    'DSC_0090.JPG',
-    'DSC_0093.JPG',
-    'DSC_0099.JPG',
-    'DSC_0102.JPG',
-    'DSC_0109.JPG',
-    'DSC_0117.JPG',
-    'IMG_20250605_145424991_HDR.jpg',
-    'IMG_20250608_193524298_HDR.jpg',
-    'IMG_20250608_193815028_HDR.jpg',
-    'IMG_2835.jpg',
-    'IMG_2839.jpg',
-    'IMG_2841.jpg',
-    'IMG_2844.jpg',
-    'IMG_2850.jpg',
-    'IMG_2861.jpg'
-  ];
-
-  const gallery = galleryFiles.map((fileName) => ({
-    src: encodeURI(`${folder}/${fileName}`),
-    alt: `Socho Toh workshop image ${fileName}`
+  const projects: Project[] = [
+    {
+      id: 'socho-toh',
+      title: 'Socho Toh',
+      format: 'Mime Workshop / Collective Performance',
+      date: '8 June',
+      location: 'Khandera village',
+      facilitator: 'Susanta Das',
+      warning: 'Performance Under Heat, Blackout, and Structural Exclusion',
+      lead:
+        'A durational mime process built under heat, blackout, and infrastructural neglect in Khandera, where gesture became a grammar of resistance.',
+      excerpt:
+        'Young participants turned exhaustion, interruption, and withheld resources into a charged collective performance.',
+      folder: '/media/images/dadri-forecast/projects/Mime Workshop 2_Socho To_Susanta Das_for_upload',
+      galleryFiles: [
+        'DSC_0090.JPG',
+        'DSC_0093.JPG',
+        'DSC_0099.JPG',
+        'DSC_0102.JPG',
+        'DSC_0109.JPG',
+        'DSC_0117.JPG',
+        'IMG_20250605_145424991_HDR.jpg',
+        'IMG_20250608_193524298_HDR.jpg',
+        'IMG_20250608_193815028_HDR.jpg',
+        'IMG_2835.jpg',
+        'IMG_2839.jpg',
+        'IMG_2841.jpg',
+        'IMG_2844.jpg',
+        'IMG_2850.jpg',
+        'IMG_2861.jpg'
+      ],
+      writeup: [
+        'On 8th June, Khandera Art Space hosted a compelling mime performance devised and performed by young participants of Khandera village, who had, over 13 days, endured heat, blackout, and infrastructural neglect during the workshop. Rehearsals were held in fragments of time and shade, amidst failing electricity and dehydrated afternoons. The body did not enact a script; it endured. Each movement registered the ambient conditions of exclusion, where breath replaced speech, and physicality became a grammar of resistance. This was not only creative indulgence but a durational negotiation with exhaustion, where choreography was metabolized into gesture. The performance unfolded not as spectacle, but as a convulsion of withheld expression.',
+        'The process was facilitated by Susanta Das, a socio-politically engaged mime practitioner whose methods are grounded in friction, not ease. Through sequences of embodied exploration, rhythmic tension, and non-verbal syntax, the group co-authored a collective vocabulary that activated performance as a tool for cultural intervention and resistance. The performance, Socho Toh, takes its incantatory name from Gorakh Pandey\'s searing poem, a work that fractures the ordinary and reanimates it as a field of latent uprising. The performance dwells in that suspended state between stillness and rupture, charting ecological depletion, bulldozer politics, stigmatization, dislocation, systematic erasure, and slow attrition of dignity.',
+        'Rooted in a location long neglected by the state and stigmatized under structural violence, the village and its people have historically been denied access to equitable resources, cultural capital, and platforms of visibility. Khandera is not a passive container for such acts. It is a landscape disfigured by casteist governance, where dispossession is routine and remembrance is a form of risk.'
+      ]
+    },
+    {
+      id: 'what-we-ask-when-we-stay',
+      title: 'What We Ask, When We Stay',
+      format: 'Open Studio / Lecture-Performance',
+      facilitator: 'Subhankar Sengupta',
+      warning: 'Open Inquiry Across Extraction, Erasure, Resistance, and Communal Violence',
+      lead:
+        'Through printmaking, sculpture, projection mapping, and video, the open studio traced the quiet yet urgent politics of place rooted in the landscapes around Dadri and NTPC.',
+      excerpt:
+        'An evening of reflection and participation where fractured lands, communal wounds, and systemic violence were held as a shared inquiry.',
+      folder: '/media/images/dadri-forecast/projects/What We Ask, When We Stay_Open Studio_Subhankar Sengupta',
+      galleryFiles: [
+        '370A4516.JPG',
+        '370A4520.JPG',
+        '370A4534.JPG',
+        '370A4541.JPG',
+        '370A4547.JPG',
+        '370A4552.JPG',
+        '370A4563.JPG',
+        '370A4566.JPG',
+        'DSC_0126.JPG',
+        'DSC_0128.JPG',
+        'DSC_0129.JPG',
+        'DSC_0149.JPG',
+        'DSC_0154.JPG',
+        'DSC_0156.JPG'
+      ],
+      writeup: [
+        'Thank you to everyone who joined us for an evening of reflection, participation, and conversation.',
+        'Through printmaking, sculpture, projection mapping, and video, Subhankar\'s open studio traced the quiet yet urgent politics of place, rooted in the landscapes around Dadri and NTPC.',
+        'His lecture-performance wove together years of research and creative engagement across West Bengal, Telinipara, Deucha, Harishpur, and Barabani, sites marked by extraction, erasure, resistance, and communal violence.',
+        'How do we speak of fractured lands and lives, of communal wounds and systemic violence? And more so, how do we speak of them to both children and adults, without silencing or simplifying?',
+        'What emerges is not just a narrative, but a shared inquiry into staying, into listening, into reimagining.'
+      ]
+    }
+  ].map((project) => ({
+    ...project,
+    gallery: project.galleryFiles.map((fileName) => ({
+      src: encodeURI(`${project.folder}/${fileName}`),
+      alt: `${project.title} documentation ${fileName}`
+    }))
   }));
 
+  let activeProjectId = projects[0].id;
   let selectedIndex: number | null = null;
 
-  $: selectedImage = selectedIndex === null ? null : gallery[selectedIndex];
+  $: activeProject = projects.find((project) => project.id === activeProjectId) ?? projects[0];
+  $: activeGallery = activeProject.gallery;
+  $: selectedImage = selectedIndex === null ? null : activeGallery[selectedIndex];
+
+  function selectProject(projectId: string) {
+    activeProjectId = projectId;
+    selectedIndex = null;
+  }
 
   function openLightbox(index: number) {
     selectedIndex = index;
@@ -45,7 +119,7 @@
       return;
     }
 
-    selectedIndex = (selectedIndex + 1) % gallery.length;
+    selectedIndex = (selectedIndex + 1) % activeGallery.length;
   }
 
   function showPrevious() {
@@ -53,7 +127,7 @@
       return;
     }
 
-    selectedIndex = (selectedIndex - 1 + gallery.length) % gallery.length;
+    selectedIndex = (selectedIndex - 1 + activeGallery.length) % activeGallery.length;
   }
 
   function handleKeydown(event: KeyboardEvent) {
@@ -78,54 +152,86 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <main class="forecast-page">
-  <section class="hero">
+  <section class="archive-index" aria-labelledby="project-selector-heading">
     <p class="section-no" aria-hidden="true">06</p>
-    <p class="kicker">Dadri Forecast Project Archive</p>
-    <h1>{projectTitle}</h1>
-    <span class="warning-bar">Performance Under Heat, Blackout, and Structural Exclusion</span>
-    <p class="lead">
-      A durational mime process built under heat, blackout, and infrastructural neglect in Khandera, where gesture became a grammar of resistance.
-    </p>
+    <div class="archive-head">
+      <p class="kicker">Dadri Forecast Project Archive</p>
+      <h1 id="project-selector-heading">Choose a project file to enter</h1>
+      <span class="warning-bar">Select a block to load documents, images, and field notes</span>
+    </div>
+
+    <div class="selector-grid" role="list" aria-label="Dadri Forecast projects">
+      {#each projects as project, index}
+        <button
+          class:selected={project.id === activeProject.id}
+          class="selector-card"
+          type="button"
+          on:click={() => selectProject(project.id)}
+          aria-pressed={project.id === activeProject.id}
+        >
+          <span class="selector-number">{String(index + 1).padStart(2, '0')}</span>
+          <div class="selector-copy">
+            <p>{project.format}</p>
+            <h2>{project.title}</h2>
+            <p class="selector-excerpt">{project.excerpt}</p>
+          </div>
+
+          <div class="selector-footer">
+            <span>{project.gallery.length} images</span>
+            <span>{project.facilitator}</span>
+          </div>
+        </button>
+      {/each}
+    </div>
+  </section>
+
+  <section class="hero">
+    <p class="section-no" aria-hidden="true">07</p>
+    <p class="kicker">{activeProject.format}</p>
+    <h2 class="hero-title">{activeProject.title}</h2>
+    <span class="warning-bar">{activeProject.warning}</span>
+    <p class="lead">{activeProject.lead}</p>
 
     <div class="meta-row" role="list" aria-label="Project details">
-      <p role="listitem"><strong>Date</strong> {projectDate}</p>
-      <p role="listitem"><strong>Location</strong> {projectPlace}</p>
-      <p role="listitem"><strong>Facilitator</strong> {facilitator}</p>
+      {#if activeProject.date}
+        <p role="listitem"><strong>Date</strong> {activeProject.date}</p>
+      {/if}
+      {#if activeProject.location}
+        <p role="listitem"><strong>Location</strong> {activeProject.location}</p>
+      {/if}
+      {#if activeProject.facilitator}
+        <p role="listitem"><strong>Facilitator</strong> {activeProject.facilitator}</p>
+      {/if}
     </div>
   </section>
 
   <section class="writing" aria-labelledby="writeup-heading">
-    <p class="section-no" aria-hidden="true">07</p>
-    <h2 id="writeup-heading">Project Write-up</h2>
+    <p class="section-no" aria-hidden="true">08</p>
+    <div class="writing-head">
+      <h2 id="writeup-heading">Project Write-up</h2>
+      <p>Active file: {activeProject.title}</p>
+    </div>
 
-    <p>
-      On 8th June, Khandera Art Space hosted a compelling mime performance devised and performed by young participants of Khandera village, who had, over 13 days, endured heat, blackout, and infrastructural neglect during the workshop. Rehearsals were held in fragments of time and shade, amidst failing electricity and dehydrated afternoons. The body did not enact a script; it endured. Each movement registered the ambient conditions of exclusion, where breath replaced speech, and physicality became a grammar of resistance. This was not only creative indulgence but a durational negotiation with exhaustion, where choreography was metabolized into gesture. The performance unfolded not as spectacle, but as a convulsion of withheld expression.
-    </p>
-
-    <p>
-      The process was facilitated by Susanta Das, a socio-politically engaged mime practitioner whose methods are grounded in friction, not ease. Through sequences of embodied exploration, rhythmic tension, and non-verbal syntax, the group co-authored a collective vocabulary that activated performance as a tool for cultural intervention and resistance. The performance, Socho Toh, takes its incantatory name from Gorakh Pandey's searing poem, a work that fractures the ordinary and reanimates it as a field of latent uprising. The performance dwells in that suspended state between stillness and rupture, charting ecological depletion, bulldozer politics, stigmatization, dislocation, systematic erasure, and slow attrition of dignity.
-    </p>
-
-    <p>
-      Rooted in a location long neglected by the state and stigmatized under structural violence, the village and its people have historically been denied access to equitable resources, cultural capital, and platforms of visibility. Khandera is not a passive container for such acts. It is a landscape disfigured by casteist governance, where dispossession is routine and remembrance is a form of risk.
-    </p>
+    {#each activeProject.writeup as paragraph}
+      <p>{paragraph}</p>
+    {/each}
   </section>
 
   <section class="gallery" aria-labelledby="gallery-heading">
-    <p class="section-no" aria-hidden="true">08</p>
+    <p class="section-no" aria-hidden="true">09</p>
     <div class="gallery-head">
       <h2 id="gallery-heading">Image Sequence</h2>
-      <p>{gallery.length} images from the workshop process and performance evening.</p>
+      <p>{activeGallery.length} images from {activeProject.title}.</p>
     </div>
 
     <div class="masonry" role="list">
-      {#each gallery as image, index}
+      {#each activeGallery as image, index}
         <figure class="shot distressed-media" role="listitem" style={`--order: ${index};`}>
           <button
             class="shot-button"
             type="button"
             on:click={() => openLightbox(index)}
-            aria-label={`Open image ${index + 1} in fullscreen`}
+            aria-label={`Open image ${index + 1} from ${activeProject.title} in fullscreen`}
           >
             <img src={image.src} alt={image.alt} loading="lazy" />
           </button>
@@ -154,7 +260,7 @@
 
     <figure class="lightbox-frame" on:click|stopPropagation>
       <img src={selectedImage.src} alt={selectedImage.alt} />
-      <figcaption>{selectedIndex + 1} / {gallery.length}</figcaption>
+      <figcaption>{activeProject.title} // {selectedIndex + 1} / {activeGallery.length}</figcaption>
     </figure>
 
     <button class="lightbox-nav next" type="button" on:click|stopPropagation={showNext} aria-label="Show next image">
@@ -170,6 +276,7 @@
     color: var(--text);
   }
 
+  .archive-index,
   .hero {
     padding: clamp(1rem, 2.6vw, 2rem);
     border-top: 1px solid var(--line);
@@ -178,6 +285,16 @@
       repeating-linear-gradient(120deg, color-mix(in srgb, var(--accent) 14%, transparent) 0 2px, transparent 2px 18px),
       radial-gradient(circle at 12% 10%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 52%),
       radial-gradient(circle at 92% 84%, color-mix(in srgb, var(--hero-c) 24%, transparent), transparent 44%);
+  }
+
+  .hero {
+    margin-top: clamp(1rem, 2.8vw, 1.6rem);
+  }
+
+  .archive-head {
+    display: grid;
+    gap: 0.45rem;
+    margin-bottom: 1rem;
   }
 
   .kicker {
@@ -189,12 +306,85 @@
     font-weight: 700;
   }
 
-  h1 {
+  h1,
+  .hero-title {
     margin: 0.4rem 0 0.55rem;
-    font-size: clamp(2.2rem, 9vw, 6rem);
+    font-size: clamp(2.1rem, 8vw, 5.2rem);
     line-height: 0.98;
     text-wrap: balance;
     letter-spacing: 0.014em;
+  }
+
+  .selector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0.8rem;
+  }
+
+  .selector-card {
+    display: grid;
+    gap: 1rem;
+    text-align: left;
+    padding: 1rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--surface-solid) 92%, transparent), color-mix(in srgb, var(--bg) 90%, transparent)),
+      repeating-linear-gradient(-45deg, color-mix(in srgb, var(--accent) 9%, transparent) 0 12px, transparent 12px 32px);
+    color: inherit;
+    cursor: pointer;
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  }
+
+  .selector-card:hover,
+  .selector-card.selected {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 72%, var(--line));
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--accent) 16%, var(--surface-solid)), color-mix(in srgb, var(--bg) 92%, transparent)),
+      repeating-linear-gradient(-45deg, color-mix(in srgb, var(--accent) 16%, transparent) 0 12px, transparent 12px 32px);
+  }
+
+  .selector-number {
+    font-family: 'Anton', 'Arial Black', Impact, sans-serif;
+    font-size: clamp(1.6rem, 6vw, 3.5rem);
+    color: color-mix(in srgb, var(--accent) 76%, var(--text));
+    line-height: 0.9;
+  }
+
+  .selector-copy {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .selector-copy p,
+  .selector-footer span {
+    margin: 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .selector-copy h2 {
+    margin: 0;
+    font-size: clamp(1.2rem, 3.2vw, 2.1rem);
+    line-height: 1;
+  }
+
+  .selector-excerpt {
+    font-size: 0.94rem;
+    line-height: 1.55;
+    text-transform: none;
+    letter-spacing: 0;
+    color: color-mix(in srgb, var(--text) 90%, transparent);
+  }
+
+  .selector-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
   }
 
   .lead {
@@ -234,14 +424,31 @@
     padding-left: clamp(0.85rem, 2vw, 1.35rem);
   }
 
-  .writing h2,
+  .writing-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.8rem;
+    border-bottom: 2px solid color-mix(in srgb, var(--accent) 62%, var(--line));
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .writing-head h2,
   .gallery h2 {
     margin: 0;
     font-size: clamp(1.1rem, 2.2vw, 1.7rem);
     letter-spacing: 0.02em;
   }
 
-  .writing p {
+  .writing-head p,
+  .gallery-head p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.84rem;
+  }
+
+  .writing > p {
     margin: 0;
     max-width: 88ch;
     line-height: 1.82;
@@ -261,12 +468,6 @@
     border-bottom: 2px solid color-mix(in srgb, var(--accent) 62%, var(--line));
     padding-bottom: 0.5rem;
     margin-bottom: 0.85rem;
-  }
-
-  .gallery-head p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.84rem;
   }
 
   .masonry {
@@ -403,7 +604,17 @@
       margin-top: 0.9rem;
     }
 
+    .archive-index,
     .hero {
+      padding: 0.85rem;
+    }
+
+    .selector-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .selector-card {
+      gap: 0.8rem;
       padding: 0.85rem;
     }
 
@@ -418,6 +629,13 @@
       gap: 0.72rem;
     }
 
+    .writing-head,
+    .gallery-head {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.35rem;
+    }
+
     .masonry {
       columns: 2 160px;
       column-gap: 0.55rem;
@@ -425,12 +643,6 @@
 
     .shot {
       margin-bottom: 0.55rem;
-    }
-
-    .gallery-head {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.35rem;
     }
 
     .lightbox {
