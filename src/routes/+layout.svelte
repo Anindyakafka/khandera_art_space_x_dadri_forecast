@@ -3,27 +3,36 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import '../app.css';
-  import BirdFollower from '$lib/components/BirdFollower.svelte';
 
-  let brandLink: HTMLAnchorElement | undefined;
   const themeOptions = [
     { id: 'meadow', label: 'Meadow', tone: '#b56a4f' },
     { id: 'sunset', label: 'Sunset', tone: '#be4f4a' },
     { id: 'lagoon', label: 'Lagoon', tone: '#2f8d92' }
   ];
-  const navLinks = [
+  const mainNavLinks = [
     { href: '/about', label: 'About' },
     { href: '/dadri-forecast', label: 'Dadri Forecast' },
-    { href: '/dadri-forecast-projects', label: 'Dadri Forecast Projects' },
+    { href: '/projects', label: 'Projects (Khandera)' },
     { href: '/artists', label: 'Artists' },
     { href: '/events', label: 'Events' }
+  ];
+  const dadriNavLinks = [
+    { href: '/dadri-forecast', label: 'Dadri Forecast', exact: true },
+    { href: '/dadri-forecast/about', label: 'About' },
+    { href: '/dadri-forecast/projects', label: 'Projects' },
+    { href: '/dadri-forecast/artists', label: 'Artists' },
+    { href: '/dadri-forecast/events', label: 'Events' }
   ];
   let activeTheme = themeOptions[0].id;
   let mobileMenuOpen = false;
 
-  function isCurrentRoute(href: string, pathname: string) {
+  function isCurrentRoute(href: string, pathname: string, exact = false) {
     if (href === '/') {
       return pathname === '/';
+    }
+
+    if (exact) {
+      return pathname === href;
     }
 
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -41,6 +50,12 @@
 
   $: if ($page.url.pathname) {
     mobileMenuOpen = false;
+  }
+
+  $: isDadriSection = $page.url.pathname === '/dadri-forecast' || $page.url.pathname.startsWith('/dadri-forecast/');
+  $: navLinks = isDadriSection ? dadriNavLinks : mainNavLinks;
+  $: if (typeof document !== 'undefined') {
+    document.documentElement.classList.toggle('dadri-mode', isDadriSection);
   }
 
   onMount(() => {
@@ -72,14 +87,16 @@
   <title>Khandera Art Space</title>
 </svelte:head>
 
-<BirdFollower perchTarget={brandLink} />
+<svelte:body class:dadri-mode={isDadriSection} />
 
-<div class="atmosphere" aria-hidden="true">
-  <span class="shadow-layer branch far"></span>
-  <span class="shadow-layer branch mid"></span>
-  <span class="shadow-layer branch near"></span>
-  <span class="shadow-layer branch near-detail"></span>
-</div>
+{#if !isDadriSection}
+  <div class="atmosphere" aria-hidden="true">
+    <span class="shadow-layer branch far"></span>
+    <span class="shadow-layer branch mid"></span>
+    <span class="shadow-layer branch near"></span>
+    <span class="shadow-layer branch near-detail"></span>
+  </div>
+{/if}
 
 <header class="site-header">
   <div class="brand-row">
@@ -95,52 +112,58 @@
       <span class="sr-only">Menu</span>
     </button>
     <div class="brand-stack">
-      <a class="brand" href="/" bind:this={brandLink}>Khandera Art Space</a>
-      <p class="brand-subtitle">Dadri Forecast Residency</p>
+      <a class="brand" href={isDadriSection ? '/dadri-forecast' : '/'}>{isDadriSection ? 'Dadri Forecast' : 'Khandera Art Space'}</a>
+      {#if !isDadriSection}
+        <p class="brand-subtitle">Dadri Forecast Residency</p>
+      {/if}
     </div>
-    <div class="theme-picker mobile-theme-picker" role="group" aria-label="Select color palette">
-      {#each themeOptions as option}
-        <button
-          type="button"
-          class:active={activeTheme === option.id}
-          on:click={() => applyTheme(option.id)}
-          aria-pressed={activeTheme === option.id}
-          aria-label={`Activate ${option.label} theme`}
-          title={option.label}
-        >
-          <span class="swatch" style={`--swatch-tone: ${option.tone};`} aria-hidden="true"></span>
-          <span class="sr-only">{option.label}</span>
-        </button>
-      {/each}
-    </div>
+    {#if !isDadriSection}
+      <div class="theme-picker mobile-theme-picker" role="group" aria-label="Select color palette">
+        {#each themeOptions as option}
+          <button
+            type="button"
+            class:active={activeTheme === option.id}
+            on:click={() => applyTheme(option.id)}
+            aria-pressed={activeTheme === option.id}
+            aria-label={`Activate ${option.label} theme`}
+            title={option.label}
+          >
+            <span class="swatch" style={`--swatch-tone: ${option.tone};`} aria-hidden="true"></span>
+            <span class="sr-only">{option.label}</span>
+          </button>
+        {/each}
+      </div>
+    {/if}
   </div>
   <div class="header-controls">
     <nav id="main-nav" aria-label="Main navigation" class:open={mobileMenuOpen}>
       {#each navLinks as link}
         <a
           href={link.href}
-          class:current={isCurrentRoute(link.href, $page.url.pathname)}
-          aria-current={isCurrentRoute(link.href, $page.url.pathname) ? 'page' : undefined}
+          class:current={isCurrentRoute(link.href, $page.url.pathname, link.exact)}
+          aria-current={isCurrentRoute(link.href, $page.url.pathname, link.exact) ? 'page' : undefined}
         >
           {link.label}
         </a>
       {/each}
     </nav>
-    <div class="theme-picker desktop-theme-picker" role="group" aria-label="Select color palette">
-      {#each themeOptions as option}
-        <button
-          type="button"
-          class:active={activeTheme === option.id}
-          on:click={() => applyTheme(option.id)}
-          aria-pressed={activeTheme === option.id}
-          aria-label={`Activate ${option.label} theme`}
-          title={option.label}
-        >
-          <span class="swatch" style={`--swatch-tone: ${option.tone};`} aria-hidden="true"></span>
-          <span class="sr-only">{option.label}</span>
-        </button>
-      {/each}
-    </div>
+    {#if !isDadriSection}
+      <div class="theme-picker desktop-theme-picker" role="group" aria-label="Select color palette">
+        {#each themeOptions as option}
+          <button
+            type="button"
+            class:active={activeTheme === option.id}
+            on:click={() => applyTheme(option.id)}
+            aria-pressed={activeTheme === option.id}
+            aria-label={`Activate ${option.label} theme`}
+            title={option.label}
+          >
+            <span class="swatch" style={`--swatch-tone: ${option.tone};`} aria-hidden="true"></span>
+            <span class="sr-only">{option.label}</span>
+          </button>
+        {/each}
+      </div>
+    {/if}
   </div>
 </header>
 
@@ -323,6 +346,36 @@
   nav a.current {
     border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
     background: color-mix(in srgb, var(--surface-solid) 82%, transparent);
+    color: var(--text);
+  }
+
+  :global(body.dadri-mode) .site-header {
+    background: color-mix(in srgb, var(--surface-solid) 94%, transparent);
+    border-bottom-color: color-mix(in srgb, var(--accent) 62%, var(--line));
+    backdrop-filter: blur(4px) saturate(1.2);
+  }
+
+  :global(body.dadri-mode) .brand {
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  :global(body.dadri-mode) .brand-subtitle {
+    color: color-mix(in srgb, var(--muted) 90%, var(--text));
+  }
+
+  :global(body.dadri-mode) nav a {
+    border-radius: 0;
+    border: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.76rem;
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+  }
+
+  :global(body.dadri-mode) nav a.current {
+    border-color: color-mix(in srgb, var(--accent) 80%, var(--line));
+    background: color-mix(in srgb, var(--accent) 30%, var(--surface-solid));
     color: var(--text);
   }
 

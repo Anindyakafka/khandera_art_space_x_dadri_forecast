@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap');
 
 :root {
   --bg: #f4efe4;
@@ -103,6 +103,120 @@ body::before {
     radial-gradient(circle at 3px 3px, rgba(22, 22, 22, 0.14) 0.5px, transparent 0.95px);
   background-size: 2px 2px, 3px 3px, 5px 5px, 7px 7px;
   background-position: 1px 0, 0 0, 1px 2px, 2px 1px;
+}
+
+body.dadri-mode,
+html.dadri-mode body {
+  --bg: #0f0f0f;
+  --bg-deep: #151313;
+  --surface: rgba(20, 16, 16, 0.9);
+  --surface-solid: #1a1515;
+  --text: #f5f0e6;
+  --text-inverse: #0f0f0f;
+  --accent: #8b0000;
+  --accent-2: #5d3fd3;
+  --muted: #797d62;
+  --line: rgba(245, 240, 230, 0.24);
+  --shadow: rgba(0, 0, 0, 0.45);
+  --hero-a: #4a1c1a;
+  --hero-b: #8b0000;
+  --hero-c: #5d3fd3;
+  --grain-opacity: 0.34;
+  background:
+    radial-gradient(circle at 14% 16%, rgba(139, 0, 0, 0.24), transparent 34%),
+    radial-gradient(circle at 88% 84%, rgba(93, 63, 211, 0.18), transparent 42%),
+    linear-gradient(172deg, #0f0f0f 0%, #171313 42%, #101010 100%);
+}
+
+body.dadri-mode::before {
+  opacity: 0.42;
+  mix-blend-mode: screen;
+  background-image:
+    radial-gradient(circle at 0.6px 0.6px, rgba(255, 246, 225, 0.62) 0.42px, transparent 0.8px),
+    radial-gradient(circle at 1px 1px, rgba(143, 0, 0, 0.44) 0.8px, transparent 1px),
+    radial-gradient(circle at 1.8px 1.8px, rgba(40, 30, 30, 0.42) 0.5px, transparent 0.9px),
+    radial-gradient(circle at 2px 2px, rgba(110, 90, 72, 0.3) 0.7px, transparent 1px);
+  background-size: 2px 2px, 4px 4px, 6px 6px, 9px 9px;
+  background-position: 1px 0, 0 0, 1px 2px, 2px 1px;
+}
+
+body.dadri-mode::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 27;
+  opacity: 0.26;
+  mix-blend-mode: multiply;
+  background-image:
+    repeating-linear-gradient(110deg, rgba(0, 0, 0, 0.54) 0 2px, transparent 2px 16px),
+    repeating-linear-gradient(14deg, rgba(139, 0, 0, 0.17) 0 1px, transparent 1px 24px),
+    linear-gradient(180deg, rgba(18, 18, 18, 0.38), rgba(6, 6, 6, 0.6));
+}
+
+body.dadri-mode a,
+body.dadri-mode button {
+  border-radius: 0;
+}
+
+html.dadri-mode h1,
+html.dadri-mode h2,
+html.dadri-mode h3,
+html.dadri-mode h4 {
+  font-family: 'Anton', 'Arial Black', 'Impact', sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+}
+
+html.dadri-mode p,
+html.dadri-mode li {
+  letter-spacing: 0.005em;
+}
+
+html.dadri-mode .section-no {
+  margin: 0;
+  font-family: 'Anton', 'Arial Black', 'Impact', sans-serif;
+  font-size: clamp(2.2rem, 16vw, 10rem);
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  color: color-mix(in srgb, var(--accent) 76%, var(--text));
+  opacity: 0.5;
+  user-select: none;
+}
+
+html.dadri-mode .warning-bar {
+  display: block;
+  margin: 0.9rem 0;
+  padding: 0.4rem 0.6rem;
+  border-top: 1px solid color-mix(in srgb, var(--accent) 80%, var(--line));
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 80%, var(--line));
+  background:
+    repeating-linear-gradient(-32deg, color-mix(in srgb, var(--accent) 78%, transparent) 0 9px, color-mix(in srgb, #0f0f0f 84%, transparent) 9px 18px);
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+html.dadri-mode .distressed-media {
+  position: relative;
+  isolation: isolate;
+}
+
+html.dadri-mode .distressed-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+  background-image:
+    repeating-linear-gradient(121deg, rgba(0, 0, 0, 0.42) 0 2px, transparent 2px 12px),
+    radial-gradient(circle at 18% 22%, rgba(139, 0, 0, 0.24), transparent 46%),
+    radial-gradient(circle at 84% 74%, rgba(93, 63, 211, 0.16), transparent 48%);
 }
 
 p {

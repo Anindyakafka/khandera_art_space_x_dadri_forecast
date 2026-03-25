@@ -79,8 +79,10 @@
 
 <main class="forecast-page">
   <section class="hero">
+    <p class="section-no" aria-hidden="true">06</p>
     <p class="kicker">Dadri Forecast Project Archive</p>
     <h1>{projectTitle}</h1>
+    <span class="warning-bar">Performance Under Heat, Blackout, and Structural Exclusion</span>
     <p class="lead">
       A durational mime process built under heat, blackout, and infrastructural neglect in Khandera, where gesture became a grammar of resistance.
     </p>
@@ -93,6 +95,7 @@
   </section>
 
   <section class="writing" aria-labelledby="writeup-heading">
+    <p class="section-no" aria-hidden="true">07</p>
     <h2 id="writeup-heading">Project Write-up</h2>
 
     <p>
@@ -109,6 +112,7 @@
   </section>
 
   <section class="gallery" aria-labelledby="gallery-heading">
+    <p class="section-no" aria-hidden="true">08</p>
     <div class="gallery-head">
       <h2 id="gallery-heading">Image Sequence</h2>
       <p>{gallery.length} images from the workshop process and performance evening.</p>
@@ -116,7 +120,7 @@
 
     <div class="masonry" role="list">
       {#each gallery as image, index}
-        <figure class="shot" role="listitem" style={`--order: ${index};`}>
+        <figure class="shot distressed-media" role="listitem" style={`--order: ${index};`}>
           <button
             class="shot-button"
             type="button"
@@ -131,9 +135,10 @@
   </section>
 
   <nav class="route-links" aria-label="Other pages">
-    <a href="/dadri-forecast">Dadri Forecast</a>
-    <a href="/artists">Artists Page</a>
-    <a href="/events">Events Page</a>
+    <a href="/dadri-forecast">Dadri Forecast Home</a>
+    <a href="/dadri-forecast/about">About</a>
+    <a href="/dadri-forecast/artists">Artists</a>
+    <a href="/dadri-forecast/events">Events</a>
   </nav>
 </main>
 
@@ -170,8 +175,9 @@
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
     background:
-      radial-gradient(circle at 12% 10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 52%),
-      radial-gradient(circle at 92% 84%, color-mix(in srgb, var(--hero-c) 14%, transparent), transparent 44%);
+      repeating-linear-gradient(120deg, color-mix(in srgb, var(--accent) 14%, transparent) 0 2px, transparent 2px 18px),
+      radial-gradient(circle at 12% 10%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 52%),
+      radial-gradient(circle at 92% 84%, color-mix(in srgb, var(--hero-c) 24%, transparent), transparent 44%);
   }
 
   .kicker {
@@ -185,9 +191,10 @@
 
   h1 {
     margin: 0.4rem 0 0.55rem;
-    font-size: clamp(1.8rem, 6vw, 4rem);
+    font-size: clamp(2.2rem, 9vw, 6rem);
     line-height: 0.98;
     text-wrap: balance;
+    letter-spacing: 0.014em;
   }
 
   .lead {
@@ -208,7 +215,7 @@
   .meta-row p {
     margin: 0;
     border: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
-    border-radius: 999px;
+    border-radius: 0;
     padding: 0.38rem 0.75rem;
     font-size: 0.8rem;
     background: color-mix(in srgb, var(--surface) 86%, transparent);
@@ -251,7 +258,7 @@
     justify-content: space-between;
     align-items: baseline;
     gap: 0.8rem;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 2px solid color-mix(in srgb, var(--accent) 62%, var(--line));
     padding-bottom: 0.5rem;
     margin-bottom: 0.85rem;
   }
@@ -270,7 +277,7 @@
   .shot {
     break-inside: avoid;
     margin: 0 0 0.7rem;
-    border: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line));
     background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
     overflow: hidden;
     opacity: 0;
@@ -294,7 +301,7 @@
     display: block;
     object-fit: cover;
     min-height: 170px;
-    filter: saturate(1.03) contrast(1.02);
+    filter: saturate(0.92) contrast(1.12) brightness(0.94);
   }
 
   .lightbox {
@@ -341,7 +348,7 @@
     font-weight: 700;
     letter-spacing: 0.07em;
     text-transform: uppercase;
-    border-radius: 999px;
+    border-radius: 0;
     padding: 0.45rem 0.72rem;
     cursor: pointer;
   }
@@ -372,7 +379,7 @@
     align-items: center;
     border: 1px solid var(--line);
     padding: 0.5rem 0.78rem;
-    border-radius: 999px;
+    border-radius: 0;
     text-decoration: none;
     font-size: 0.84rem;
     color: color-mix(in srgb, var(--text) 92%, transparent);
