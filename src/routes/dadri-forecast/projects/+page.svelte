@@ -11,8 +11,16 @@
     excerpt: string;
     folder: string;
     galleryFiles: string[];
+    gallery: { src: string; alt: string }[];
     writeup: string[];
   };
+
+  function createGallery(projectTitle: string, folder: string, galleryFiles: string[]) {
+    return galleryFiles.map((fileName) => ({
+      src: encodeURI(`${folder}/${fileName}`),
+      alt: `${projectTitle} documentation ${fileName}`
+    }));
+  }
 
   const projects: Project[] = [
     {
@@ -45,6 +53,27 @@
         'IMG_2850.jpg',
         'IMG_2861.jpg'
       ],
+      gallery: createGallery(
+        'Socho Toh',
+        '/media/images/dadri-forecast/projects/Mime Workshop 2_Socho To_Susanta Das_for_upload',
+        [
+          'DSC_0090.JPG',
+          'DSC_0093.JPG',
+          'DSC_0099.JPG',
+          'DSC_0102.JPG',
+          'DSC_0109.JPG',
+          'DSC_0117.JPG',
+          'IMG_20250605_145424991_HDR.jpg',
+          'IMG_20250608_193524298_HDR.jpg',
+          'IMG_20250608_193815028_HDR.jpg',
+          'IMG_2835.jpg',
+          'IMG_2839.jpg',
+          'IMG_2841.jpg',
+          'IMG_2844.jpg',
+          'IMG_2850.jpg',
+          'IMG_2861.jpg'
+        ]
+      ),
       writeup: [
         'On 8th June, Khandera Art Space hosted a compelling mime performance devised and performed by young participants of Khandera village, who had, over 13 days, endured heat, blackout, and infrastructural neglect during the workshop. Rehearsals were held in fragments of time and shade, amidst failing electricity and dehydrated afternoons. The body did not enact a script; it endured. Each movement registered the ambient conditions of exclusion, where breath replaced speech, and physicality became a grammar of resistance. This was not only creative indulgence but a durational negotiation with exhaustion, where choreography was metabolized into gesture. The performance unfolded not as spectacle, but as a convulsion of withheld expression.',
         'The process was facilitated by Susanta Das, a socio-politically engaged mime practitioner whose methods are grounded in friction, not ease. Through sequences of embodied exploration, rhythmic tension, and non-verbal syntax, the group co-authored a collective vocabulary that activated performance as a tool for cultural intervention and resistance. The performance, Socho Toh, takes its incantatory name from Gorakh Pandey\'s searing poem, a work that fractures the ordinary and reanimates it as a field of latent uprising. The performance dwells in that suspended state between stillness and rupture, charting ecological depletion, bulldozer politics, stigmatization, dislocation, systematic erasure, and slow attrition of dignity.',
@@ -78,6 +107,26 @@
         'DSC_0154.JPG',
         'DSC_0156.JPG'
       ],
+      gallery: createGallery(
+        'What We Ask, When We Stay',
+        '/media/images/dadri-forecast/projects/What We Ask, When We Stay_Open Studio_Subhankar Sengupta',
+        [
+          '370A4516.JPG',
+          '370A4520.JPG',
+          '370A4534.JPG',
+          '370A4541.JPG',
+          '370A4547.JPG',
+          '370A4552.JPG',
+          '370A4563.JPG',
+          '370A4566.JPG',
+          'DSC_0126.JPG',
+          'DSC_0128.JPG',
+          'DSC_0129.JPG',
+          'DSC_0149.JPG',
+          'DSC_0154.JPG',
+          'DSC_0156.JPG'
+        ]
+      ),
       writeup: [
         'Thank you to everyone who joined us for an evening of reflection, participation, and conversation.',
         'Through printmaking, sculpture, projection mapping, and video, Subhankar\'s open studio traced the quiet yet urgent politics of place, rooted in the landscapes around Dadri and NTPC.',
@@ -86,13 +135,7 @@
         'What emerges is not just a narrative, but a shared inquiry into staying, into listening, into reimagining.'
       ]
     }
-  ].map((project) => ({
-    ...project,
-    gallery: project.galleryFiles.map((fileName) => ({
-      src: encodeURI(`${project.folder}/${fileName}`),
-      alt: `${project.title} documentation ${fileName}`
-    }))
-  }));
+  ];
 
   let activeProjectId = projects[0].id;
   let selectedIndex: number | null = null;
@@ -185,60 +228,62 @@
     </div>
   </section>
 
-  <section class="hero">
-    <p class="section-no" aria-hidden="true">07</p>
-    <p class="kicker">{activeProject.format}</p>
-    <h2 class="hero-title">{activeProject.title}</h2>
-    <span class="warning-bar">{activeProject.warning}</span>
-    <p class="lead">{activeProject.lead}</p>
+  {#key activeProject.id}
+    <section class="hero">
+      <p class="section-no" aria-hidden="true">07</p>
+      <p class="kicker">{activeProject.format}</p>
+      <h2 class="hero-title">{activeProject.title}</h2>
+      <span class="warning-bar">{activeProject.warning}</span>
+      <p class="lead">{activeProject.lead}</p>
 
-    <div class="meta-row" role="list" aria-label="Project details">
-      {#if activeProject.date}
-        <p role="listitem"><strong>Date</strong> {activeProject.date}</p>
-      {/if}
-      {#if activeProject.location}
-        <p role="listitem"><strong>Location</strong> {activeProject.location}</p>
-      {/if}
-      {#if activeProject.facilitator}
-        <p role="listitem"><strong>Facilitator</strong> {activeProject.facilitator}</p>
-      {/if}
-    </div>
-  </section>
+      <div class="meta-row" role="list" aria-label="Project details">
+        {#if activeProject.date}
+          <p role="listitem"><strong>Date</strong> {activeProject.date}</p>
+        {/if}
+        {#if activeProject.location}
+          <p role="listitem"><strong>Location</strong> {activeProject.location}</p>
+        {/if}
+        {#if activeProject.facilitator}
+          <p role="listitem"><strong>Facilitator</strong> {activeProject.facilitator}</p>
+        {/if}
+      </div>
+    </section>
 
-  <section class="writing" aria-labelledby="writeup-heading">
-    <p class="section-no" aria-hidden="true">08</p>
-    <div class="writing-head">
-      <h2 id="writeup-heading">Project Write-up</h2>
-      <p>Active file: {activeProject.title}</p>
-    </div>
+    <section class="writing" aria-labelledby="writeup-heading">
+      <p class="section-no" aria-hidden="true">08</p>
+      <div class="writing-head">
+        <h2 id="writeup-heading">Project Write-up</h2>
+        <p>Active file: {activeProject.title}</p>
+      </div>
 
-    {#each activeProject.writeup as paragraph}
-      <p>{paragraph}</p>
-    {/each}
-  </section>
-
-  <section class="gallery" aria-labelledby="gallery-heading">
-    <p class="section-no" aria-hidden="true">09</p>
-    <div class="gallery-head">
-      <h2 id="gallery-heading">Image Sequence</h2>
-      <p>{activeGallery.length} images from {activeProject.title}.</p>
-    </div>
-
-    <div class="masonry" role="list">
-      {#each activeGallery as image, index}
-        <figure class="shot distressed-media" role="listitem" style={`--order: ${index};`}>
-          <button
-            class="shot-button"
-            type="button"
-            on:click={() => openLightbox(index)}
-            aria-label={`Open image ${index + 1} from ${activeProject.title} in fullscreen`}
-          >
-            <img src={image.src} alt={image.alt} loading="lazy" />
-          </button>
-        </figure>
+      {#each activeProject.writeup as paragraph}
+        <p>{paragraph}</p>
       {/each}
-    </div>
-  </section>
+    </section>
+
+    <section class="gallery" aria-labelledby="gallery-heading">
+      <p class="section-no" aria-hidden="true">09</p>
+      <div class="gallery-head">
+        <h2 id="gallery-heading">Image Sequence</h2>
+        <p>{activeGallery.length} images from {activeProject.title}.</p>
+      </div>
+
+      <div class="masonry" role="list">
+        {#each activeGallery as image, index (image.src)}
+          <figure class="shot distressed-media" role="listitem" style={`--order: ${index};`}>
+            <button
+              class="shot-button"
+              type="button"
+              on:click={() => openLightbox(index)}
+              aria-label={`Open image ${index + 1} from ${activeProject.title} in fullscreen`}
+            >
+              <img src={image.src} alt={image.alt} loading="lazy" />
+            </button>
+          </figure>
+        {/each}
+      </div>
+    </section>
+  {/key}
 
   <nav class="route-links" aria-label="Other pages">
     <a href="/dadri-forecast">Dadri Forecast Home</a>
