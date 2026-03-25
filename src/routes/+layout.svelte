@@ -14,8 +14,8 @@
   const navLinks = [
     { href: '/about', label: 'About' },
     { href: '/dadri-forecast', label: 'Dadri Forecast' },
+    { href: '/dadri-forecast-projects', label: 'Dadri Forecast Projects' },
     { href: '/artists', label: 'Artists' },
-    { href: '/projects', label: 'Projects' },
     { href: '/events', label: 'Events' }
   ];
   let activeTheme = themeOptions[0].id;
