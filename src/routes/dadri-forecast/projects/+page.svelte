@@ -1,4 +1,10 @@
 <script lang="ts">
+  type CollaboratingArtist = {
+    name: string;
+    role: string;
+    description?: string;
+  };
+
   type Project = {
     id: string;
     title: string;
@@ -13,6 +19,7 @@
     galleryFiles: string[];
     gallery: { src: string; alt: string }[];
     writeup: string[];
+    collaboratingArtists: CollaboratingArtist[];
   };
 
   function createGallery(projectTitle: string, folder: string, galleryFiles: string[]) {
@@ -78,6 +85,20 @@
         'On 8th June, Khandera Art Space hosted a compelling mime performance devised and performed by young participants of Khandera village, who had, over 13 days, endured heat, blackout, and infrastructural neglect during the workshop. Rehearsals were held in fragments of time and shade, amidst failing electricity and dehydrated afternoons. The body did not enact a script; it endured. Each movement registered the ambient conditions of exclusion, where breath replaced speech, and physicality became a grammar of resistance. This was not only creative indulgence but a durational negotiation with exhaustion, where choreography was metabolized into gesture. The performance unfolded not as spectacle, but as a convulsion of withheld expression.',
         'The process was facilitated by Susanta Das, a socio-politically engaged mime practitioner whose methods are grounded in friction, not ease. Through sequences of embodied exploration, rhythmic tension, and non-verbal syntax, the group co-authored a collective vocabulary that activated performance as a tool for cultural intervention and resistance. The performance, Socho Toh, takes its incantatory name from Gorakh Pandey\'s searing poem, a work that fractures the ordinary and reanimates it as a field of latent uprising. The performance dwells in that suspended state between stillness and rupture, charting ecological depletion, bulldozer politics, stigmatization, dislocation, systematic erasure, and slow attrition of dignity.',
         'Rooted in a location long neglected by the state and stigmatized under structural violence, the village and its people have historically been denied access to equitable resources, cultural capital, and platforms of visibility. Khandera is not a passive container for such acts. It is a landscape disfigured by casteist governance, where dispossession is routine and remembrance is a form of risk.'
+      ],
+      collaboratingArtists: [
+        {
+          name: 'Susanta Das',
+          role: 'Mime Practitioner / Facilitator',
+          description:
+            'A socio-politically engaged mime practitioner whose methods are grounded in friction, not ease. His practice builds collective non-verbal vocabularies for cultural intervention and resistance.'
+        },
+        {
+          name: 'Collective Participants',
+          role: 'Young Artists from Khandera Village',
+          description:
+            'Young participants who, over 13 days, endured heat, blackout, and infrastructural neglect to co-author a performance vocabulary rooted in embodied experience and defiance.'
+        }
       ]
     },
     {
@@ -133,6 +154,14 @@
         'His lecture-performance wove together years of research and creative engagement across West Bengal, Telinipara, Deucha, Harishpur, and Barabani, sites marked by extraction, erasure, resistance, and communal violence.',
         'How do we speak of fractured lands and lives, of communal wounds and systemic violence? And more so, how do we speak of them to both children and adults, without silencing or simplifying?',
         'What emerges is not just a narrative, but a shared inquiry into staying, into listening, into reimagining.'
+      ],
+      collaboratingArtists: [
+        {
+          name: 'Subhankar Sengupta',
+          role: 'Visual Artist / Open Studio Lead',
+          description:
+            'A visual artist whose practice spans printmaking, sculpture, projection mapping, and video. His research connects the micro-politics of everyday life in Dadri with broader histories of extraction, erasure, and communal violence across West Bengal.'
+        }
       ]
     }
   ];
@@ -252,7 +281,7 @@
     <section class="writing" aria-labelledby="writeup-heading">
       <p class="section-no" aria-hidden="true">08</p>
       <div class="writing-head">
-        <h2 id="writeup-heading">Project Write-up</h2>
+        <h2 id="writeup-heading">What? Why?</h2>
         <p>Active file: {activeProject.title}</p>
       </div>
 
@@ -261,8 +290,27 @@
       {/each}
     </section>
 
-    <section class="gallery" aria-labelledby="gallery-heading">
+    <section class="collab-artists" aria-labelledby="collab-heading">
       <p class="section-no" aria-hidden="true">09</p>
+      <div class="collab-head">
+        <h2 id="collab-heading">Collaborating Artists</h2>
+        <p>{activeProject.collaboratingArtists.length} contributor{activeProject.collaboratingArtists.length > 1 ? 's' : ''}</p>
+      </div>
+      <div class="collab-grid">
+        {#each activeProject.collaboratingArtists as artist}
+          <article class="collab-card">
+            <p class="collab-role">{artist.role}</p>
+            <h3 class="collab-name">{artist.name}</h3>
+            {#if artist.description}
+              <p class="collab-desc">{artist.description}</p>
+            {/if}
+          </article>
+        {/each}
+      </div>
+    </section>
+
+    <section class="gallery" aria-labelledby="gallery-heading">
+      <p class="section-no" aria-hidden="true">10</p>
       <div class="gallery-head">
         <h2 id="gallery-heading">Image Sequence</h2>
         <p>{activeGallery.length} images from {activeProject.title}.</p>
@@ -499,6 +547,74 @@
     line-height: 1.82;
     font-size: clamp(0.94rem, 1.4vw, 1.03rem);
     color: color-mix(in srgb, var(--text) 92%, transparent);
+  }
+
+  .collab-artists {
+    margin-top: clamp(1.2rem, 3vw, 2.1rem);
+  }
+
+  .collab-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.8rem;
+    border-bottom: 2px solid color-mix(in srgb, var(--accent) 62%, var(--line));
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .collab-head h2 {
+    margin: 0;
+    font-size: clamp(1.1rem, 2.2vw, 1.7rem);
+    letter-spacing: 0.02em;
+  }
+
+  .collab-head p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.84rem;
+  }
+
+  .collab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 0.7rem;
+  }
+
+  .collab-card {
+    border-top: 2px solid color-mix(in srgb, var(--accent) 44%, var(--line));
+    border-left: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+    padding: 0.9rem 1rem;
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .collab-role {
+    margin: 0;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .collab-name {
+    margin: 0;
+    font-size: clamp(1.1rem, 2.6vw, 1.8rem);
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+
+  .collab-desc {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: color-mix(in srgb, var(--text) 88%, transparent);
+    padding-top: 0.35rem;
+    border-top: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
   }
 
   .gallery {
