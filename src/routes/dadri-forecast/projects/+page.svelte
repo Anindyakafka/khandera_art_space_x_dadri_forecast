@@ -58,8 +58,7 @@
         'IMG_2839.jpg',
         'IMG_2841.jpg',
         'IMG_2844.jpg',
-        'IMG_2850.jpg',
-        'IMG_2861.jpg'
+        'IMG_2850.jpg'
       ],
       gallery: createGallery(
         'Socho Toh',
@@ -78,8 +77,7 @@
           'IMG_2839.jpg',
           'IMG_2841.jpg',
           'IMG_2844.jpg',
-          'IMG_2850.jpg',
-          'IMG_2861.jpg'
+          'IMG_2850.jpg'
         ]
       ),
       writeup: [
@@ -123,7 +121,6 @@
         '370A4547.JPG',
         '370A4552.JPG',
         '370A4563.JPG',
-        '370A4566.JPG',
         'DSC_0126.JPG',
         'DSC_0128.JPG',
         'DSC_0129.JPG',
@@ -142,7 +139,6 @@
           '370A4547.JPG',
           '370A4552.JPG',
           '370A4563.JPG',
-          '370A4566.JPG',
           'DSC_0126.JPG',
           'DSC_0128.JPG',
           'DSC_0129.JPG',
