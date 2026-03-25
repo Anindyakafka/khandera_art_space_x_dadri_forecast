@@ -128,7 +128,7 @@
         ]
       ),
       writeup: [
-        'Thank you to everyone who joined us for an evening of reflection, participation, and conversation.',
+        'Evening of reflection, participation, and conversation.',
         'Through printmaking, sculpture, projection mapping, and video, Subhankar\'s open studio traced the quiet yet urgent politics of place, rooted in the landscapes around Dadri and NTPC.',
         'His lecture-performance wove together years of research and creative engagement across West Bengal, Telinipara, Deucha, Harishpur, and Barabani, sites marked by extraction, erasure, resistance, and communal violence.',
         'How do we speak of fractured lands and lives, of communal wounds and systemic violence? And more so, how do we speak of them to both children and adults, without silencing or simplifying?',
