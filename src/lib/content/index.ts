@@ -58,7 +58,6 @@ export function getEventsContent() {
 export function getDadriForecastContent() {
   return {
     site: siteContent,
-    manifestoMarkdown: manifestoContent,
-    artists: artistsContent
+    manifestoMarkdown: manifestoContent
   };
 }

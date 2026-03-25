@@ -1,23 +1,11 @@
 <script lang="ts">
   import Hero from "$lib/components/Hero.svelte";
-  import ProjectCard from "$lib/components/ProjectCard.svelte";
   export let data;
 </script>
 
 <main class="layout">
   <section class="hero-stage">
     <Hero title={data.site.heroTitle} subtitle={data.site.heroSubtitle} />
-  </section>
-
-  <section id="projects" class="section">
-    <h2>{data.site.home.projectsHeading}</h2>
-    <p>{data.site.home.projectsIntro}</p>
-
-    <div class="grid">
-      {#each data.projects as project}
-        <ProjectCard {project} />
-      {/each}
-    </div>
   </section>
 
   <section class="section" id="manifesto">
@@ -63,13 +51,6 @@
     margin-bottom: 0.65rem;
   }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: clamp(0.68rem, 2vw, 1.05rem);
-    margin-top: 1rem;
-  }
-
   .secondary {
     color: color-mix(in srgb, var(--accent) 84%, var(--text));
     font-weight: 700;
@@ -96,9 +77,5 @@
       font-size: 0.95rem;
     }
 
-    .grid {
-      grid-template-columns: 1fr;
-      gap: 0.62rem;
-    }
   }
 </style>
