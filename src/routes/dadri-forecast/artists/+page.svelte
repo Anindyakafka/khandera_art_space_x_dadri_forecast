@@ -3,17 +3,24 @@
   <p class="kicker">Dadri Forecast</p>
   <h1>Artists</h1>
   <span class="warning-bar">Embodied Practice // Collective Voice // Refusal</span>
-  <p class="intro">This is the Dadri Forecast artists section, intentionally separate from Khandera's main artists page.</p>
 
   <div class="list">
     <article>
-      <h2>Collective Participants</h2>
-      <p>Young participants and collaborators from Khandera village engaging through embodied, process-based performance practices.</p>
+      <p class="role">Visual Artist / Open Studio Lead</p>
+      <h2>Subhankar Sengupta</h2>
+      <p>A visual artist whose practice spans printmaking, sculpture, projection mapping, and video. His research connects the micro-politics of everyday life in Dadri with broader histories of extraction, erasure, and communal violence across West Bengal.</p>
     </article>
 
     <article>
-      <h2>Facilitating Practitioner</h2>
-      <p>Susanta Das, socio-politically engaged mime practitioner, guiding non-verbal research vocabularies for collective action.</p>
+      <p class="role">Mime Practitioner / Facilitator</p>
+      <h2>Susanta Das</h2>
+      <p>A socio-politically engaged mime practitioner whose methods are grounded in friction, not ease. His practice builds collective non-verbal vocabularies for cultural intervention and resistance.</p>
+    </article>
+
+    <article>
+      <p class="role">Young Artists from Khandera Village</p>
+      <h2>Collective Participants</h2>
+      <p>Young participants who, over 13 days, endured heat, blackout, and infrastructural neglect to co-author a performance vocabulary rooted in embodied experience and defiance.</p>
     </article>
   </div>
 </main>
@@ -42,31 +49,46 @@
     letter-spacing: 0.015em;
   }
 
-  .intro {
-    margin: 0 0 0.9rem;
-    color: color-mix(in srgb, var(--text) 90%, transparent);
-  }
-
   .list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 0.7rem;
+    margin-top: 1rem;
   }
 
   article {
     border-top: 2px solid color-mix(in srgb, var(--accent) 44%, var(--line));
-    border-bottom: 1px solid var(--line);
-    padding: 0.9rem 0.5rem;
+    border-left: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+    padding: 0.9rem 1rem;
     background: color-mix(in srgb, var(--surface) 82%, transparent);
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .role {
+    margin: 0;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-weight: 700;
   }
 
   h2 {
-    margin: 0 0 0.4rem;
-    font-size: 1.08rem;
+    margin: 0;
+    font-size: clamp(1.1rem, 2.6vw, 1.8rem);
+    line-height: 1;
+    letter-spacing: 0.01em;
   }
 
-  article p {
+  article p:not(.role) {
     margin: 0;
+    font-size: 0.9rem;
     line-height: 1.7;
+    color: color-mix(in srgb, var(--text) 88%, transparent);
+    padding-top: 0.35rem;
+    border-top: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
   }
 </style>
