@@ -285,12 +285,9 @@
   }
 
   .dadri-brand-logo {
-    width: 1.95rem;
-    height: 1.95rem;
+    width: 2.45rem;
+    height: 2.45rem;
     object-fit: contain;
-    border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
-    background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
-    padding: 0.16rem;
   }
 
   .brand {

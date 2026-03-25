@@ -84,13 +84,10 @@
 
   .hero-logo {
     display: block;
-    width: clamp(3.4rem, 11vw, 6.5rem);
-    height: clamp(3.4rem, 11vw, 6.5rem);
+    width: clamp(4.6rem, 14vw, 8.6rem);
+    height: clamp(4.6rem, 14vw, 8.6rem);
     object-fit: contain;
     margin: 0 auto 0.75rem;
-    border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--line));
-    background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
-    padding: 0.3rem;
   }
 
   h1 {
