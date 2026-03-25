@@ -1,6 +1,8 @@
 <main class="dadri-page">
+  <p class="section-no" aria-hidden="true">04</p>
   <p class="kicker">Dadri Forecast</p>
   <h1>Artists</h1>
+  <span class="warning-bar">Embodied Practice // Collective Voice // Refusal</span>
   <p class="intro">This is the Dadri Forecast artists section, intentionally separate from Khandera's main artists page.</p>
 
   <div class="list">

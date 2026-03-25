@@ -8,8 +8,10 @@
 <main class="dadri-root">
   <section class="title-screen" aria-label="Dadri Forecast introduction">
     <div class="title-center">
+      <p class="section-no" aria-hidden="true">01</p>
       <p class="eyebrow">Dadri Forecast</p>
       <h1>Dadri Forecast</h1>
+      <span class="warning-bar">Militant Research Zone</span>
       <p class="scroll-hint">Scroll to enter the archive</p>
     </div>
   </section>
@@ -17,6 +19,7 @@
   <section class="reveal-panel" aria-label="Dadri Forecast details">
     <article class="doc-root">
       <header class="panel-head">
+        <p class="section-no" aria-hidden="true">02</p>
         <h2>Militant research, collective memory, and grounded futures</h2>
         <p>
           Dadri Forecast has its own archive system. Use the section links below to access Dadri-only about, projects, artists, and events.
@@ -32,6 +35,7 @@
       </nav>
 
       <div class="doc-card">
+        <span class="warning-bar">Archive Text: Counter Narrative Material</span>
         {@html manifestoHtml}
       </div>
     </article>
@@ -120,6 +124,10 @@
     margin: 0 0 0.55rem;
     font-size: clamp(1.5rem, 4.8vw, 3.3rem);
     letter-spacing: 0.015em;
+  }
+
+  .panel-head .section-no {
+    margin-bottom: 0.15rem;
   }
 
   .panel-head p {

@@ -1,6 +1,8 @@
 <main class="dadri-page">
+  <p class="section-no" aria-hidden="true">05</p>
   <p class="kicker">Dadri Forecast</p>
   <h1>Events</h1>
+  <span class="warning-bar">Public Assembly // Tactical Culture // Field Action</span>
   <p class="intro">This events timeline is dedicated to Dadri Forecast activities and is separate from the Khandera events page.</p>
 
   <ol class="timeline">

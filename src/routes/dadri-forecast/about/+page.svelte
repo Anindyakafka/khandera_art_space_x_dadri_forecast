@@ -1,6 +1,8 @@
 <main class="dadri-page">
+  <p class="section-no" aria-hidden="true">03</p>
   <p class="kicker">Dadri Forecast</p>
   <h1>About</h1>
+  <span class="warning-bar">Counter-History // State Neglect // Dispossession</span>
   <p>
     Dadri Forecast is a community-rooted research and cultural practice shaped in response to land loss, ecological damage,
     caste violence, and extractive development.

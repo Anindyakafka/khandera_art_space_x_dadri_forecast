@@ -175,6 +175,50 @@ html.dadri-mode li {
   letter-spacing: 0.005em;
 }
 
+html.dadri-mode .section-no {
+  margin: 0;
+  font-family: 'Anton', 'Arial Black', 'Impact', sans-serif;
+  font-size: clamp(2.2rem, 16vw, 10rem);
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  color: color-mix(in srgb, var(--accent) 76%, var(--text));
+  opacity: 0.5;
+  user-select: none;
+}
+
+html.dadri-mode .warning-bar {
+  display: block;
+  margin: 0.9rem 0;
+  padding: 0.4rem 0.6rem;
+  border-top: 1px solid color-mix(in srgb, var(--accent) 80%, var(--line));
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 80%, var(--line));
+  background:
+    repeating-linear-gradient(-32deg, color-mix(in srgb, var(--accent) 78%, transparent) 0 9px, color-mix(in srgb, #0f0f0f 84%, transparent) 9px 18px);
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+html.dadri-mode .distressed-media {
+  position: relative;
+  isolation: isolate;
+}
+
+html.dadri-mode .distressed-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+  background-image:
+    repeating-linear-gradient(121deg, rgba(0, 0, 0, 0.42) 0 2px, transparent 2px 12px),
+    radial-gradient(circle at 18% 22%, rgba(139, 0, 0, 0.24), transparent 46%),
+    radial-gradient(circle at 84% 74%, rgba(93, 63, 211, 0.16), transparent 48%);
+}
+
 p {
   margin-block: 0 1rem;
 }

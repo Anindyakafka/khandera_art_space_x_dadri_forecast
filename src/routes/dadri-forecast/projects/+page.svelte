@@ -79,8 +79,10 @@
 
 <main class="forecast-page">
   <section class="hero">
+    <p class="section-no" aria-hidden="true">06</p>
     <p class="kicker">Dadri Forecast Project Archive</p>
     <h1>{projectTitle}</h1>
+    <span class="warning-bar">Performance Under Heat, Blackout, and Structural Exclusion</span>
     <p class="lead">
       A durational mime process built under heat, blackout, and infrastructural neglect in Khandera, where gesture became a grammar of resistance.
     </p>
@@ -93,6 +95,7 @@
   </section>
 
   <section class="writing" aria-labelledby="writeup-heading">
+    <p class="section-no" aria-hidden="true">07</p>
     <h2 id="writeup-heading">Project Write-up</h2>
 
     <p>
@@ -109,6 +112,7 @@
   </section>
 
   <section class="gallery" aria-labelledby="gallery-heading">
+    <p class="section-no" aria-hidden="true">08</p>
     <div class="gallery-head">
       <h2 id="gallery-heading">Image Sequence</h2>
       <p>{gallery.length} images from the workshop process and performance evening.</p>
@@ -116,7 +120,7 @@
 
     <div class="masonry" role="list">
       {#each gallery as image, index}
-        <figure class="shot" role="listitem" style={`--order: ${index};`}>
+        <figure class="shot distressed-media" role="listitem" style={`--order: ${index};`}>
           <button
             class="shot-button"
             type="button"
