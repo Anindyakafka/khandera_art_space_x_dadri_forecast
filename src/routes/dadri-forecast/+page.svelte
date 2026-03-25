@@ -55,6 +55,27 @@
   .title-center {
     text-align: center;
     width: min(92vw, 760px);
+    position: relative;
+    padding: 1rem 0;
+  }
+
+  .title-center::before,
+  .title-center::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(78vw, 640px);
+    height: 1px;
+    background: color-mix(in srgb, var(--accent) 72%, var(--line));
+  }
+
+  .title-center::before {
+    top: 0;
+  }
+
+  .title-center::after {
+    bottom: 0;
   }
 
   .eyebrow {
@@ -68,10 +89,11 @@
 
   h1 {
     margin: 0.6rem 0;
-    font-size: clamp(2rem, 11vw, 6.8rem);
+    font-size: clamp(2.2rem, 12vw, 8rem);
     line-height: 0.9;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
+    text-shadow: 0 0 24px color-mix(in srgb, var(--accent) 30%, transparent);
   }
 
   .scroll-hint {
@@ -85,7 +107,7 @@
   .reveal-panel {
     width: min(1100px, 96vw);
     margin: 0 auto;
-    border-top: 1px solid var(--line);
+    border-top: 2px solid color-mix(in srgb, var(--accent) 64%, var(--line));
     padding: clamp(1rem, 3.5vw, 2.6rem) 0 clamp(2rem, 5vw, 4rem);
   }
 
@@ -96,7 +118,8 @@
 
   .panel-head h2 {
     margin: 0 0 0.55rem;
-    font-size: clamp(1.2rem, 3.3vw, 2.2rem);
+    font-size: clamp(1.5rem, 4.8vw, 3.3rem);
+    letter-spacing: 0.015em;
   }
 
   .panel-head p {
@@ -117,11 +140,12 @@
     display: inline-flex;
     align-items: center;
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: 0;
     padding: 0.5rem 0.82rem;
     text-decoration: none;
-    font-size: 0.82rem;
-    letter-spacing: 0.03em;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: color-mix(in srgb, var(--text) 90%, transparent);
     background: color-mix(in srgb, var(--surface) 78%, transparent);
   }
@@ -132,25 +156,26 @@
   }
 
   .doc-card {
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    border-top: 2px solid color-mix(in srgb, var(--accent) 64%, var(--line));
+    border-bottom: 2px solid color-mix(in srgb, var(--line) 90%, transparent);
     padding: 1.2rem 0;
   }
 
   .doc-card :global(h1),
   .doc-card :global(h2),
   .doc-card :global(h3) {
-    letter-spacing: 0.03em;
+    letter-spacing: 0.012em;
     margin-top: 1rem;
     margin-bottom: 0.45rem;
-    font-size: clamp(1.02rem, 2.2vw, 1.6rem);
+    font-size: clamp(1.28rem, 3.4vw, 2.4rem);
   }
 
   .doc-card :global(p),
   .doc-card :global(li) {
     line-height: 1.76;
     color: color-mix(in srgb, var(--text) 92%, transparent);
-    font-size: clamp(0.94rem, 1.35vw, 1.03rem);
+    font-size: clamp(0.95rem, 1.35vw, 1.05rem);
+    max-width: 78ch;
   }
 
   .spacer {

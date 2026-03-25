@@ -17,6 +17,8 @@
     width: min(920px, 95vw);
     margin: clamp(1rem, 3.5vw, 2.5rem) auto;
     color: var(--text);
+    border-top: 2px solid color-mix(in srgb, var(--accent) 62%, var(--line));
+    padding-top: 0.9rem;
   }
 
   .kicker {
@@ -30,7 +32,8 @@
 
   h1 {
     margin: 0.45rem 0 0.75rem;
-    font-size: clamp(1.45rem, 4.8vw, 2.8rem);
+    font-size: clamp(1.8rem, 7vw, 4.2rem);
+    letter-spacing: 0.015em;
   }
 
   .intro {
@@ -42,7 +45,8 @@
     margin: 0;
     padding: 0;
     list-style: none;
-    border-left: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    border-left: 3px solid color-mix(in srgb, var(--accent) 74%, transparent);
+    background: color-mix(in srgb, var(--surface) 75%, transparent);
   }
 
   .timeline li {

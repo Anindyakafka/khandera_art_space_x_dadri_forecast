@@ -187,9 +187,10 @@
 
   h1 {
     margin: 0.4rem 0 0.55rem;
-    font-size: clamp(1.8rem, 6vw, 4rem);
+    font-size: clamp(2.2rem, 9vw, 6rem);
     line-height: 0.98;
     text-wrap: balance;
+    letter-spacing: 0.014em;
   }
 
   .lead {
@@ -253,7 +254,7 @@
     justify-content: space-between;
     align-items: baseline;
     gap: 0.8rem;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 2px solid color-mix(in srgb, var(--accent) 62%, var(--line));
     padding-bottom: 0.5rem;
     margin-bottom: 0.85rem;
   }

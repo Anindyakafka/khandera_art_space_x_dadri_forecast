@@ -16,9 +16,10 @@
     width: min(900px, 95vw);
     margin: clamp(1rem, 3.5vw, 2.5rem) auto;
     color: var(--text);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    border-top: 2px solid color-mix(in srgb, var(--accent) 64%, var(--line));
+    border-bottom: 2px solid color-mix(in srgb, var(--line) 88%, transparent);
     padding: clamp(1rem, 2.4vw, 1.8rem);
+    background: color-mix(in srgb, var(--surface) 86%, transparent);
   }
 
   .kicker {
@@ -32,7 +33,8 @@
 
   h1 {
     margin: 0.45rem 0 0.75rem;
-    font-size: clamp(1.45rem, 4.8vw, 2.8rem);
+    font-size: clamp(1.8rem, 7vw, 4.2rem);
+    letter-spacing: 0.015em;
   }
 
   p {

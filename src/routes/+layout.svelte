@@ -54,6 +54,9 @@
 
   $: isDadriSection = $page.url.pathname === '/dadri-forecast' || $page.url.pathname.startsWith('/dadri-forecast/');
   $: navLinks = isDadriSection ? dadriNavLinks : mainNavLinks;
+  $: if (typeof document !== 'undefined') {
+    document.documentElement.classList.toggle('dadri-mode', isDadriSection);
+  }
 
   onMount(() => {
     const storedTheme = localStorage.getItem('khandera-theme');

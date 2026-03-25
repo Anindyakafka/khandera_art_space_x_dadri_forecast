@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap');
 
 :root {
   --bg: #f4efe4;
@@ -105,7 +105,8 @@ body::before {
   background-position: 1px 0, 0 0, 1px 2px, 2px 1px;
 }
 
-body.dadri-mode {
+body.dadri-mode,
+html.dadri-mode body {
   --bg: #0f0f0f;
   --bg-deep: #151313;
   --surface: rgba(20, 16, 16, 0.9);
@@ -156,6 +157,22 @@ body.dadri-mode::after {
 body.dadri-mode a,
 body.dadri-mode button {
   border-radius: 0;
+}
+
+html.dadri-mode h1,
+html.dadri-mode h2,
+html.dadri-mode h3,
+html.dadri-mode h4 {
+  font-family: 'Anton', 'Arial Black', 'Impact', sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+}
+
+html.dadri-mode p,
+html.dadri-mode li {
+  letter-spacing: 0.005em;
 }
 
 p {
