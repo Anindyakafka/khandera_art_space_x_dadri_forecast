@@ -86,14 +86,20 @@
   <title>Khandera Art Space</title>
 </svelte:head>
 
-<BirdFollower perchTarget={brandLink} />
+<svelte:body class:dadri-mode={isDadriSection} />
 
-<div class="atmosphere" aria-hidden="true">
-  <span class="shadow-layer branch far"></span>
-  <span class="shadow-layer branch mid"></span>
-  <span class="shadow-layer branch near"></span>
-  <span class="shadow-layer branch near-detail"></span>
-</div>
+{#if !isDadriSection}
+  <BirdFollower perchTarget={brandLink} />
+{/if}
+
+{#if !isDadriSection}
+  <div class="atmosphere" aria-hidden="true">
+    <span class="shadow-layer branch far"></span>
+    <span class="shadow-layer branch mid"></span>
+    <span class="shadow-layer branch near"></span>
+    <span class="shadow-layer branch near-detail"></span>
+  </div>
+{/if}
 
 <header class="site-header">
   <div class="brand-row">
@@ -112,21 +118,23 @@
       <a class="brand" href="/" bind:this={brandLink}>Khandera Art Space</a>
       <p class="brand-subtitle">Dadri Forecast Residency</p>
     </div>
-    <div class="theme-picker mobile-theme-picker" role="group" aria-label="Select color palette">
-      {#each themeOptions as option}
-        <button
-          type="button"
-          class:active={activeTheme === option.id}
-          on:click={() => applyTheme(option.id)}
-          aria-pressed={activeTheme === option.id}
-          aria-label={`Activate ${option.label} theme`}
-          title={option.label}
-        >
-          <span class="swatch" style={`--swatch-tone: ${option.tone};`} aria-hidden="true"></span>
-          <span class="sr-only">{option.label}</span>
-        </button>
-      {/each}
-    </div>
+    {#if !isDadriSection}
+      <div class="theme-picker mobile-theme-picker" role="group" aria-label="Select color palette">
+        {#each themeOptions as option}
+          <button
+            type="button"
+            class:active={activeTheme === option.id}
+            on:click={() => applyTheme(option.id)}
+            aria-pressed={activeTheme === option.id}
+            aria-label={`Activate ${option.label} theme`}
+            title={option.label}
+          >
+            <span class="swatch" style={`--swatch-tone: ${option.tone};`} aria-hidden="true"></span>
+            <span class="sr-only">{option.label}</span>
+          </button>
+        {/each}
+      </div>
+    {/if}
   </div>
   <div class="header-controls">
     <nav id="main-nav" aria-label="Main navigation" class:open={mobileMenuOpen}>
@@ -140,21 +148,23 @@
         </a>
       {/each}
     </nav>
-    <div class="theme-picker desktop-theme-picker" role="group" aria-label="Select color palette">
-      {#each themeOptions as option}
-        <button
-          type="button"
-          class:active={activeTheme === option.id}
-          on:click={() => applyTheme(option.id)}
-          aria-pressed={activeTheme === option.id}
-          aria-label={`Activate ${option.label} theme`}
-          title={option.label}
-        >
-          <span class="swatch" style={`--swatch-tone: ${option.tone};`} aria-hidden="true"></span>
-          <span class="sr-only">{option.label}</span>
-        </button>
-      {/each}
-    </div>
+    {#if !isDadriSection}
+      <div class="theme-picker desktop-theme-picker" role="group" aria-label="Select color palette">
+        {#each themeOptions as option}
+          <button
+            type="button"
+            class:active={activeTheme === option.id}
+            on:click={() => applyTheme(option.id)}
+            aria-pressed={activeTheme === option.id}
+            aria-label={`Activate ${option.label} theme`}
+            title={option.label}
+          >
+            <span class="swatch" style={`--swatch-tone: ${option.tone};`} aria-hidden="true"></span>
+            <span class="sr-only">{option.label}</span>
+          </button>
+        {/each}
+      </div>
+    {/if}
   </div>
 </header>
 

@@ -105,6 +105,31 @@ body::before {
   background-position: 1px 0, 0 0, 1px 2px, 2px 1px;
 }
 
+body.dadri-mode {
+  --bg: #f0ece4;
+  --bg-deep: #dbd6cc;
+  --surface: rgba(248, 243, 235, 0.86);
+  --surface-solid: #f7f3ea;
+  --text: #2a2622;
+  --text-inverse: #f7f2e9;
+  --accent: #6f5444;
+  --accent-2: #8a7763;
+  --muted: #6c6259;
+  --line: rgba(50, 42, 35, 0.2);
+  --shadow: rgba(36, 28, 22, 0.16);
+  --hero-a: #e3d9cb;
+  --hero-b: #d7cdc0;
+  --hero-c: #cdc2b2;
+  --grain-opacity: 0;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(201, 187, 169, 0.2), transparent 42%),
+    linear-gradient(164deg, #f4f0e8 0%, #ddd7cc 100%);
+}
+
+body.dadri-mode::before {
+  opacity: 0;
+}
+
 p {
   margin-block: 0 1rem;
 }
