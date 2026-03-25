@@ -35,7 +35,7 @@
       id: 'socho-toh',
       title: 'Socho Toh',
       format: 'Mime Workshop / Collective Performance',
-      date: '8 June',
+      date: '8 June 2025',
       location: 'Khandera village',
       facilitator: 'Susanta Das',
       warning: 'Performance Under Heat, Blackout, and Structural Exclusion',
@@ -81,7 +81,7 @@
         ]
       ),
       writeup: [
-        'On 8th June, Khandera Art Space hosted a compelling mime performance devised and performed by young participants of Khandera village, who had, over 13 days, endured heat, blackout, and infrastructural neglect during the workshop. Rehearsals were held in fragments of time and shade, amidst failing electricity and dehydrated afternoons. The body did not enact a script; it endured. Each movement registered the ambient conditions of exclusion, where breath replaced speech, and physicality became a grammar of resistance. This was not only creative indulgence but a durational negotiation with exhaustion, where choreography was metabolized into gesture. The performance unfolded not as spectacle, but as a convulsion of withheld expression.',
+        'On 8th June 2025, Dadri Forecast hosted a compelling mime performance devised and performed by young participants of Khandera village, who had, over 13 days, endured heat, blackout, and infrastructural neglect during the workshop. Rehearsals were held in fragments of time and shade, amidst failing electricity and dehydrated afternoons. The body did not enact a script; it endured. Each movement registered the ambient conditions of exclusion, where breath replaced speech, and physicality became a grammar of resistance. This was not only creative indulgence but a durational negotiation with exhaustion, where choreography was metabolized into gesture. The performance unfolded not as spectacle, but as a convulsion of withheld expression.',
         'The process was facilitated by Susanta Das, a socio-politically engaged mime practitioner whose methods are grounded in friction, not ease. Through sequences of embodied exploration, rhythmic tension, and non-verbal syntax, the group co-authored a collective vocabulary that activated performance as a tool for cultural intervention and resistance. The performance, Socho Toh, takes its incantatory name from Gorakh Pandey\'s searing poem, a work that fractures the ordinary and reanimates it as a field of latent uprising. The performance dwells in that suspended state between stillness and rupture, charting ecological depletion, bulldozer politics, stigmatization, dislocation, systematic erasure, and slow attrition of dignity.',
         'Rooted in a location long neglected by the state and stigmatized under structural violence, the village and its people have historically been denied access to equitable resources, cultural capital, and platforms of visibility. Khandera is not a passive container for such acts. It is a landscape disfigured by casteist governance, where dispossession is routine and remembrance is a form of risk.'
       ],
