@@ -29,7 +29,55 @@
     src: encodeURI(`${folder}/${fileName}`),
     alt: `Socho To workshop image ${fileName}`
   }));
+
+  let selectedIndex: number | null = null;
+
+  $: selectedImage = selectedIndex === null ? null : gallery[selectedIndex];
+
+  function openLightbox(index: number) {
+    selectedIndex = index;
+  }
+
+  function closeLightbox() {
+    selectedIndex = null;
+  }
+
+  function showNext() {
+    if (selectedIndex === null) {
+      return;
+    }
+
+    selectedIndex = (selectedIndex + 1) % gallery.length;
+  }
+
+  function showPrevious() {
+    if (selectedIndex === null) {
+      return;
+    }
+
+    selectedIndex = (selectedIndex - 1 + gallery.length) % gallery.length;
+  }
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (selectedIndex === null) {
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      closeLightbox();
+    }
+
+    if (event.key === 'ArrowRight') {
+      showNext();
+    }
+
+    if (event.key === 'ArrowLeft') {
+      showPrevious();
+    }
+  }
 </script>
+
+<svelte:window on:keydown={handleKeydown} />
 
 <main class="forecast-page">
   <section class="hero">
@@ -71,7 +119,14 @@
     <div class="masonry" role="list">
       {#each gallery as image, index}
         <figure class="shot" role="listitem" style={`--order: ${index};`}>
-          <img src={image.src} alt={image.alt} loading="lazy" />
+          <button
+            class="shot-button"
+            type="button"
+            on:click={() => openLightbox(index)}
+            aria-label={`Open image ${index + 1} in fullscreen`}
+          >
+            <img src={image.src} alt={image.alt} loading="lazy" />
+          </button>
         </figure>
       {/each}
     </div>
@@ -83,6 +138,27 @@
     <a href={data.site.manifestoDocumentPath} target="_blank" rel="noopener noreferrer">Download manifesto document</a>
   </nav>
 </main>
+
+{#if selectedImage}
+  <section class="lightbox" aria-label="Fullscreen image viewer" on:click={closeLightbox}>
+    <button class="lightbox-close" type="button" on:click|stopPropagation={closeLightbox} aria-label="Close fullscreen view">
+      Close
+    </button>
+
+    <button class="lightbox-nav prev" type="button" on:click|stopPropagation={showPrevious} aria-label="Show previous image">
+      Prev
+    </button>
+
+    <figure class="lightbox-frame" on:click|stopPropagation>
+      <img src={selectedImage.src} alt={selectedImage.alt} />
+      <figcaption>{selectedIndex + 1} / {gallery.length}</figcaption>
+    </figure>
+
+    <button class="lightbox-nav next" type="button" on:click|stopPropagation={showNext} aria-label="Show next image">
+      Next
+    </button>
+  </section>
+{/if}
 
 <style>
   .forecast-page {
@@ -205,12 +281,85 @@
     animation-delay: calc(var(--order) * 22ms);
   }
 
+  .shot-button {
+    display: block;
+    width: 100%;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    cursor: zoom-in;
+  }
+
   .shot img {
     width: 100%;
     display: block;
     object-fit: cover;
     min-height: 170px;
     filter: saturate(1.03) contrast(1.02);
+  }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    background: color-mix(in srgb, #000 88%, transparent);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.8rem;
+    padding: clamp(0.8rem, 2.4vw, 1.4rem);
+  }
+
+  .lightbox-frame {
+    margin: 0;
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+    max-height: 92vh;
+  }
+
+  .lightbox-frame img {
+    max-width: min(92vw, 1400px);
+    max-height: 84vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+  }
+
+  .lightbox-frame figcaption {
+    color: #f4f4f4;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  .lightbox-close,
+  .lightbox-nav {
+    border: 1px solid color-mix(in srgb, #fff 36%, transparent);
+    background: color-mix(in srgb, #111 68%, transparent);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    padding: 0.45rem 0.72rem;
+    cursor: pointer;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.9rem;
+  }
+
+  .lightbox-nav.prev {
+    justify-self: start;
+  }
+
+  .lightbox-nav.next {
+    justify-self: end;
   }
 
   .route-links {
@@ -277,6 +426,38 @@
       flex-direction: column;
       align-items: flex-start;
       gap: 0.35rem;
+    }
+
+    .lightbox {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: 0.55rem;
+      padding: 0.65rem;
+    }
+
+    .lightbox-frame img {
+      max-width: 95vw;
+      max-height: 79vh;
+    }
+
+    .lightbox-nav {
+      position: fixed;
+      bottom: 0.9rem;
+    }
+
+    .lightbox-nav.prev {
+      left: 0.75rem;
+      justify-self: auto;
+    }
+
+    .lightbox-nav.next {
+      right: 0.75rem;
+      justify-self: auto;
+    }
+
+    .lightbox-close {
+      top: 0.65rem;
+      right: 0.65rem;
     }
   }
 </style>
