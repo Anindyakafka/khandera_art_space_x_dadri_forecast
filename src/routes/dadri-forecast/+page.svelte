@@ -2,14 +2,14 @@
   import { renderSimpleMarkdown } from '$lib/content/markdown';
   export let data;
 
+  const dadriLogoPath = '/media/images/dadri-forecast/logo.png';
   const manifestoHtml = renderSimpleMarkdown(data.manifestoMarkdown);
 </script>
 
 <main class="dadri-root">
   <section class="title-screen" aria-label="Dadri Forecast introduction">
     <div class="title-center">
-      <p class="section-no" aria-hidden="true">01</p>
-      <p class="eyebrow">Dadri Forecast</p>
+      <img class="hero-logo" src={dadriLogoPath} alt="Dadri Forecast logo" />
       <h1>Dadri Forecast</h1>
       <span class="warning-bar">Militant Research Zone</span>
       <p class="scroll-hint">Scroll to enter the archive</p>
@@ -82,13 +82,15 @@
     bottom: 0;
   }
 
-  .eyebrow {
-    margin: 0;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--muted);
-    font-weight: 700;
+  .hero-logo {
+    display: block;
+    width: clamp(3.4rem, 11vw, 6.5rem);
+    height: clamp(3.4rem, 11vw, 6.5rem);
+    object-fit: contain;
+    margin: 0 auto 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--line));
+    background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
+    padding: 0.3rem;
   }
 
   h1 {

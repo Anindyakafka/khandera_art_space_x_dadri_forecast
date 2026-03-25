@@ -23,6 +23,7 @@
     { href: '/dadri-forecast/artists', label: 'Artists' },
     { href: '/dadri-forecast/events', label: 'Events' }
   ];
+  const dadriLogoPath = '/media/images/dadri-forecast/logo.png';
   let activeTheme = themeOptions[0].id;
   let mobileMenuOpen = false;
 
@@ -112,7 +113,14 @@
       <span class="sr-only">Menu</span>
     </button>
     <div class="brand-stack">
-      <a class="brand" href={isDadriSection ? '/dadri-forecast' : '/'}>{isDadriSection ? 'Dadri Forecast' : 'Khandera Art Space'}</a>
+      {#if isDadriSection}
+        <a class="dadri-brand-link" href="/dadri-forecast">
+          <img class="dadri-brand-logo" src={dadriLogoPath} alt="Dadri Forecast logo" />
+          <span class="brand">Dadri Forecast</span>
+        </a>
+      {:else}
+        <a class="brand" href="/">Khandera Art Space</a>
+      {/if}
       {#if !isDadriSection}
         <p class="brand-subtitle">Dadri Forecast Residency</p>
       {/if}
@@ -266,6 +274,23 @@
     display: grid;
     align-items: end;
     gap: 0.2rem;
+  }
+
+  .dadri-brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .dadri-brand-logo {
+    width: 1.95rem;
+    height: 1.95rem;
+    object-fit: contain;
+    border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+    background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
+    padding: 0.16rem;
   }
 
   .brand {
