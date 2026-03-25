@@ -3,9 +3,7 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import '../app.css';
-  import BirdFollower from '$lib/components/BirdFollower.svelte';
 
-  let brandLink: HTMLAnchorElement | undefined;
   const themeOptions = [
     { id: 'meadow', label: 'Meadow', tone: '#b56a4f' },
     { id: 'sunset', label: 'Sunset', tone: '#be4f4a' },
@@ -89,10 +87,6 @@
 <svelte:body class:dadri-mode={isDadriSection} />
 
 {#if !isDadriSection}
-  <BirdFollower perchTarget={brandLink} />
-{/if}
-
-{#if !isDadriSection}
   <div class="atmosphere" aria-hidden="true">
     <span class="shadow-layer branch far"></span>
     <span class="shadow-layer branch mid"></span>
@@ -115,7 +109,7 @@
       <span class="sr-only">Menu</span>
     </button>
     <div class="brand-stack">
-      <a class="brand" href="/" bind:this={brandLink}>Khandera Art Space</a>
+      <a class="brand" href="/">Khandera Art Space</a>
       <p class="brand-subtitle">Dadri Forecast Residency</p>
     </div>
     {#if !isDadriSection}
@@ -347,6 +341,36 @@
   nav a.current {
     border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
     background: color-mix(in srgb, var(--surface-solid) 82%, transparent);
+    color: var(--text);
+  }
+
+  :global(body.dadri-mode) .site-header {
+    background: color-mix(in srgb, var(--surface-solid) 94%, transparent);
+    border-bottom-color: color-mix(in srgb, var(--accent) 62%, var(--line));
+    backdrop-filter: blur(4px) saturate(1.2);
+  }
+
+  :global(body.dadri-mode) .brand {
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  :global(body.dadri-mode) .brand-subtitle {
+    color: color-mix(in srgb, var(--muted) 90%, var(--text));
+  }
+
+  :global(body.dadri-mode) nav a {
+    border-radius: 0;
+    border: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.76rem;
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+  }
+
+  :global(body.dadri-mode) nav a.current {
+    border-color: color-mix(in srgb, var(--accent) 80%, var(--line));
+    background: color-mix(in srgb, var(--accent) 30%, var(--surface-solid));
     color: var(--text);
   }
 

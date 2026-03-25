@@ -106,28 +106,56 @@ body::before {
 }
 
 body.dadri-mode {
-  --bg: #f0ece4;
-  --bg-deep: #dbd6cc;
-  --surface: rgba(248, 243, 235, 0.86);
-  --surface-solid: #f7f3ea;
-  --text: #2a2622;
-  --text-inverse: #f7f2e9;
-  --accent: #6f5444;
-  --accent-2: #8a7763;
-  --muted: #6c6259;
-  --line: rgba(50, 42, 35, 0.2);
-  --shadow: rgba(36, 28, 22, 0.16);
-  --hero-a: #e3d9cb;
-  --hero-b: #d7cdc0;
-  --hero-c: #cdc2b2;
-  --grain-opacity: 0;
+  --bg: #0f0f0f;
+  --bg-deep: #151313;
+  --surface: rgba(20, 16, 16, 0.9);
+  --surface-solid: #1a1515;
+  --text: #f5f0e6;
+  --text-inverse: #0f0f0f;
+  --accent: #8b0000;
+  --accent-2: #5d3fd3;
+  --muted: #797d62;
+  --line: rgba(245, 240, 230, 0.24);
+  --shadow: rgba(0, 0, 0, 0.45);
+  --hero-a: #4a1c1a;
+  --hero-b: #8b0000;
+  --hero-c: #5d3fd3;
+  --grain-opacity: 0.34;
   background:
-    radial-gradient(circle at 18% 12%, rgba(201, 187, 169, 0.2), transparent 42%),
-    linear-gradient(164deg, #f4f0e8 0%, #ddd7cc 100%);
+    radial-gradient(circle at 14% 16%, rgba(139, 0, 0, 0.24), transparent 34%),
+    radial-gradient(circle at 88% 84%, rgba(93, 63, 211, 0.18), transparent 42%),
+    linear-gradient(172deg, #0f0f0f 0%, #171313 42%, #101010 100%);
 }
 
 body.dadri-mode::before {
-  opacity: 0;
+  opacity: 0.42;
+  mix-blend-mode: screen;
+  background-image:
+    radial-gradient(circle at 0.6px 0.6px, rgba(255, 246, 225, 0.62) 0.42px, transparent 0.8px),
+    radial-gradient(circle at 1px 1px, rgba(143, 0, 0, 0.44) 0.8px, transparent 1px),
+    radial-gradient(circle at 1.8px 1.8px, rgba(40, 30, 30, 0.42) 0.5px, transparent 0.9px),
+    radial-gradient(circle at 2px 2px, rgba(110, 90, 72, 0.3) 0.7px, transparent 1px);
+  background-size: 2px 2px, 4px 4px, 6px 6px, 9px 9px;
+  background-position: 1px 0, 0 0, 1px 2px, 2px 1px;
+}
+
+body.dadri-mode::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 27;
+  opacity: 0.26;
+  mix-blend-mode: multiply;
+  background-image:
+    repeating-linear-gradient(110deg, rgba(0, 0, 0, 0.54) 0 2px, transparent 2px 16px),
+    repeating-linear-gradient(14deg, rgba(139, 0, 0, 0.17) 0 1px, transparent 1px 24px),
+    linear-gradient(180deg, rgba(18, 18, 18, 0.38), rgba(6, 6, 6, 0.6));
+}
+
+body.dadri-mode a,
+body.dadri-mode button {
+  border-radius: 0;
 }
 
 p {

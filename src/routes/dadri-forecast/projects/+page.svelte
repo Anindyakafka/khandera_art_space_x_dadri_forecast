@@ -171,8 +171,9 @@
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
     background:
-      radial-gradient(circle at 12% 10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 52%),
-      radial-gradient(circle at 92% 84%, color-mix(in srgb, var(--hero-c) 14%, transparent), transparent 44%);
+      repeating-linear-gradient(120deg, color-mix(in srgb, var(--accent) 14%, transparent) 0 2px, transparent 2px 18px),
+      radial-gradient(circle at 12% 10%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 52%),
+      radial-gradient(circle at 92% 84%, color-mix(in srgb, var(--hero-c) 24%, transparent), transparent 44%);
   }
 
   .kicker {
@@ -209,7 +210,7 @@
   .meta-row p {
     margin: 0;
     border: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
-    border-radius: 999px;
+    border-radius: 0;
     padding: 0.38rem 0.75rem;
     font-size: 0.8rem;
     background: color-mix(in srgb, var(--surface) 86%, transparent);
@@ -271,7 +272,7 @@
   .shot {
     break-inside: avoid;
     margin: 0 0 0.7rem;
-    border: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line));
     background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
     overflow: hidden;
     opacity: 0;
@@ -295,7 +296,7 @@
     display: block;
     object-fit: cover;
     min-height: 170px;
-    filter: saturate(1.03) contrast(1.02);
+    filter: saturate(0.92) contrast(1.12) brightness(0.94);
   }
 
   .lightbox {
@@ -342,7 +343,7 @@
     font-weight: 700;
     letter-spacing: 0.07em;
     text-transform: uppercase;
-    border-radius: 999px;
+    border-radius: 0;
     padding: 0.45rem 0.72rem;
     cursor: pointer;
   }
@@ -373,7 +374,7 @@
     align-items: center;
     border: 1px solid var(--line);
     padding: 0.5rem 0.78rem;
-    border-radius: 999px;
+    border-radius: 0;
     text-decoration: none;
     font-size: 0.84rem;
     color: color-mix(in srgb, var(--text) 92%, transparent);
