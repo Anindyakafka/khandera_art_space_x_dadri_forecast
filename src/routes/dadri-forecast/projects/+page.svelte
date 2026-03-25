@@ -2,6 +2,7 @@
   type CollaboratingArtist = {
     name: string;
     role: string;
+    href: string;
     description?: string;
   };
 
@@ -90,12 +91,14 @@
         {
           name: 'Susanta Das',
           role: 'Mime Practitioner / Facilitator',
+          href: '/dadri-forecast/artists/susanta-das',
           description:
             'A socio-politically engaged mime practitioner whose methods are grounded in friction, not ease. His practice builds collective non-verbal vocabularies for cultural intervention and resistance.'
         },
         {
           name: 'Collective Participants',
           role: 'Young Artists from Khandera Village',
+          href: '/dadri-forecast/artists/collective-participants',
           description:
             'Young participants who, over 13 days, endured heat, blackout, and infrastructural neglect to co-author a performance vocabulary rooted in embodied experience and defiance.'
         }
@@ -159,6 +162,7 @@
         {
           name: 'Subhankar Sengupta',
           role: 'Visual Artist / Open Studio Lead',
+          href: '/dadri-forecast/artists/subhankar-sengupta',
           description:
             'A visual artist whose practice spans printmaking, sculpture, projection mapping, and video. His research connects the micro-politics of everyday life in Dadri with broader histories of extraction, erasure, and communal violence across West Bengal.'
         }
@@ -298,13 +302,13 @@
       </div>
       <div class="collab-grid">
         {#each activeProject.collaboratingArtists as artist}
-          <article class="collab-card">
+          <a class="collab-card" href={artist.href}>
             <p class="collab-role">{artist.role}</p>
             <h3 class="collab-name">{artist.name}</h3>
             {#if artist.description}
               <p class="collab-desc">{artist.description}</p>
             {/if}
-          </article>
+          </a>
         {/each}
       </div>
     </section>
@@ -590,6 +594,15 @@
     background: color-mix(in srgb, var(--surface) 82%, transparent);
     display: grid;
     gap: 0.4rem;
+    color: inherit;
+    text-decoration: none;
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  }
+
+  .collab-card:hover {
+    transform: translateY(-2px);
+    border-top-color: color-mix(in srgb, var(--accent) 70%, var(--line));
+    background: color-mix(in srgb, var(--surface-solid) 86%, transparent);
   }
 
   .collab-role {

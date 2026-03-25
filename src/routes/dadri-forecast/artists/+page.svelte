@@ -5,23 +5,23 @@
   <span class="warning-bar">Embodied Practice // Collective Voice // Refusal</span>
 
   <div class="list">
-    <article>
+    <a class="artist-card" href="/dadri-forecast/artists/subhankar-sengupta">
       <p class="role">Visual Artist / Open Studio Lead</p>
       <h2>Subhankar Sengupta</h2>
       <p>A visual artist whose practice spans printmaking, sculpture, projection mapping, and video. His research connects the micro-politics of everyday life in Dadri with broader histories of extraction, erasure, and communal violence across West Bengal.</p>
-    </article>
+    </a>
 
-    <article>
+    <a class="artist-card" href="/dadri-forecast/artists/susanta-das">
       <p class="role">Mime Practitioner / Facilitator</p>
       <h2>Susanta Das</h2>
       <p>A socio-politically engaged mime practitioner whose methods are grounded in friction, not ease. His practice builds collective non-verbal vocabularies for cultural intervention and resistance.</p>
-    </article>
+    </a>
 
-    <article>
+    <a class="artist-card" href="/dadri-forecast/artists/collective-participants">
       <p class="role">Young Artists from Khandera Village</p>
       <h2>Collective Participants</h2>
       <p>Young participants who, over 13 days, endured heat, blackout, and infrastructural neglect to co-author a performance vocabulary rooted in embodied experience and defiance.</p>
-    </article>
+    </a>
   </div>
 </main>
 
@@ -56,7 +56,7 @@
     margin-top: 1rem;
   }
 
-  article {
+  .artist-card {
     border-top: 2px solid color-mix(in srgb, var(--accent) 44%, var(--line));
     border-left: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
     border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
@@ -65,6 +65,15 @@
     background: color-mix(in srgb, var(--surface) 82%, transparent);
     display: grid;
     gap: 0.4rem;
+    color: inherit;
+    text-decoration: none;
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  }
+
+  .artist-card:hover {
+    transform: translateY(-2px);
+    border-top-color: color-mix(in srgb, var(--accent) 70%, var(--line));
+    background: color-mix(in srgb, var(--surface-solid) 86%, transparent);
   }
 
   .role {
@@ -83,7 +92,7 @@
     letter-spacing: 0.01em;
   }
 
-  article p:not(.role) {
+  .artist-card p:not(.role) {
     margin: 0;
     font-size: 0.9rem;
     line-height: 1.7;
