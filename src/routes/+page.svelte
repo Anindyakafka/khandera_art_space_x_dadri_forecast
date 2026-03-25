@@ -12,6 +12,11 @@
     <h2>{data.site.home.manifestoHeading}</h2>
     <p>{data.site.home.manifestoExcerpt}</p>
     <a class="secondary" href="/dadri-forecast">{data.site.home.manifestoLinkLabel}</a>
+
+    <div class="split-links" aria-label="Explore dedicated pages">
+      <a class="chip-link" href="/artists">Artists Page</a>
+      <a class="chip-link" href="/projects">Projects Page</a>
+    </div>
   </section>
 </main>
 
@@ -54,6 +59,31 @@
     padding-bottom: 0.12rem;
   }
 
+  .split-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+
+  .chip-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    text-decoration: none;
+    color: color-mix(in srgb, var(--text) 92%, transparent);
+    font-size: 0.84rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+
+  .chip-link:hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    color: color-mix(in srgb, var(--accent) 78%, var(--text));
+  }
+
   @media (max-width: 640px) {
     .hero-stage {
       min-height: calc(100svh - 6.2rem);
@@ -70,6 +100,11 @@
 
     .section p {
       font-size: 0.95rem;
+    }
+
+    .split-links {
+      margin-top: 0.85rem;
+      gap: 0.5rem;
     }
 
   }

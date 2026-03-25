@@ -15,8 +15,7 @@ export const manifestoContent = manifestoMarkdown;
 
 export function getHomeContent() {
   return {
-    site: siteContent,
-    projects: projectsContent
+    site: siteContent
   };
 }
 
