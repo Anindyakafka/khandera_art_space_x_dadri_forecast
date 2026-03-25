@@ -10,7 +10,7 @@
   <section class="title-screen" aria-label="Dadri Forecast introduction">
     <div class="title-center">
       <img class="hero-logo" src={dadriLogoPath} alt="Dadri Forecast logo" />
-      <h1>Dadri Forecast</h1>
+      <h1>दादरी Forecast</h1>
       <span class="warning-bar">Militant Research Zone</span>
       <p class="scroll-hint">Scroll to enter the archive</p>
     </div>
