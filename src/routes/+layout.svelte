@@ -112,8 +112,10 @@
       <span class="sr-only">Menu</span>
     </button>
     <div class="brand-stack">
-      <a class="brand" href="/">Khandera Art Space</a>
-      <p class="brand-subtitle">Dadri Forecast Residency</p>
+      <a class="brand" href={isDadriSection ? '/dadri-forecast' : '/'}>{isDadriSection ? 'Dadri Forecast' : 'Khandera Art Space'}</a>
+      {#if !isDadriSection}
+        <p class="brand-subtitle">Dadri Forecast Residency</p>
+      {/if}
     </div>
     {#if !isDadriSection}
       <div class="theme-picker mobile-theme-picker" role="group" aria-label="Select color palette">
