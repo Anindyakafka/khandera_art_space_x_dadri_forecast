@@ -36,11 +36,6 @@
     padding: 0 0.3rem;
   }
 
-  .section + .section {
-    border-top: 1px solid var(--line);
-    padding-top: 1.5rem;
-  }
-
   .section p {
     max-width: 68ch;
     color: color-mix(in srgb, var(--text) 90%, transparent);

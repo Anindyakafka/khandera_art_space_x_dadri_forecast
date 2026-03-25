@@ -14,7 +14,7 @@
     <p class="eyebrow">Experimental Collective Studio</p>
     <h1 class:highlighted={highlighted}>{title}</h1>
     <p class="subtitle">{subtitle}</p>
-    <a class="cta" href="#projects">View Featured Projects</a>
+    <a class="cta" href="/projects">View Featured Projects</a>
   </div>
 </section>
 
