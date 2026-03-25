@@ -8,16 +8,6 @@
     <Hero title={data.site.heroTitle} subtitle={data.site.heroSubtitle} />
   </section>
 
-  <section class="section" id="manifesto">
-    <h2>{data.site.home.manifestoHeading}</h2>
-    <p>{data.site.home.manifestoExcerpt}</p>
-    <a class="secondary" href="/dadri-forecast">{data.site.home.manifestoLinkLabel}</a>
-
-    <div class="split-links" aria-label="Explore dedicated pages">
-      <a class="chip-link" href="/artists">Artists Page</a>
-      <a class="chip-link" href="/projects">Projects Page</a>
-    </div>
-  </section>
 </main>
 
 <style>
