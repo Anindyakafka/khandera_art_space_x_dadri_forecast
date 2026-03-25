@@ -11,19 +11,30 @@
     { id: 'sunset', label: 'Sunset', tone: '#be4f4a' },
     { id: 'lagoon', label: 'Lagoon', tone: '#2f8d92' }
   ];
-  const navLinks = [
+  const mainNavLinks = [
     { href: '/about', label: 'About' },
     { href: '/dadri-forecast', label: 'Dadri Forecast' },
-    { href: '/dadri-forecast-projects', label: 'Dadri Forecast Projects' },
+    { href: '/projects', label: 'Projects (Khandera)' },
     { href: '/artists', label: 'Artists' },
     { href: '/events', label: 'Events' }
+  ];
+  const dadriNavLinks = [
+    { href: '/dadri-forecast', label: 'Dadri Forecast', exact: true },
+    { href: '/dadri-forecast/about', label: 'About' },
+    { href: '/dadri-forecast/projects', label: 'Projects' },
+    { href: '/dadri-forecast/artists', label: 'Artists' },
+    { href: '/dadri-forecast/events', label: 'Events' }
   ];
   let activeTheme = themeOptions[0].id;
   let mobileMenuOpen = false;
 
-  function isCurrentRoute(href: string, pathname: string) {
+  function isCurrentRoute(href: string, pathname: string, exact = false) {
     if (href === '/') {
       return pathname === '/';
+    }
+
+    if (exact) {
+      return pathname === href;
     }
 
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -42,6 +53,9 @@
   $: if ($page.url.pathname) {
     mobileMenuOpen = false;
   }
+
+  $: isDadriSection = $page.url.pathname === '/dadri-forecast' || $page.url.pathname.startsWith('/dadri-forecast/');
+  $: navLinks = isDadriSection ? dadriNavLinks : mainNavLinks;
 
   onMount(() => {
     const storedTheme = localStorage.getItem('khandera-theme');
@@ -119,8 +133,8 @@
       {#each navLinks as link}
         <a
           href={link.href}
-          class:current={isCurrentRoute(link.href, $page.url.pathname)}
-          aria-current={isCurrentRoute(link.href, $page.url.pathname) ? 'page' : undefined}
+          class:current={isCurrentRoute(link.href, $page.url.pathname, link.exact)}
+          aria-current={isCurrentRoute(link.href, $page.url.pathname, link.exact) ? 'page' : undefined}
         >
           {link.label}
         </a>

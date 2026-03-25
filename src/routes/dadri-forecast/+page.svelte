@@ -12,15 +12,17 @@
     <p>
       This page holds the larger context of Dadri Forecast. Project-specific documentation now lives on a separate dedicated page.
     </p>
-    <a class="project-cta" href="/dadri-forecast-projects">Open Dadri Forecast Projects</a>
+    <a class="project-cta" href="/dadri-forecast/projects">Open Dadri Forecast Projects</a>
   </section>
 
   <article class="doc-root">
     <div class="doc-card">
       {@html manifestoHtml}
       <nav class="route-links" aria-label="Dadri Forecast navigation">
-        <a href="/dadri-forecast-projects">Dadri Forecast Projects</a>
-        <a href="/artists">Artists Page</a>
+        <a href="/dadri-forecast/about">About</a>
+        <a href="/dadri-forecast/projects">Projects</a>
+        <a href="/dadri-forecast/artists">Artists</a>
+        <a href="/dadri-forecast/events">Events</a>
         <a href={data.site.manifestoDocumentPath} target="_blank" rel="noopener noreferrer">Download manifesto document</a>
       </nav>
     </div>

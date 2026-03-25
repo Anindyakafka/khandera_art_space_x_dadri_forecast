@@ -131,9 +131,10 @@
   </section>
 
   <nav class="route-links" aria-label="Other pages">
-    <a href="/dadri-forecast">Dadri Forecast</a>
-    <a href="/artists">Artists Page</a>
-    <a href="/events">Events Page</a>
+    <a href="/dadri-forecast">Dadri Forecast Home</a>
+    <a href="/dadri-forecast/about">About</a>
+    <a href="/dadri-forecast/artists">Artists</a>
+    <a href="/dadri-forecast/events">Events</a>
   </nav>
 </main>
 
