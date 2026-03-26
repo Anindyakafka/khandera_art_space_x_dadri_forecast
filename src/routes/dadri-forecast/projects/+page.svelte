@@ -176,6 +176,20 @@
   $: activeGallery = activeProject?.gallery ?? [];
   $: selectedImage = selectedIndex === null ? null : activeGallery[selectedIndex];
 
+  function scrollToDetail() {
+    if (!detailRoot || typeof window === 'undefined') {
+      return;
+    }
+
+    const headerOffset = window.innerWidth <= 900 ? 116 : 104;
+    const top = detailRoot.getBoundingClientRect().top + window.scrollY - headerOffset;
+
+    window.scrollTo({
+      top: Math.max(top, 0),
+      behavior: 'smooth'
+    });
+  }
+
   async function selectProject(projectId: string) {
     if (activeProjectId === projectId) {
       activeProjectId = null;
@@ -187,7 +201,7 @@
     selectedIndex = null;
 
     await tick();
-    detailRoot?.scrollIntoView({ block: 'start', behavior: 'auto' });
+    scrollToDetail();
   }
 
   function openLightbox(index: number) {
@@ -499,6 +513,12 @@
     border-top: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
   }
 
+  .project-detail {
+    margin-top: clamp(1.35rem, 3vw, 2rem);
+    scroll-margin-top: 7.8rem;
+    animation: detail-drift-in 320ms ease-out;
+  }
+
   .lead {
     margin: 0;
     max-width: 74ch;
@@ -787,6 +807,18 @@
     }
   }
 
+  @keyframes detail-drift-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @media (max-width: 760px) {
     .forecast-page {
       width: min(96vw, 760px);
@@ -810,6 +842,10 @@
     .lead {
       font-size: 0.96rem;
       line-height: 1.58;
+    }
+
+    .project-detail {
+      scroll-margin-top: 7rem;
     }
 
     .writing {
