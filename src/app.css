@@ -129,15 +129,20 @@ html.dadri-mode body {
 }
 
 body.dadri-mode::before {
-  opacity: 0.42;
-  mix-blend-mode: screen;
+  opacity: 0.2;
+  mix-blend-mode: soft-light;
   background-image:
-    radial-gradient(circle at 0.6px 0.6px, rgba(255, 246, 225, 0.62) 0.42px, transparent 0.8px),
-    radial-gradient(circle at 1px 1px, rgba(143, 0, 0, 0.44) 0.8px, transparent 1px),
-    radial-gradient(circle at 1.8px 1.8px, rgba(40, 30, 30, 0.42) 0.5px, transparent 0.9px),
-    radial-gradient(circle at 2px 2px, rgba(110, 90, 72, 0.3) 0.7px, transparent 1px);
-  background-size: 2px 2px, 4px 4px, 6px 6px, 9px 9px;
-  background-position: 1px 0, 0 0, 1px 2px, 2px 1px;
+    radial-gradient(circle at 18% 22%, rgba(245, 240, 230, 0.16) 0 6%, transparent 22%),
+    radial-gradient(circle at 78% 74%, rgba(139, 0, 0, 0.2) 0 8%, transparent 24%),
+    radial-gradient(circle at 58% 34%, rgba(93, 63, 211, 0.11) 0 7%, transparent 20%),
+    radial-gradient(circle at 34% 66%, rgba(12, 10, 10, 0.46) 0 10%, transparent 28%),
+    repeating-radial-gradient(circle at 24% 28%, rgba(245, 240, 230, 0.05) 0 1.2%, transparent 1.2% 5.4%),
+    repeating-radial-gradient(circle at 72% 62%, rgba(0, 0, 0, 0.16) 0 0.9%, transparent 0.9% 4.8%),
+    repeating-radial-gradient(circle at 54% 52%, rgba(139, 0, 0, 0.06) 0 0.8%, transparent 0.8% 6%);
+  background-size: 170% 170%, 155% 155%, 185% 185%, 160% 160%, 125% 125%, 140% 140%, 150% 150%;
+  background-position: 0% 0%, 100% 100%, 52% 48%, 24% 76%, 16% 24%, 70% 64%, 46% 54%;
+  filter: contrast(115%) saturate(86%);
+  animation: dadri-fractal-drift 26s ease-in-out infinite alternate;
 }
 
 body.dadri-mode::after {
@@ -219,6 +224,23 @@ html.dadri-mode .distressed-media::after {
     radial-gradient(circle at 84% 74%, rgba(93, 63, 211, 0.16), transparent 48%);
 }
 
+@keyframes dadri-fractal-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.02);
+    background-position: 0% 0%, 100% 100%, 52% 48%, 24% 76%, 16% 24%, 70% 64%, 46% 54%;
+  }
+
+  50% {
+    transform: translate3d(-0.8%, 0.6%, 0) scale(1.045);
+    background-position: 8% 6%, 94% 92%, 48% 54%, 30% 68%, 22% 34%, 64% 58%, 52% 48%;
+  }
+
+  100% {
+    transform: translate3d(1%, -0.7%, 0) scale(1.035);
+    background-position: 14% 10%, 88% 86%, 56% 44%, 20% 80%, 12% 20%, 74% 66%, 42% 58%;
+  }
+}
+
 p {
   margin-block: 0 1rem;
 }
@@ -276,5 +298,11 @@ main, section {
 
   body {
     line-height: 1.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dadri-mode::before {
+    animation: none;
   }
 }
