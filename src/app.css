@@ -129,20 +129,23 @@ html.dadri-mode body {
 }
 
 body.dadri-mode::before {
-  opacity: 0.2;
-  mix-blend-mode: soft-light;
+  opacity: 0.46;
+  mix-blend-mode: overlay;
   background-image:
-    radial-gradient(circle at 18% 22%, rgba(245, 240, 230, 0.16) 0 6%, transparent 22%),
-    radial-gradient(circle at 78% 74%, rgba(139, 0, 0, 0.2) 0 8%, transparent 24%),
-    radial-gradient(circle at 58% 34%, rgba(93, 63, 211, 0.11) 0 7%, transparent 20%),
-    radial-gradient(circle at 34% 66%, rgba(12, 10, 10, 0.46) 0 10%, transparent 28%),
-    repeating-radial-gradient(circle at 24% 28%, rgba(245, 240, 230, 0.05) 0 1.2%, transparent 1.2% 5.4%),
-    repeating-radial-gradient(circle at 72% 62%, rgba(0, 0, 0, 0.16) 0 0.9%, transparent 0.9% 4.8%),
-    repeating-radial-gradient(circle at 54% 52%, rgba(139, 0, 0, 0.06) 0 0.8%, transparent 0.8% 6%);
-  background-size: 170% 170%, 155% 155%, 185% 185%, 160% 160%, 125% 125%, 140% 140%, 150% 150%;
+    radial-gradient(circle at 18% 22%, rgba(245, 240, 230, 0.2) 0 6%, transparent 18%),
+    radial-gradient(circle at 78% 74%, rgba(139, 0, 0, 0.3) 0 8%, transparent 20%),
+    radial-gradient(circle at 58% 34%, rgba(93, 63, 211, 0.16) 0 7%, transparent 18%),
+    radial-gradient(circle at 34% 66%, rgba(12, 10, 10, 0.56) 0 10%, transparent 24%),
+    repeating-radial-gradient(circle at 24% 28%, rgba(245, 240, 230, 0.08) 0 0.9%, transparent 0.9% 3.6%),
+    repeating-radial-gradient(circle at 72% 62%, rgba(0, 0, 0, 0.24) 0 0.8%, transparent 0.8% 3.4%),
+    repeating-radial-gradient(circle at 54% 52%, rgba(139, 0, 0, 0.1) 0 0.7%, transparent 0.7% 4.2%);
+  background-size: 140% 140%, 132% 132%, 148% 148%, 138% 138%, 94% 94%, 102% 102%, 110% 110%;
   background-position: 0% 0%, 100% 100%, 52% 48%, 24% 76%, 16% 24%, 70% 64%, 46% 54%;
-  filter: contrast(115%) saturate(86%);
-  animation: dadri-fractal-drift 26s ease-in-out infinite alternate;
+  filter: contrast(168%) saturate(118%) brightness(1.08);
+  will-change: transform, background-position, opacity, filter;
+  animation:
+    dadri-fractal-drift 12s linear infinite,
+    dadri-fractal-flicker 1450ms steps(4, end) infinite;
 }
 
 body.dadri-mode::after {
@@ -226,18 +229,45 @@ html.dadri-mode .distressed-media::after {
 
 @keyframes dadri-fractal-drift {
   0% {
-    transform: translate3d(0, 0, 0) scale(1.02);
+    transform: translate3d(0, 0, 0) scale(1.04);
     background-position: 0% 0%, 100% 100%, 52% 48%, 24% 76%, 16% 24%, 70% 64%, 46% 54%;
   }
 
   50% {
-    transform: translate3d(-0.8%, 0.6%, 0) scale(1.045);
-    background-position: 8% 6%, 94% 92%, 48% 54%, 30% 68%, 22% 34%, 64% 58%, 52% 48%;
+    transform: translate3d(-1.8%, 1.4%, 0) scale(1.08);
+    background-position: 14% 11%, 88% 84%, 44% 58%, 32% 66%, 27% 39%, 58% 54%, 58% 44%;
   }
 
   100% {
-    transform: translate3d(1%, -0.7%, 0) scale(1.035);
-    background-position: 14% 10%, 88% 86%, 56% 44%, 20% 80%, 12% 20%, 74% 66%, 42% 58%;
+    transform: translate3d(2%, -1.5%, 0) scale(1.06);
+    background-position: 24% 18%, 78% 72%, 62% 38%, 16% 84%, 10% 16%, 82% 70%, 36% 62%;
+  }
+}
+
+@keyframes dadri-fractal-flicker {
+  0% {
+    opacity: 0.38;
+    filter: contrast(150%) saturate(110%) brightness(1.02);
+  }
+
+  25% {
+    opacity: 0.5;
+    filter: contrast(178%) saturate(120%) brightness(1.12);
+  }
+
+  50% {
+    opacity: 0.44;
+    filter: contrast(168%) saturate(116%) brightness(1.07);
+  }
+
+  75% {
+    opacity: 0.54;
+    filter: contrast(186%) saturate(125%) brightness(1.14);
+  }
+
+  100% {
+    opacity: 0.42;
+    filter: contrast(160%) saturate(112%) brightness(1.04);
   }
 }
 
@@ -304,5 +334,6 @@ main, section {
 @media (prefers-reduced-motion: reduce) {
   body.dadri-mode::before {
     animation: none;
+    opacity: 0.34;
   }
 }
