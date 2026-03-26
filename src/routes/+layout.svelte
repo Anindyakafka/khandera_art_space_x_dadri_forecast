@@ -107,7 +107,7 @@
           <feTurbulence
             id="dadriNoiseA"
             type="fractalNoise"
-            baseFrequency="0.78 0.84"
+            baseFrequency="0.82 0.9"
             numOctaves="4"
             seed="23"
             stitchTiles="stitch"
@@ -115,37 +115,47 @@
           >
             <animate
               attributeName="baseFrequency"
-              values="0.78 0.84;0.96 1.02;0.82 0.9;0.78 0.84"
-              dur="6.8s"
+              calcMode="linear"
+              keyTimes="0;0.09;0.22;0.37;0.51;0.66;0.79;0.91;1"
+              values="0.82 0.9;1.24 1.46;0.76 1.18;1.38 0.88;0.94 1.54;1.42 1.12;0.88 1.28;1.3 0.82;0.82 0.9"
+              dur="2.9s"
               repeatCount="indefinite"
             />
           </feTurbulence>
           <feTurbulence
             id="dadriNoiseB"
             type="fractalNoise"
-            baseFrequency="1.35 1.1"
-            numOctaves="2"
+            baseFrequency="1.28 1.36"
+            numOctaves="3"
             seed="41"
             stitchTiles="stitch"
             result="noiseB"
           >
             <animate
               attributeName="baseFrequency"
-              values="1.35 1.1;1.65 1.4;1.28 1.02;1.35 1.1"
-              dur="2.6s"
+              calcMode="linear"
+              keyTimes="0;0.13;0.29;0.44;0.58;0.73;0.87;1"
+              values="1.28 1.36;1.72 1.96;1.06 1.58;1.84 1.18;1.2 2.04;1.66 1.24;1.02 1.72;1.28 1.36"
+              dur="1.7s"
               repeatCount="indefinite"
             />
           </feTurbulence>
-          <feBlend in="noiseA" in2="noiseB" mode="multiply" result="noise" />
+          <feBlend in="noiseA" in2="noiseB" mode="multiply" result="noiseRaw" />
           <feColorMatrix
-            in="noise"
+            in="noiseRaw"
             type="matrix"
-            values="1 0 0 0 0
-                    0 0.8 0 0 0
-                    0 0 1.2 0 0
+            values="0.33 0.33 0.33 0 0
+                    0.33 0.33 0.33 0 0
+                    0.33 0.33 0.33 0 0
                     0 0 0 1 0"
-            result="tintedNoise"
+            result="monoNoise"
           />
+          <feComponentTransfer in="monoNoise" result="sootNoise">
+            <feFuncR type="gamma" amplitude="0.62" exponent="1.8" offset="0" />
+            <feFuncG type="gamma" amplitude="0.62" exponent="1.8" offset="0" />
+            <feFuncB type="gamma" amplitude="0.62" exponent="1.8" offset="0" />
+            <feFuncA type="table" tableValues="0 0.32 0.68 0.9" />
+          </feComponentTransfer>
         </filter>
       </defs>
       <rect x="0" y="0" width="100" height="100" filter="url(#dadriFractalFilter)" />
@@ -252,10 +262,10 @@
     position: fixed;
     inset: -10% -8%;
     pointer-events: none;
-    z-index: 26;
-    opacity: 0.48;
-    mix-blend-mode: overlay;
-    filter: contrast(210%) saturate(122%) brightness(1.07);
+    z-index: 0;
+    opacity: 0.56;
+    mix-blend-mode: multiply;
+    filter: contrast(240%) saturate(0%) brightness(0.72);
     will-change: opacity;
   }
 
@@ -711,6 +721,10 @@
     .atmosphere {
       animation: none;
       inset: -8vh -6vw;
+    }
+
+    .dadri-fractal-overlay {
+      opacity: 0.46;
     }
 
     .shadow-layer {
