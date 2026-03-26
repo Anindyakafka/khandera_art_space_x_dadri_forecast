@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { tick } from 'svelte';
+
   type CollaboratingArtist = {
     name: string;
     role: string;
@@ -166,16 +168,26 @@
     }
   ];
 
-  let activeProjectId = projects[0].id;
+  let activeProjectId: string | null = null;
   let selectedIndex: number | null = null;
+  let detailRoot: HTMLElement | null = null;
 
-  $: activeProject = projects.find((project) => project.id === activeProjectId) ?? projects[0];
-  $: activeGallery = activeProject.gallery;
+  $: activeProject = projects.find((project) => project.id === activeProjectId) ?? null;
+  $: activeGallery = activeProject?.gallery ?? [];
   $: selectedImage = selectedIndex === null ? null : activeGallery[selectedIndex];
 
-  function selectProject(projectId: string) {
+  async function selectProject(projectId: string) {
+    if (activeProjectId === projectId) {
+      activeProjectId = null;
+      selectedIndex = null;
+      return;
+    }
+
     activeProjectId = projectId;
     selectedIndex = null;
+
+    await tick();
+    detailRoot?.scrollIntoView({ block: 'start', behavior: 'auto' });
   }
 
   function openLightbox(index: number) {
@@ -235,11 +247,13 @@
     <div class="selector-grid" role="list" aria-label="Dadri Forecast projects">
       {#each projects as project, index}
         <button
-          class:selected={project.id === activeProject.id}
+          class:selected={project.id === activeProjectId}
           class="selector-card"
           type="button"
           on:click={() => selectProject(project.id)}
-          aria-pressed={project.id === activeProject.id}
+          aria-controls="project-detail"
+          aria-expanded={project.id === activeProjectId}
+          aria-pressed={project.id === activeProjectId}
         >
           <span class="selector-number">{String(index + 1).padStart(2, '0')}</span>
           <div class="selector-copy">
@@ -251,13 +265,16 @@
           <div class="selector-footer">
             <span>{project.gallery.length} images</span>
             <span>{project.facilitator}</span>
+            <span>{project.id === activeProjectId ? 'Close file' : 'Open file'}</span>
           </div>
         </button>
       {/each}
     </div>
   </section>
 
-  {#key activeProject.id}
+  {#if activeProject}
+    {#key activeProject.id}
+    <div class="project-detail" id="project-detail" bind:this={detailRoot}>
     <section class="hero">
       <p class="section-no" aria-hidden="true">07</p>
       <p class="kicker">{activeProject.format}</p>
@@ -331,7 +348,9 @@
         {/each}
       </div>
     </section>
-  {/key}
+    </div>
+    {/key}
+  {/if}
 
   <nav class="route-links" aria-label="Other pages">
     <a href="/dadri-forecast">Dadri Forecast Home</a>
