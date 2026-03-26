@@ -121,7 +121,7 @@ html.dadri-mode body {
   --hero-a: #4a1c1a;
   --hero-b: #8b0000;
   --hero-c: #5d3fd3;
-  --grain-opacity: 0.34;
+  --grain-opacity: 0;
   background:
     radial-gradient(circle at 14% 16%, rgba(139, 0, 0, 0.24), transparent 34%),
     radial-gradient(circle at 88% 84%, rgba(93, 63, 211, 0.18), transparent 42%),
@@ -129,6 +129,7 @@ html.dadri-mode body {
 }
 
 body.dadri-mode::before {
+  content: none;
   opacity: 0;
   animation: none;
 }

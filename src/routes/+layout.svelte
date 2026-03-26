@@ -105,13 +105,38 @@
       <defs>
         <filter id="dadriFractalFilter" x="-20%" y="-20%" width="140%" height="140%">
           <feTurbulence
+            id="dadriNoiseA"
             type="fractalNoise"
-            baseFrequency="0.86"
+            baseFrequency="0.78 0.84"
             numOctaves="4"
-            seed="19"
+            seed="23"
             stitchTiles="stitch"
-            result="noise"
-          />
+            result="noiseA"
+          >
+            <animate
+              attributeName="baseFrequency"
+              values="0.78 0.84;0.96 1.02;0.82 0.9;0.78 0.84"
+              dur="6.8s"
+              repeatCount="indefinite"
+            />
+          </feTurbulence>
+          <feTurbulence
+            id="dadriNoiseB"
+            type="fractalNoise"
+            baseFrequency="1.35 1.1"
+            numOctaves="2"
+            seed="41"
+            stitchTiles="stitch"
+            result="noiseB"
+          >
+            <animate
+              attributeName="baseFrequency"
+              values="1.35 1.1;1.65 1.4;1.28 1.02;1.35 1.1"
+              dur="2.6s"
+              repeatCount="indefinite"
+            />
+          </feTurbulence>
+          <feBlend in="noiseA" in2="noiseB" mode="multiply" result="noise" />
           <feColorMatrix
             in="noise"
             type="matrix"
@@ -228,11 +253,10 @@
     inset: -10% -8%;
     pointer-events: none;
     z-index: 26;
-    opacity: 0.38;
+    opacity: 0.48;
     mix-blend-mode: overlay;
-    filter: contrast(195%) saturate(124%) brightness(1.08);
-    will-change: transform, opacity;
-    animation: dadri-fractal-shift 9s linear infinite;
+    filter: contrast(210%) saturate(122%) brightness(1.07);
+    will-change: opacity;
   }
 
   .dadri-fractal-overlay svg {
@@ -600,33 +624,6 @@
 
     50% {
       transform: translate3d(0, -4px, 0);
-    }
-  }
-
-  @keyframes dadri-fractal-shift {
-    0% {
-      transform: translate3d(0, 0, 0) scale(1.03);
-      opacity: 0.34;
-    }
-
-    25% {
-      transform: translate3d(-1.2%, 0.8%, 0) scale(1.08);
-      opacity: 0.41;
-    }
-
-    50% {
-      transform: translate3d(1.3%, -1.1%, 0) scale(1.05);
-      opacity: 0.37;
-    }
-
-    75% {
-      transform: translate3d(-0.7%, 1.5%, 0) scale(1.09);
-      opacity: 0.43;
-    }
-
-    100% {
-      transform: translate3d(0, 0, 0) scale(1.04);
-      opacity: 0.35;
     }
   }
 
