@@ -2,7 +2,6 @@
   // no client data used here, prerender is handled in +layout.server.ts
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
-  import DadriPretextProbe from '$lib/components/DadriPretextProbe.svelte';
   import '../app.css';
 
   const themeOptions = [
