@@ -7,34 +7,35 @@
   const ORB_R = ORB_D / 2;
 
   let mounted = false;
+  let orbVisible = false;
   let orbX = -2000;
   let orbY = -2000;
 
-  const floatMap = new Map<Element, HTMLSpanElement>();
-  let textCache: Element[] = [];
-  let cacheAge = 0;
+  let activeTextEl: Element | null = null;
+  const floatMap = new Map<Element, { left: HTMLSpanElement; right: HTMLSpanElement }>();
   let rafPending: number | null = null;
 
-  // --- Cache ---
+  function clamp(value: number, min: number, max: number) {
+    return Math.min(Math.max(value, min), max);
+  }
 
-  function buildCache() {
-    textCache = Array.from(
-      document.querySelectorAll<Element>('p, li, blockquote')
-    ).filter(el => {
-      if (
-        el.closest('nav') ||
-        el.closest('header') ||
-        el.closest('button') ||
-        el.closest('a') ||
-        el.closest('footer') ||
-        el.closest('.title-screen') ||
-        el.closest('.route-links') ||
-        el.closest('.warning-bar') ||
-        el.closest('.section-no')
-      ) return false;
-      return (el.textContent?.trim().length ?? 0) > 30;
-    });
-    cacheAge = Date.now();
+  function isEligibleText(el: Element | null): el is Element {
+    if (!el) return false;
+    if (!el.matches('p, li, blockquote')) return false;
+    if (
+      el.closest('nav') ||
+      el.closest('header') ||
+      el.closest('button') ||
+      el.closest('a') ||
+      el.closest('footer') ||
+      el.closest('.title-screen') ||
+      el.closest('.route-links') ||
+      el.closest('.warning-bar') ||
+      el.closest('.section-no')
+    ) {
+      return false;
+    }
+    return (el.textContent?.trim().length ?? 0) > 30;
   }
 
   // --- Float injection ---
@@ -47,72 +48,84 @@
     return dx * dx + dy * dy < (ORB_R + 4) * (ORB_R + 4);
   }
 
-  function tick(cx: number, cy: number) {
-    if (Date.now() - cacheAge > 2500) buildCache();
+  function tick(target: Element, cx: number, cy: number) {
+    const rect = target.getBoundingClientRect();
 
-    // Read phase — gather rects without triggering layout thrash
-    const hits: { el: Element; rect: DOMRect }[] = [];
-    for (const el of textCache) {
-      if (!el.isConnected) continue;
-      const rect = el.getBoundingClientRect();
-      if (hitsOrb(cx, cy, rect)) hits.push({ el, rect });
+    if (!hitsOrb(cx, cy, rect)) {
+      clearAll();
+      activeTextEl = null;
+      orbVisible = false;
+      return;
     }
 
-    // Write phase — update / create float spans
-    const active = new Set<Element>();
-    for (const { el, rect } of hits) {
-      active.add(el);
-      let span = floatMap.get(el);
-      if (!span) {
-        span = document.createElement('span');
-        span.setAttribute('aria-hidden', 'true');
-        el.insertBefore(span, el.firstChild);
-        floatMap.set(el, span);
-      }
-
-      const toLeft = cx <= rect.left + rect.width * 0.56;
-      const mt = Math.max(0, cy - ORB_R - rect.top);
-
-      if (toLeft) {
-        const ml = Math.max(0, cx - ORB_R - rect.left);
-        span.style.cssText =
-          `display:block;float:left;shape-outside:circle(50%);pointer-events:none;` +
-          `width:${ORB_D}px;height:${ORB_D}px;margin:${mt}px 0.4em 0 ${ml}px;`;
-      } else {
-        const mr = Math.max(0, rect.right - cx - ORB_R);
-        span.style.cssText =
-          `display:block;float:right;shape-outside:circle(50%);pointer-events:none;` +
-          `width:${ORB_D}px;height:${ORB_D}px;margin:${mt}px ${mr}px 0 0.4em;`;
-      }
+    let pair = floatMap.get(target);
+    if (!pair) {
+      clearAll();
+      const left = document.createElement('span');
+      const right = document.createElement('span');
+      left.setAttribute('aria-hidden', 'true');
+      right.setAttribute('aria-hidden', 'true');
+      left.className = 'dadri-flow-spacer';
+      right.className = 'dadri-flow-spacer';
+      target.insertBefore(right, target.firstChild);
+      target.insertBefore(left, target.firstChild);
+      pair = { left, right };
+      floatMap.set(target, pair);
     }
 
-    // Cleanup spans no longer needed
-    for (const [el, span] of floatMap) {
-      if (!active.has(el) || !el.isConnected) {
-        span.remove();
-        floatMap.delete(el);
-      }
-    }
+    const mt = Math.max(0, cy - ORB_R - rect.top);
+    const availableWidth = Math.max(ORB_R, rect.width - ORB_R);
+    const leftInset = clamp(cx - ORB_R - rect.left, 0, availableWidth);
+    const rightInset = clamp(rect.right - cx - ORB_R, 0, availableWidth);
+
+    pair.left.style.cssText =
+      `display:block;float:left;shape-outside:circle(50%);shape-margin:0.06em;pointer-events:none;` +
+      `width:${ORB_R}px;height:${ORB_D}px;margin:${mt}px 0.18em 0 ${leftInset}px;`;
+
+    pair.right.style.cssText =
+      `display:block;float:right;shape-outside:circle(50%);shape-margin:0.06em;pointer-events:none;` +
+      `width:${ORB_R}px;height:${ORB_D}px;margin:${mt}px ${rightInset}px 0 0.18em;`;
   }
 
   function clearAll() {
-    for (const span of floatMap.values()) span.remove();
+    for (const pair of floatMap.values()) {
+      pair.left.remove();
+      pair.right.remove();
+    }
     floatMap.clear();
   }
 
   // --- Event handlers ---
 
   function onMouseMove(e: MouseEvent) {
+    const hovered = document.elementFromPoint(e.clientX, e.clientY)?.closest('p, li, blockquote') ?? null;
+
+    if (!isEligibleText(hovered)) {
+      activeTextEl = null;
+      orbVisible = false;
+      orbX = -2000;
+      orbY = -2000;
+      clearAll();
+      return;
+    }
+
+    activeTextEl = hovered;
+    orbVisible = true;
     orbX = e.clientX;
     orbY = e.clientY;
+
     if (rafPending !== null) cancelAnimationFrame(rafPending);
     rafPending = requestAnimationFrame(() => {
-      tick(orbX, orbY);
+      if (activeTextEl) {
+        tick(activeTextEl, orbX, orbY);
+      }
       rafPending = null;
     });
   }
 
   function onMouseLeave() {
+    activeTextEl = null;
+    orbVisible = false;
     orbX = -2000;
     orbY = -2000;
     clearAll();
@@ -121,13 +134,13 @@
   // --- Lifecycle ---
 
   afterNavigate(() => {
+    activeTextEl = null;
+    orbVisible = false;
     clearAll();
-    requestAnimationFrame(() => buildCache());
   });
 
   onMount(() => {
     mounted = true;
-    buildCache();
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseleave', onMouseLeave);
 
@@ -145,7 +158,7 @@
   <slot />
 </div>
 
-{#if mounted}
+{#if mounted && orbVisible}
   <div
     class="dadri-orb"
     aria-hidden="true"
