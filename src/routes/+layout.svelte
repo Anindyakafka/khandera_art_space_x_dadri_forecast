@@ -2,6 +2,7 @@
   // no client data used here, prerender is handled in +layout.server.ts
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
+  import DadriPretextProbe from '$lib/components/DadriPretextProbe.svelte';
   import '../app.css';
 
   const themeOptions = [
@@ -39,6 +40,8 @@
 
     const aX = (0.68 + Math.random() * 0.78).toFixed(3);
     const aY = (0.72 + Math.random() * 0.92).toFixed(3);
+
+    <DadriPretextProbe />
     const bX = (0.94 + Math.random() * 1.02).toFixed(3);
     const bY = (1.02 + Math.random() * 1.08).toFixed(3);
 
