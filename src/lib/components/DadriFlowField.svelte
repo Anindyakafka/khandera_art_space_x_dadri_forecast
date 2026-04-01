@@ -1,161 +1,181 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { afterNavigate } from '$app/navigation';
 
-  let shell: HTMLDivElement | null = null;
-  let dragging = false;
+  // 50% smaller than previous 58px
+  const ORB_D = 29;
+  const ORB_R = ORB_D / 2;
 
-  const orbSize = 96;
-  let orbX = 14;
-  let orbY = 22;
-  let offsetX = 0;
-  let offsetY = 0;
+  let mounted = false;
+  let orbX = -2000;
+  let orbY = -2000;
 
-  function clamp(value: number, min: number, max: number) {
-    return Math.min(Math.max(value, min), max);
+  const floatMap = new Map<Element, HTMLSpanElement>();
+  let textCache: Element[] = [];
+  let cacheAge = 0;
+  let rafPending: number | null = null;
+
+  // --- Cache ---
+
+  function buildCache() {
+    textCache = Array.from(
+      document.querySelectorAll<Element>('p, li, blockquote')
+    ).filter(el => {
+      if (
+        el.closest('nav') ||
+        el.closest('header') ||
+        el.closest('button') ||
+        el.closest('a') ||
+        el.closest('footer') ||
+        el.closest('.title-screen') ||
+        el.closest('.route-links') ||
+        el.closest('.warning-bar') ||
+        el.closest('.section-no')
+      ) return false;
+      return (el.textContent?.trim().length ?? 0) > 30;
+    });
+    cacheAge = Date.now();
   }
 
-  function getLimits() {
-    if (!shell) {
-      return { maxX: 200, maxY: 500 };
+  // --- Float injection ---
+
+  function hitsOrb(cx: number, cy: number, rect: DOMRect): boolean {
+    const nx = Math.max(rect.left, Math.min(cx, rect.right));
+    const ny = Math.max(rect.top, Math.min(cy, rect.bottom));
+    const dx = cx - nx;
+    const dy = cy - ny;
+    return dx * dx + dy * dy < (ORB_R + 4) * (ORB_R + 4);
+  }
+
+  function tick(cx: number, cy: number) {
+    if (Date.now() - cacheAge > 2500) buildCache();
+
+    // Read phase — gather rects without triggering layout thrash
+    const hits: { el: Element; rect: DOMRect }[] = [];
+    for (const el of textCache) {
+      if (!el.isConnected) continue;
+      const rect = el.getBoundingClientRect();
+      if (hitsOrb(cx, cy, rect)) hits.push({ el, rect });
     }
 
-    const width = Math.max(shell.clientWidth, 320);
-    const height = Math.max(shell.scrollHeight, shell.clientHeight, 320);
+    // Write phase — update / create float spans
+    const active = new Set<Element>();
+    for (const { el, rect } of hits) {
+      active.add(el);
+      let span = floatMap.get(el);
+      if (!span) {
+        span = document.createElement('span');
+        span.setAttribute('aria-hidden', 'true');
+        el.insertBefore(span, el.firstChild);
+        floatMap.set(el, span);
+      }
 
-    return {
-      maxX: Math.max(8, width - orbSize - 8),
-      maxY: Math.max(8, Math.min(height - orbSize - 8, 1200))
-    };
-  }
+      const toLeft = cx <= rect.left + rect.width * 0.56;
+      const mt = Math.max(0, cy - ORB_R - rect.top);
 
-  function setFromPointer(event: PointerEvent) {
-    if (!shell) {
-      return;
+      if (toLeft) {
+        const ml = Math.max(0, cx - ORB_R - rect.left);
+        span.style.cssText =
+          `display:block;float:left;shape-outside:circle(50%);pointer-events:none;` +
+          `width:${ORB_D}px;height:${ORB_D}px;margin:${mt}px 0.4em 0 ${ml}px;`;
+      } else {
+        const mr = Math.max(0, rect.right - cx - ORB_R);
+        span.style.cssText =
+          `display:block;float:right;shape-outside:circle(50%);pointer-events:none;` +
+          `width:${ORB_D}px;height:${ORB_D}px;margin:${mt}px ${mr}px 0 0.4em;`;
+      }
     }
 
-    const rect = shell.getBoundingClientRect();
-    const limits = getLimits();
-    orbX = clamp(event.clientX - rect.left - offsetX, 8, limits.maxX);
-    orbY = clamp(event.clientY - rect.top - offsetY, 8, limits.maxY);
-  }
-
-  function onOrbPointerDown(event: PointerEvent) {
-    event.preventDefault();
-
-    if (!shell) {
-      return;
+    // Cleanup spans no longer needed
+    for (const [el, span] of floatMap) {
+      if (!active.has(el) || !el.isConnected) {
+        span.remove();
+        floatMap.delete(el);
+      }
     }
-
-    const rect = shell.getBoundingClientRect();
-    dragging = true;
-    offsetX = event.clientX - rect.left - orbX;
-    offsetY = event.clientY - rect.top - orbY;
   }
 
-  function onPointerMove(event: PointerEvent) {
-    if (!dragging) {
-      return;
-    }
-
-    setFromPointer(event);
+  function clearAll() {
+    for (const span of floatMap.values()) span.remove();
+    floatMap.clear();
   }
 
-  function onPointerUp() {
-    dragging = false;
+  // --- Event handlers ---
+
+  function onMouseMove(e: MouseEvent) {
+    orbX = e.clientX;
+    orbY = e.clientY;
+    if (rafPending !== null) cancelAnimationFrame(rafPending);
+    rafPending = requestAnimationFrame(() => {
+      tick(orbX, orbY);
+      rafPending = null;
+    });
   }
 
-  function constrainOnResize() {
-    const limits = getLimits();
-    orbX = clamp(orbX, 8, limits.maxX);
-    orbY = clamp(orbY, 8, limits.maxY);
+  function onMouseLeave() {
+    orbX = -2000;
+    orbY = -2000;
+    clearAll();
   }
+
+  // --- Lifecycle ---
+
+  afterNavigate(() => {
+    clearAll();
+    requestAnimationFrame(() => buildCache());
+  });
 
   onMount(() => {
-    const resizeObserver = new ResizeObserver(() => {
-      constrainOnResize();
-    });
-
-    if (shell) {
-      resizeObserver.observe(shell);
-    }
-
-    window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp);
-    window.addEventListener('resize', constrainOnResize);
+    mounted = true;
+    buildCache();
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseleave', onMouseLeave);
 
     return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerup', onPointerUp);
-      window.removeEventListener('resize', constrainOnResize);
+      mounted = false;
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseleave', onMouseLeave);
+      clearAll();
+      if (rafPending !== null) cancelAnimationFrame(rafPending);
     };
   });
 </script>
 
-<div class="dadri-flow-field" bind:this={shell}>
-  <button
-    type="button"
-    class="dadri-flow-orb"
-    aria-label="Drag orb to reflow Dadri text"
-    on:pointerdown={onOrbPointerDown}
-    style={`--orb-size:${orbSize}px; --orb-x:${orbX}px; --orb-y:${orbY}px;`}
-  >
-    <span>{dragging ? 'move' : 'flow'}</span>
-  </button>
-
+<div class="dadri-shell">
   <slot />
 </div>
 
+{#if mounted}
+  <div
+    class="dadri-orb"
+    aria-hidden="true"
+    style="left:{orbX}px;top:{orbY}px;"
+  ></div>
+{/if}
+
 <style>
-  .dadri-flow-field {
-    position: relative;
+  .dadri-shell {
     width: 100%;
   }
 
-  .dadri-flow-orb {
-    --gap: clamp(0.55rem, 1.4vw, 0.95rem);
-    float: left;
-    width: var(--orb-size);
-    height: var(--orb-size);
-    margin-left: var(--orb-x);
-    margin-top: var(--orb-y);
-    margin-right: var(--gap);
-    margin-bottom: var(--gap);
+  .dadri-orb {
+    position: fixed;
+    width: 29px;
+    height: 29px;
+    transform: translate(-50%, -50%);
     border-radius: 999px;
-    shape-outside: circle(50%);
-    clip-path: circle(50%);
-    border: 1px solid color-mix(in srgb, var(--accent) 56%, var(--line));
-    background:
-      radial-gradient(circle at 34% 24%, color-mix(in srgb, var(--accent) 34%, transparent), transparent 58%),
-      color-mix(in srgb, var(--surface) 94%, transparent);
-    color: color-mix(in srgb, var(--accent) 86%, var(--text));
-    font: 700 0.6rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    display: grid;
-    place-items: center;
-    cursor: grab;
-    user-select: none;
-    touch-action: none;
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--line) 55%, transparent),
-      0 14px 28px color-mix(in srgb, black 21%, transparent);
-  }
-
-  .dadri-flow-orb:active {
-    cursor: grabbing;
-    filter: brightness(1.03);
-  }
-
-  .dadri-flow-orb span {
     pointer-events: none;
-    opacity: 0.9;
-  }
-
-  @media (max-width: 760px) {
-    .dadri-flow-orb {
-      width: calc(var(--orb-size) * 0.8);
-      height: calc(var(--orb-size) * 0.8);
-    }
+    z-index: 8000;
+    border: 1px solid color-mix(in srgb, var(--accent) 58%, var(--line));
+    background:
+      radial-gradient(
+        circle at 34% 24%,
+        color-mix(in srgb, var(--accent) 38%, transparent),
+        transparent 60%
+      ),
+      color-mix(in srgb, var(--surface) 88%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--line) 38%, transparent),
+      0 3px 8px color-mix(in srgb, black 16%, transparent);
   }
 </style>
