@@ -26,6 +26,41 @@
   const dadriLogoPath = '/media/images/dadri-forecast/logo.png';
   let activeTheme = themeOptions[0].id;
   let mobileMenuOpen = false;
+  let dadriNoiseA: SVGFETurbulenceElement | null = null;
+  let dadriNoiseB: SVGFETurbulenceElement | null = null;
+  let fractalTimer: ReturnType<typeof setInterval> | null = null;
+
+  function updateFractalNoise() {
+    if (!dadriNoiseA || !dadriNoiseB) {
+      return;
+    }
+
+    const aX = (0.68 + Math.random() * 0.78).toFixed(3);
+    const aY = (0.72 + Math.random() * 0.92).toFixed(3);
+    const bX = (0.94 + Math.random() * 1.02).toFixed(3);
+    const bY = (1.02 + Math.random() * 1.08).toFixed(3);
+
+    dadriNoiseA.setAttribute('baseFrequency', `${aX} ${aY}`);
+    dadriNoiseB.setAttribute('baseFrequency', `${bX} ${bY}`);
+  }
+
+  function startFractalNoise() {
+    if (fractalTimer || !dadriNoiseA || !dadriNoiseB) {
+      return;
+    }
+
+    updateFractalNoise();
+    fractalTimer = setInterval(updateFractalNoise, 220);
+  }
+
+  function stopFractalNoise() {
+    if (!fractalTimer) {
+      return;
+    }
+
+    clearInterval(fractalTimer);
+    fractalTimer = null;
+  }
 
   function isCurrentRoute(href: string, pathname: string, exact = false) {
     if (href === '/') {
@@ -58,6 +93,13 @@
   $: if (typeof document !== 'undefined') {
     document.documentElement.classList.toggle('dadri-mode', isDadriSection);
   }
+  $: if (typeof window !== 'undefined') {
+    if (isDadriSection) {
+      startFractalNoise();
+    } else {
+      stopFractalNoise();
+    }
+  }
 
   onMount(() => {
     const storedTheme = localStorage.getItem('khandera-theme');
@@ -77,6 +119,7 @@
     closeMenuOnDesktop();
 
     return () => {
+      stopFractalNoise();
       mediaQuery.removeEventListener('change', closeMenuOnDesktop);
     };
   });
@@ -106,6 +149,7 @@
         <filter id="dadriFractalFilter" x="-20%" y="-20%" width="140%" height="140%">
           <feTurbulence
             id="dadriNoiseA"
+            bind:this={dadriNoiseA}
             type="fractalNoise"
             baseFrequency="0.82 0.9"
             numOctaves="4"
@@ -124,6 +168,7 @@
           </feTurbulence>
           <feTurbulence
             id="dadriNoiseB"
+            bind:this={dadriNoiseB}
             type="fractalNoise"
             baseFrequency="1.28 1.36"
             numOctaves="3"

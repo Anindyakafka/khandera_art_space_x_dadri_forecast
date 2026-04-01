@@ -1,8 +1,20 @@
+<script lang="ts">
+  import FlowAroundOrb from '$lib/components/FlowAroundOrb.svelte';
+
+  const flowText =
+    'What We Ask, When We Stay unfolds as a moving question of belonging. In Dadri, proximity to industry, labor routes, and inherited memory reshapes how bodies gather and separate. This text block is intentionally unstable: drag the orbital marker, and each line renegotiates itself around that temporary force field.';
+</script>
+
 <main class="artist-page">
   <p class="section-no" aria-hidden="true">11</p>
   <p class="kicker">Dadri Forecast / Artist Profile</p>
   <h1>Subhankar Sengupta</h1>
   <span class="warning-bar">Visual Artist // Open Studio Lead // Lecture-Performance</span>
+
+  <section class="flow-study" aria-label="Interactive text flow study">
+    <p class="flow-caption">Text Flow Study // Inspired by Cheng Lou's manual line layout experiments</p>
+    <FlowAroundOrb text={flowText} />
+  </section>
 
   <div class="profile-grid">
     <article class="profile-card">
@@ -52,6 +64,19 @@
     margin: 0.45rem 0 0.75rem;
     font-size: clamp(1.8rem, 7vw, 4.2rem);
     letter-spacing: 0.015em;
+  }
+
+  .flow-study {
+    margin: 0.9rem 0 0.35rem;
+  }
+
+  .flow-caption {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    color: color-mix(in srgb, var(--muted) 86%, var(--text));
+    font-size: 0.66rem;
+    font-weight: 700;
   }
 
   .profile-grid {
