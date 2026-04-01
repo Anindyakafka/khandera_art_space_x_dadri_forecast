@@ -41,7 +41,6 @@
     const aX = (0.68 + Math.random() * 0.78).toFixed(3);
     const aY = (0.72 + Math.random() * 0.92).toFixed(3);
 
-    <DadriPretextProbe />
     const bX = (0.94 + Math.random() * 1.02).toFixed(3);
     const bY = (1.02 + Math.random() * 1.08).toFixed(3);
 
@@ -292,6 +291,8 @@
 <div class="page-shell">
   <slot />
 </div>
+
+<DadriPretextProbe />
 
 <style>
   :global(body) {
