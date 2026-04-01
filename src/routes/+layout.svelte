@@ -291,8 +291,6 @@
   <slot />
 </div>
 
-<DadriPretextProbe />
-
 <style>
   :global(body) {
     margin: 0;
