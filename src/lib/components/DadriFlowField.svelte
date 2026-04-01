@@ -338,8 +338,6 @@
       0 3px 8px color-mix(in srgb, black 16%, transparent);
   }
 </style>
-
-  type Cursor = {
     segmentIndex: number;
     graphemeIndex: number;
   };
