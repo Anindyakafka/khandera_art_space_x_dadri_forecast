@@ -1,6 +1,6 @@
 <script lang="ts">
-  import DadriTestOrb from '$lib/components/DadriTestOrb.svelte';
+  import DadriPretextProbe from '$lib/components/DadriPretextProbe.svelte';
 </script>
 
 <slot />
-<DadriTestOrb />
+<DadriPretextProbe />

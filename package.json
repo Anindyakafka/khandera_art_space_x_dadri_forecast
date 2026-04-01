@@ -12,6 +12,9 @@
     "lint": "eslint . --ext .svelte,.ts",
     "format": "prettier --write ."
   },
+  "dependencies": {
+    "@chenglou/pretext": "^0.0.3"
+  },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.0",
     "@sveltejs/kit": "^2.55.0",
