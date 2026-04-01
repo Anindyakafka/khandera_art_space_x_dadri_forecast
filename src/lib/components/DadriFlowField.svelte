@@ -28,20 +28,29 @@
     lineHeight: number;
   };
 
-  // 50% smaller than previous 58px
-  const ORB_D = 29;
+  // 20% larger than previous 29px
+  const ORB_D = 35;
   const ORB_R = ORB_D / 2;
   const HIT_PAD = 5;
   const INNER_GAP = 4;
+  const LAYOUT_INTERVAL_MS = 34;
+  const LAYOUT_MOVE_THRESHOLD = 2;
+  const ORB_LERP = 0.34;
 
   let mounted = false;
   let orbVisible = false;
   let orbX = -2000;
   let orbY = -2000;
+  let pointerX = -2000;
+  let pointerY = -2000;
 
   let pretextApi: PretextApi | null = null;
   let activeParagraph: ActiveParagraph | null = null;
-  let rafPending: number | null = null;
+  let loopRaf: number | null = null;
+  let lastLayoutTime = 0;
+  let lastLayoutX = -9999;
+  let lastLayoutY = -9999;
+  let lastLayoutSignature = '';
 
   function clamp(value: number, min: number, max: number) {
     return Math.min(Math.max(value, min), max);
@@ -109,6 +118,7 @@
     activeParagraph.el.style.position = activeParagraph.originalPosition;
     activeParagraph.el.style.minHeight = activeParagraph.originalMinHeight;
     activeParagraph = null;
+    lastLayoutSignature = '';
   }
 
   function setActiveParagraph(el: HTMLElement) {
@@ -177,11 +187,11 @@
 
     if (!hitsOrb(orbX, orbY, rect)) {
       restoreActiveParagraph();
-      orbVisible = false;
       return;
     }
 
     const frag = document.createDocumentFragment();
+    const sig: string[] = [];
     let lineTop = 0;
     let safety = 0;
     let done = false;
@@ -223,10 +233,14 @@
           continue;
         }
 
+        const left = Math.round(range.start);
+        const top = Math.round(lineTop);
+        sig.push(`${left}|${top}|${line.text}`);
+
         const span = document.createElement('span');
         span.className = 'dadri-flow-line';
-        span.style.left = `${range.start}px`;
-        span.style.top = `${lineTop}px`;
+        span.style.left = `${left}px`;
+        span.style.top = `${top}px`;
         span.textContent = line.text;
         frag.appendChild(span);
 
@@ -239,10 +253,12 @@
         if (!fallback || sameCursor(cursor, fallback.end)) {
           done = true;
         } else {
+          const top = Math.round(lineTop);
+          sig.push(`0|${top}|${fallback.text}`);
           const span = document.createElement('span');
           span.className = 'dadri-flow-line';
           span.style.left = '0px';
-          span.style.top = `${lineTop}px`;
+          span.style.top = `${top}px`;
           span.textContent = fallback.text;
           frag.appendChild(span);
           cursor = fallback.end;
@@ -253,6 +269,12 @@
       safety += 1;
     }
 
+    const signature = sig.join('\n');
+    if (signature === lastLayoutSignature) {
+      return;
+    }
+
+    lastLayoutSignature = signature;
     el.textContent = '';
     el.appendChild(frag);
     el.style.minHeight = `${Math.max(lineHeight, lineTop)}px`;
@@ -260,6 +282,39 @@
 
   function clearAll() {
     restoreActiveParagraph();
+  }
+
+  function runFrame(now: number) {
+    if (!orbVisible) {
+      loopRaf = null;
+      return;
+    }
+
+    orbX += (pointerX - orbX) * ORB_LERP;
+    orbY += (pointerY - orbY) * ORB_LERP;
+
+    if (Math.abs(pointerX - orbX) < 0.25) orbX = pointerX;
+    if (Math.abs(pointerY - orbY) < 0.25) orbY = pointerY;
+
+    const moved = Math.hypot(orbX - lastLayoutX, orbY - lastLayoutY) >= LAYOUT_MOVE_THRESHOLD;
+    const due = now - lastLayoutTime >= LAYOUT_INTERVAL_MS;
+
+    if (activeParagraph && moved && due) {
+      renderActiveLayout();
+      lastLayoutX = orbX;
+      lastLayoutY = orbY;
+      lastLayoutTime = now;
+    }
+
+    loopRaf = requestAnimationFrame(runFrame);
+  }
+
+  function ensureLoop() {
+    if (loopRaf !== null) {
+      return;
+    }
+
+    loopRaf = requestAnimationFrame(runFrame);
   }
 
   // --- Event handlers ---
@@ -273,6 +328,8 @@
 
     if (!isEligibleText(hovered)) {
       orbVisible = false;
+      pointerX = -2000;
+      pointerY = -2000;
       orbX = -2000;
       orbY = -2000;
       clearAll();
@@ -281,32 +338,43 @@
 
     setActiveParagraph(hovered);
     orbVisible = true;
-    orbX = e.clientX;
-    orbY = e.clientY;
+    pointerX = e.clientX;
+    pointerY = e.clientY;
 
-    if (rafPending !== null) cancelAnimationFrame(rafPending);
-    rafPending = requestAnimationFrame(() => {
-      if (activeParagraph) {
-        renderActiveLayout();
-      }
-      rafPending = null;
-    });
+    if (orbX < -1000 || orbY < -1000) {
+      orbX = pointerX;
+      orbY = pointerY;
+    }
+
+    ensureLoop();
   }
 
   function onMouseLeave() {
     orbVisible = false;
+    pointerX = -2000;
+    pointerY = -2000;
     orbX = -2000;
     orbY = -2000;
     clearAll();
+    if (loopRaf !== null) {
+      cancelAnimationFrame(loopRaf);
+      loopRaf = null;
+    }
   }
 
   // --- Lifecycle ---
 
   afterNavigate(() => {
     orbVisible = false;
+    pointerX = -2000;
+    pointerY = -2000;
     orbX = -2000;
     orbY = -2000;
     clearAll();
+    if (loopRaf !== null) {
+      cancelAnimationFrame(loopRaf);
+      loopRaf = null;
+    }
   });
 
   onMount(async () => {
@@ -326,7 +394,10 @@
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseleave', onMouseLeave);
       clearAll();
-      if (rafPending !== null) cancelAnimationFrame(rafPending);
+      if (loopRaf !== null) {
+        cancelAnimationFrame(loopRaf);
+        loopRaf = null;
+      }
     };
   });
 </script>
