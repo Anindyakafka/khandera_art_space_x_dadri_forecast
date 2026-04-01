@@ -28,6 +28,8 @@
   const HIT_PAD = 8;
   const INNER_GAP = 4;
   const ORB_LERP = 0.22;
+  const PARAGRAPH_STICKY_PAD = 10;
+  const RELAYOUT_DISTANCE = 5;
 
   let mounted = false;
   let orbVisible = false;
@@ -39,6 +41,8 @@
   let pretextApi: PretextApi | null = null;
   let activeParagraph: ActiveParagraph | null = null;
   let loopRaf: number | null = null;
+  let lastRenderX = -2000;
+  let lastRenderY = -2000;
 
   function clamp(v: number, lo: number, hi: number) {
     return Math.min(Math.max(v, lo), hi);
@@ -124,6 +128,15 @@
     const nx = clamp(cx, rect.left, rect.right);
     const ny = clamp(cy, rect.top, rect.bottom);
     return (cx - nx) ** 2 + (cy - ny) ** 2 < (ORB_R + HIT_PAD) ** 2;
+  }
+
+  function isInsideStickyRect(x: number, y: number, rect: DOMRect) {
+    return (
+      x >= rect.left - PARAGRAPH_STICKY_PAD &&
+      x <= rect.right + PARAGRAPH_STICKY_PAD &&
+      y >= rect.top - PARAGRAPH_STICKY_PAD &&
+      y <= rect.bottom + PARAGRAPH_STICKY_PAD
+    );
   }
 
   function blockedRange(rect: DOMRect, lineMidY: number) {
@@ -223,6 +236,8 @@
 
   function clearAll() {
     restoreActiveParagraph();
+    lastRenderX = -2000;
+    lastRenderY = -2000;
   }
 
   function stopLoop() {
@@ -237,7 +252,14 @@
     if (Math.abs(pointerX - orbX) < 0.3) orbX = pointerX;
     if (Math.abs(pointerY - orbY) < 0.3) orbY = pointerY;
 
-    if (activeParagraph) renderActiveLayout();
+    if (activeParagraph) {
+      const movedEnough = Math.hypot(orbX - lastRenderX, orbY - lastRenderY) >= RELAYOUT_DISTANCE;
+      if (movedEnough) {
+        renderActiveLayout();
+        lastRenderX = orbX;
+        lastRenderY = orbY;
+      }
+    }
 
     loopRaf = requestAnimationFrame(runFrame);
   }
@@ -245,6 +267,27 @@
   function onMouseMove(e: MouseEvent) {
     if (!pretextApi) return;
     const hovered = document.elementFromPoint(e.clientX, e.clientY)?.closest('p, li, blockquote') ?? null;
+
+    if (!isEligibleText(hovered) && activeParagraph) {
+      if (Math.abs(window.scrollY - activeParagraph.scrollY) > 4) {
+        activeParagraph.rect = activeParagraph.el.getBoundingClientRect();
+        activeParagraph.scrollY = window.scrollY;
+      }
+
+      if (isInsideStickyRect(e.clientX, e.clientY, activeParagraph.rect)) {
+        pointerX = e.clientX;
+        pointerY = e.clientY;
+
+        if (!orbVisible) {
+          orbX = pointerX;
+          orbY = pointerY;
+          orbVisible = true;
+        }
+
+        if (loopRaf === null) loopRaf = requestAnimationFrame(runFrame);
+        return;
+      }
+    }
 
     if (!isEligibleText(hovered)) {
       if (orbVisible) {
