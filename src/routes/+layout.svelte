@@ -29,6 +29,8 @@
   let dadriNoiseA: SVGFETurbulenceElement | null = null;
   let dadriNoiseB: SVGFETurbulenceElement | null = null;
   let fractalTimer: ReturnType<typeof setInterval> | null = null;
+  let isDadriSection = false;
+  let navLinks = mainNavLinks;
 
   function updateFractalNoise() {
     if (!dadriNoiseA || !dadriNoiseB) {
