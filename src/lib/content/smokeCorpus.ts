@@ -16,13 +16,29 @@ function sanitize(value: string) {
     .trim();
 }
 
-const rawCorpus = [
-  JSON.stringify(siteContent),
+function collectStrings(input: unknown): string[] {
+  if (typeof input === 'string') {
+    return [input];
+  }
+
+  if (Array.isArray(input)) {
+    return input.flatMap(collectStrings);
+  }
+
+  if (input && typeof input === 'object') {
+    return Object.values(input).flatMap(collectStrings);
+  }
+
+  return [];
+}
+
+const narrativeBits = [
+  ...collectStrings(siteContent),
   aboutContent,
   manifestoContent,
-  JSON.stringify(artistsContent),
-  JSON.stringify(projectsContent),
-  JSON.stringify(eventsContent)
-].join(' · ');
+  ...artistsContent.flatMap((artist) => [artist.name, artist.role, artist.bio]),
+  ...projectsContent.flatMap((project) => [project.title, project.excerpt, ...(project.tags ?? [])]),
+  ...eventsContent.flatMap((event) => [event.title, event.location, event.summary])
+].filter(Boolean);
 
-export const dadriSmokeCorpus = sanitize(rawCorpus);
+export const dadriSmokeCorpus = sanitize(narrativeBits.join(' · '));
