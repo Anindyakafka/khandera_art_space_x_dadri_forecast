@@ -39,11 +39,11 @@
   const CHARSET_FALLBACK = '.,:;!+-=*#@%&abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
   const emitters: Emitter[] = [
-    { cx: 0.08, cy: 0.18, orbitX: 0.06, orbitY: 0.09, freq: 0.22, phase: 0.0, strength: 0.26 },
-    { cx: 0.92, cy: 0.16, orbitX: 0.06, orbitY: 0.09, freq: 0.25, phase: 1.7, strength: 0.26 },
-    { cx: 0.12, cy: 0.72, orbitX: 0.05, orbitY: 0.07, freq: 0.19, phase: 3.1, strength: 0.16 },
-    { cx: 0.88, cy: 0.68, orbitX: 0.05, orbitY: 0.07, freq: 0.24, phase: 4.4, strength: 0.16 },
-    { cx: 0.5, cy: 0.08, orbitX: 0.2, orbitY: 0.03, freq: 0.15, phase: 0.8, strength: 0.11 }
+    { cx: 0.08, cy: 0.18, orbitX: 0.06, orbitY: 0.09, freq: 0.22, phase: 0.0, strength: 0.34 },
+    { cx: 0.92, cy: 0.16, orbitX: 0.06, orbitY: 0.09, freq: 0.25, phase: 1.7, strength: 0.34 },
+    { cx: 0.12, cy: 0.72, orbitX: 0.05, orbitY: 0.07, freq: 0.19, phase: 3.1, strength: 0.22 },
+    { cx: 0.88, cy: 0.68, orbitX: 0.05, orbitY: 0.07, freq: 0.24, phase: 4.4, strength: 0.22 },
+    { cx: 0.5, cy: 0.08, orbitX: 0.2, orbitY: 0.03, freq: 0.15, phase: 0.8, strength: 0.15 }
   ];
 
   let host: HTMLDivElement | null = null;
@@ -99,17 +99,24 @@
     return sum / (255 * 32 * 32);
   }
 
+  function measureCharWidth(char: string, font: string) {
+    ensureProbeContext();
+
+    if (!probeCtx) {
+      return FONT_SIZE * 0.62;
+    }
+
+    probeCtx.font = font;
+    const width = probeCtx.measureText(char).width;
+    return width > 0 ? width : FONT_SIZE * 0.62;
+  }
+
   function buildCharset(source: string) {
     const merged = Array.from(new Set((CHARSET_FALLBACK + source).replace(/\s+/g, '')));
     return merged.join('');
   }
 
   function buildPalette() {
-    if (!pretextApi) {
-      palette = [];
-      return;
-    }
-
     const charset = buildCharset(text);
     const next: PaletteEntry[] = [];
 
@@ -122,12 +129,8 @@
             continue;
           }
 
-          const prepared = pretextApi.prepareWithSegments(char, font);
-          const width = prepared.widths?.[0] ?? 0;
-
-          if (width <= 0) {
-            continue;
-          }
+          const pretextWidth = pretextApi ? (pretextApi.prepareWithSegments(char, font).widths?.[0] ?? 0) : 0;
+          const width = pretextWidth > 0 ? pretextWidth : measureCharWidth(char, font);
 
           next.push({
             char,
@@ -204,6 +207,13 @@
 
     density = new Float32Array(cols * rows);
     tempDensity = new Float32Array(cols * rows);
+
+    for (let r = 0; r < rows; r += 1) {
+      for (let c = 0; c < cols; c += 1) {
+        const i = r * cols + c;
+        density[i] = edgeFactor(c, r) * (0.012 + Math.random() * 0.035);
+      }
+    }
 
     artEl.innerHTML = '';
     rowEls = [];
@@ -324,7 +334,7 @@
         for (let c = 0; c < cols; c += 1) {
           const densityValue = density[r * cols + c] * edgeFactor(c, r);
 
-          if (densityValue < 0.016) {
+          if (densityValue < 0.008) {
             html += ' ';
             continue;
           }
@@ -389,12 +399,12 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 0;
+    z-index: 1;
     overflow: hidden;
     opacity: 1;
-    mix-blend-mode: screen;
-    mask-image: radial-gradient(ellipse at 50% 46%, transparent 0 16%, rgba(0, 0, 0, 0.4) 28%, black 52%);
-    -webkit-mask-image: radial-gradient(ellipse at 50% 46%, transparent 0 16%, rgba(0, 0, 0, 0.4) 28%, black 52%);
+    mix-blend-mode: normal;
+    mask-image: radial-gradient(ellipse at 50% 46%, transparent 0 11%, rgba(0, 0, 0, 0.75) 18%, black 38%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 46%, transparent 0 11%, rgba(0, 0, 0, 0.75) 18%, black 38%);
   }
 
   .art {
@@ -405,6 +415,7 @@
     overflow: hidden;
     user-select: none;
     text-rendering: geometricPrecision;
+    filter: blur(0.15px);
   }
 
   .r {
@@ -429,18 +440,18 @@
     font-style: italic;
   }
 
-  .a1 { color: rgba(225, 214, 202, 0.12); }
-  .a2 { color: rgba(226, 208, 193, 0.17); }
-  .a3 { color: rgba(228, 202, 184, 0.24); }
-  .a4 { color: rgba(231, 192, 170, 0.32); }
-  .a5 { color: rgba(233, 181, 156, 0.41); }
-  .a6 { color: rgba(236, 168, 141, 0.5); }
-  .a7 { color: rgba(238, 155, 126, 0.6); }
-  .a8 { color: rgba(240, 143, 112, 0.7); }
-  .a9 { color: rgba(242, 132, 99, 0.8); }
+  .a1 { color: rgba(227, 216, 205, 0.18); }
+  .a2 { color: rgba(229, 210, 196, 0.26); }
+  .a3 { color: rgba(232, 202, 186, 0.35); }
+  .a4 { color: rgba(235, 192, 172, 0.45); }
+  .a5 { color: rgba(238, 181, 157, 0.56); }
+  .a6 { color: rgba(241, 167, 142, 0.67); }
+  .a7 { color: rgba(243, 153, 127, 0.78); }
+  .a8 { color: rgba(245, 141, 113, 0.86); }
+  .a9 { color: rgba(247, 131, 100, 0.93); }
   .a10 {
-    color: rgba(245, 124, 90, 0.9);
-    text-shadow: 0 0 12px rgba(245, 124, 90, 0.24);
+    color: rgba(249, 122, 88, 1);
+    text-shadow: 0 0 14px rgba(249, 122, 88, 0.34);
   }
 
   @media (prefers-reduced-motion: reduce) {
