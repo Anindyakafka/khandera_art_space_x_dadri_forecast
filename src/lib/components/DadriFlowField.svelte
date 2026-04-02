@@ -383,16 +383,33 @@
   });
 </script>
 
-<div class="dadri-smoke" bind:this={host} aria-hidden="true">
-  <div class="art" bind:this={artEl}></div>
+<div class="dadri-field-shell">
+  <div class="dadri-smoke" bind:this={host} aria-hidden="true">
+    <div class="art" bind:this={artEl}></div>
+  </div>
+
+  <div class="dadri-content">
+    <slot />
+  </div>
 </div>
 
 <style>
+  .dadri-field-shell {
+    position: relative;
+    min-height: 100%;
+    isolation: isolate;
+  }
+
+  .dadri-content {
+    position: relative;
+    z-index: 2;
+  }
+
   .dadri-smoke {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 1;
+    z-index: 0;
     overflow: hidden;
     opacity: 1;
     mix-blend-mode: normal;
