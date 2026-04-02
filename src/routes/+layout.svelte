@@ -24,7 +24,7 @@
     { href: '/dadri-forecast/events', label: 'Events' }
   ];
   const dadriLogoPath = '/media/images/dadri-forecast/logo.png';
-  const enableDadriFractal = false;
+  const enableDadriFractal = true;
   let activeTheme = themeOptions[0].id;
   let mobileMenuOpen = false;
   let dadriNoiseA: SVGFETurbulenceElement | null = null;

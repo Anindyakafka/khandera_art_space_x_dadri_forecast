@@ -1,5 +1,6 @@
 <script lang="ts">
   import DadriSmokeField from '$lib/components/DadriSmokeField.svelte';
+  import FlowAroundOrb from '$lib/components/FlowAroundOrb.svelte';
   import { renderSimpleMarkdown } from '$lib/content/markdown';
   import { dadriSmokeCorpus } from '$lib/content/smokeCorpus';
 
@@ -7,6 +8,8 @@
 
   const dadriLogoPath = '/media/images/dadri-forecast/logo.png';
   const manifestoHtml = renderSimpleMarkdown(data.manifestoMarkdown);
+  const orbText =
+    'Dadri Forecast tracks land grabs, smoke, wetlands, labor, memory, and communal fracture as shared weather. Drag the orb to force the passage to reroute itself around pressure, blockage, and refusal.';
 </script>
 
 <main class="dadri-root">
@@ -19,6 +22,20 @@
       <span class="warning-bar">Militant Research Zone</span>
       <p class="scroll-hint">Scroll to enter the archive</p>
     </div>
+  </section>
+
+  <section class="signal-panel" aria-label="Dadri Forecast signal field">
+    <article class="doc-root">
+      <header class="panel-head">
+        <p class="section-no" aria-hidden="true">01</p>
+        <h2>Signal field</h2>
+        <p>
+          The Cheng Lou Pretext orb is active again. Drag it to watch the text genuinely reflow around the obstruction.
+        </p>
+      </header>
+
+      <FlowAroundOrb text={orbText} lineHeight={30} orbRadius={78} />
+    </article>
   </section>
 
   <section class="reveal-panel" aria-label="Dadri Forecast details">
@@ -115,9 +132,17 @@
     color: var(--muted);
   }
 
+  .signal-panel,
   .reveal-panel {
     width: min(1100px, 96vw);
     margin: 0 auto;
+  }
+
+  .signal-panel {
+    padding: 0 0 clamp(1rem, 3vw, 1.6rem);
+  }
+
+  .reveal-panel {
     border-top: 2px solid color-mix(in srgb, var(--accent) 64%, var(--line));
     padding: clamp(1rem, 3.5vw, 2.6rem) 0 clamp(2rem, 5vw, 4rem);
   }

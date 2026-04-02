@@ -1,9 +1,25 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
+  type Cursor = {
+    segmentIndex: number;
+    graphemeIndex: number;
+  };
+
+  type LayoutLine = {
+    text: string;
+    width: number;
+    start: Cursor;
+    end: Cursor;
+  };
+
+  type PretextApi = {
+    prepareWithSegments: (text: string, font: string, options?: { whiteSpace?: 'normal' | 'pre-wrap' }) => unknown;
+    layoutNextLine: (prepared: unknown, start: Cursor, maxWidth: number) => LayoutLine | null;
+  };
+
   type Segment = {
-    start: number;
-    end: number;
+    text: string;
     x: number;
     width: number;
     y: number;
@@ -15,8 +31,7 @@
   export let font = '500 1rem "IBM Plex Sans", "Segoe UI", sans-serif';
   export let orbRadius = 76;
 
-  let host: HTMLDivElement | null = null;
-  let lineLayer: HTMLDivElement | null = null;
+  let host: HTMLElement | null = null;
 
   let hostWidth = 640;
   let hostHeight = 340;
@@ -26,10 +41,18 @@
 
   let segments: Segment[] = [];
   let canvasCtx: CanvasRenderingContext2D | null = null;
+  let pretextApi: PretextApi | null = null;
+  let prepared: unknown = null;
+  let usingPretext = false;
+
   const widthCache = new Map<string, number>();
 
   function clamp(value: number, min: number, max: number) {
     return Math.min(Math.max(value, min), max);
+  }
+
+  function sameCursor(a: Cursor, b: Cursor) {
+    return a.segmentIndex === b.segmentIndex && a.graphemeIndex === b.graphemeIndex;
   }
 
   function measureTextWidth(fragment: string) {
@@ -45,6 +68,28 @@
     const width = canvasCtx.measureText(fragment).width;
     widthCache.set(fragment, width);
     return width;
+  }
+
+  function prepareLayoutData() {
+    widthCache.clear();
+
+    if (canvasCtx) {
+      canvasCtx.font = font;
+    }
+
+    if (!pretextApi) {
+      prepared = null;
+      usingPretext = false;
+      return;
+    }
+
+    try {
+      prepared = pretextApi.prepareWithSegments(text, font, { whiteSpace: 'normal' });
+      usingPretext = true;
+    } catch {
+      prepared = null;
+      usingPretext = false;
+    }
   }
 
   function getBlockedRange(midY: number) {
@@ -86,17 +131,16 @@
     return spans;
   }
 
-  function pushLineSegment(start: number, end: number, x: number, y: number) {
-    if (end <= start) {
+  function pushLineSegment(content: string, x: number, y: number) {
+    if (content.length === 0) {
       return;
     }
 
     segments.push({
-      start,
-      end,
+      text: content,
       x,
       y,
-      width: measureTextWidth(text.slice(start, end))
+      width: measureTextWidth(content)
     });
   }
 
@@ -104,22 +148,89 @@
     return isLineStart && text[index] === ' ';
   }
 
-  function layoutTextAroundOrb() {
+  function layoutTextWithPretext() {
+    if (!pretextApi || !prepared) {
+      return false;
+    }
+
+    const nextSegments: Segment[] = [];
+    let lineTop = 0;
+    let safety = 0;
+    let done = false;
+    let cursor: Cursor = { segmentIndex: 0, graphemeIndex: 0 };
+
+    while (!done && lineTop < 1600 && safety < 260) {
+      const ranges = allowedRanges(lineTop);
+      let consumedRow = false;
+
+      for (const range of ranges) {
+        const width = range.end - range.start;
+        if (width < 12) {
+          continue;
+        }
+
+        const before = { ...cursor };
+        const line = pretextApi.layoutNextLine(prepared, cursor, width);
+
+        if (!line) {
+          done = true;
+          break;
+        }
+
+        if (sameCursor(before, line.end)) {
+          continue;
+        }
+
+        nextSegments.push({
+          text: line.text,
+          x: range.start,
+          y: lineTop,
+          width: line.width
+        });
+
+        cursor = line.end;
+        consumedRow = true;
+      }
+
+      if (!consumedRow && !done) {
+        const fallback = pretextApi.layoutNextLine(prepared, cursor, hostWidth);
+        if (!fallback || sameCursor(cursor, fallback.end)) {
+          done = true;
+        } else {
+          nextSegments.push({
+            text: fallback.text,
+            x: 0,
+            y: lineTop,
+            width: fallback.width
+          });
+          cursor = fallback.end;
+        }
+      }
+
+      lineTop += lineHeight;
+      safety += 1;
+    }
+
+    segments = nextSegments;
+    hostHeight = Math.max(260, lineTop + lineHeight * 0.7);
+    return true;
+  }
+
+  function layoutTextFallback() {
     if (!canvasCtx || !host || hostWidth <= 0) {
       return;
     }
 
-    widthCache.clear();
     segments = [];
 
     let cursor = 0;
     let lineTop = 0;
     const maxLines = 260;
 
-    for (let lineIndex = 0; lineIndex < maxLines && cursor < text.length; lineIndex++) {
+    for (let lineIndex = 0; lineIndex < maxLines && cursor < text.length; lineIndex += 1) {
       const ranges = allowedRanges(lineTop);
 
-      for (let rangeIndex = 0; rangeIndex < ranges.length && cursor < text.length; rangeIndex++) {
+      for (let rangeIndex = 0; rangeIndex < ranges.length && cursor < text.length; rangeIndex += 1) {
         const range = ranges[rangeIndex];
         const rangeWidth = range.end - range.start;
         if (rangeWidth < 8) {
@@ -154,12 +265,12 @@
         }
 
         if (localCursor === lineStart) {
-          const forcedWidth = measureTextWidth(text.slice(localCursor, localCursor + 1));
-          pushLineSegment(localCursor, localCursor + 1, range.start, lineTop);
-          used = forcedWidth;
+          const singleChar = text.slice(localCursor, localCursor + 1);
+          pushLineSegment(singleChar, range.start, lineTop);
+          used = measureTextWidth(singleChar);
           localCursor += 1;
         } else {
-          pushLineSegment(lineStart, localCursor, range.start, lineTop);
+          pushLineSegment(text.slice(lineStart, localCursor), range.start, lineTop);
         }
 
         cursor = localCursor;
@@ -174,6 +285,18 @@
     }
 
     hostHeight = Math.max(260, lineTop + lineHeight * 0.7);
+  }
+
+  function layoutTextAroundOrb() {
+    if (!host || hostWidth <= 0) {
+      return;
+    }
+
+    if (layoutTextWithPretext()) {
+      return;
+    }
+
+    layoutTextFallback();
   }
 
   function syncHostBounds() {
@@ -200,11 +323,7 @@
   }
 
   function onPointerDown(event: PointerEvent) {
-    if (!(event.target instanceof HTMLElement)) {
-      return;
-    }
-
-    if (!event.target.closest('.orb')) {
+    if (!(event.target instanceof HTMLElement) || !event.target.closest('.orb')) {
       return;
     }
 
@@ -224,7 +343,7 @@
     dragging = false;
   }
 
-  onMount(() => {
+  onMount(async () => {
     const canvas = document.createElement('canvas');
     canvasCtx = canvas.getContext('2d');
 
@@ -232,11 +351,20 @@
       return;
     }
 
-    canvasCtx.font = font;
+    prepareLayoutData();
     syncHostBounds();
 
+    try {
+      pretextApi = (await import('@chenglou/pretext')) as PretextApi;
+    } catch {
+      pretextApi = null;
+    }
+
+    prepareLayoutData();
+    layoutTextAroundOrb();
+
     const resizeObserver = new ResizeObserver(() => {
-      canvasCtx!.font = font;
+      prepareLayoutData();
       syncHostBounds();
     });
 
@@ -261,9 +389,11 @@
   on:pointerdown={onPointerDown}
   style={`--orb-size:${orbRadius * 2}px; min-height:${Math.ceil(hostHeight)}px;`}
 >
-  <div class="line-layer" bind:this={lineLayer}>
+  <p class="flow-kicker">{usingPretext ? 'Cheng Lou Pretext // active' : 'Drag orb // fallback wrap'}</p>
+
+  <div class="line-layer">
     {#each segments as segment, index (index)}
-      <span class="line-fragment" style={`left:${segment.x}px; top:${segment.y}px;`}>{text.slice(segment.start, segment.end)}</span>
+      <span class="line-fragment" style={`left:${segment.x}px; top:${segment.y}px;`}>{segment.text}</span>
     {/each}
   </div>
 
@@ -289,6 +419,15 @@
       linear-gradient(180deg, color-mix(in srgb, var(--surface) 90%, transparent), color-mix(in srgb, var(--surface) 75%, transparent));
     overflow: clip;
     touch-action: none;
+  }
+
+  .flow-kicker {
+    margin: 0;
+    padding: 0.65rem 0.8rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font: 700 0.62rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
+    color: color-mix(in srgb, var(--muted) 88%, var(--text));
   }
 
   .line-layer {
