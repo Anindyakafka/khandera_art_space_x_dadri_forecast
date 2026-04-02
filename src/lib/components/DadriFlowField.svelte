@@ -1,385 +1,455 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { afterNavigate } from '$app/navigation';
 
-  // ---- types ----
-  type Cursor = { segmentIndex: number; graphemeIndex: number };
-  type LayoutLine = { text: string; width: number; start: Cursor; end: Cursor };
+  type PreparedChar = { widths?: number[] };
   type PretextApi = {
-    prepareWithSegments: (text: string, font: string, options?: { whiteSpace?: 'normal' | 'pre-wrap' }) => unknown;
-    layoutNextLine: (prepared: unknown, start: Cursor, maxWidth: number) => LayoutLine | null;
+    prepareWithSegments: (text: string, font: string, options?: { whiteSpace?: 'normal' | 'pre-wrap' }) => PreparedChar;
   };
 
-  type ActiveParagraph = {
-    el: HTMLElement;
-    prepared: unknown;
-    lineHeight: number;
-    overlay: HTMLDivElement;
-    pool: HTMLSpanElement[];
-    textColor: string;
-    originalColor: string;
-    originalPosition: string;
-    rect: DOMRect;
-    scrollY: number;
+  type PaletteEntry = {
+    char: string;
+    weight: 300 | 500 | 800;
+    style: 'normal' | 'italic';
+    width: number;
+    brightness: number;
   };
 
-  const ORB_D = 35;
-  const ORB_R = ORB_D / 2;
-  const HIT_PAD = 8;
-  const INNER_GAP = 4;
-  const ORB_LERP = 0.22;
-  const PARAGRAPH_STICKY_PAD = 10;
-  const RELAYOUT_DISTANCE = 5;
+  type Emitter = {
+    cx: number;
+    cy: number;
+    orbitX: number;
+    orbitY: number;
+    freq: number;
+    phase: number;
+    strength: number;
+  };
 
-  let mounted = false;
-  let orbVisible = false;
-  let orbX = -2000;
-  let orbY = -2000;
-  let pointerX = -2000;
-  let pointerY = -2000;
+  export let text = '';
 
+  const FONT_SIZE = 14;
+  const LINE_HEIGHT = 18;
+  const FAMILY = '"IBM Plex Sans", "Segoe UI", sans-serif';
+  const FONT_STYLES = ['normal', 'italic'] as const;
+  const WEIGHTS = [300, 500, 800] as const;
+  const MAX_COLS = 84;
+  const MAX_ROWS = 32;
+  const MIN_COLS = 42;
+  const MIN_ROWS = 18;
+  const SPACE_W = FONT_SIZE * 0.28;
+  const CHARSET_FALLBACK = '.,:;!+-=*#@%&abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+  const emitters: Emitter[] = [
+    { cx: 0.08, cy: 0.18, orbitX: 0.06, orbitY: 0.09, freq: 0.22, phase: 0.0, strength: 0.26 },
+    { cx: 0.92, cy: 0.16, orbitX: 0.06, orbitY: 0.09, freq: 0.25, phase: 1.7, strength: 0.26 },
+    { cx: 0.12, cy: 0.72, orbitX: 0.05, orbitY: 0.07, freq: 0.19, phase: 3.1, strength: 0.16 },
+    { cx: 0.88, cy: 0.68, orbitX: 0.05, orbitY: 0.07, freq: 0.24, phase: 4.4, strength: 0.16 },
+    { cx: 0.5, cy: 0.08, orbitX: 0.2, orbitY: 0.03, freq: 0.15, phase: 0.8, strength: 0.11 }
+  ];
+
+  let host: HTMLDivElement | null = null;
+  let artEl: HTMLDivElement | null = null;
   let pretextApi: PretextApi | null = null;
-  let activeParagraph: ActiveParagraph | null = null;
-  let loopRaf: number | null = null;
-  let lastRenderX = -2000;
-  let lastRenderY = -2000;
+  let rowEls: HTMLDivElement[] = [];
+  let palette: PaletteEntry[] = [];
+  let density = new Float32Array(0);
+  let tempDensity = new Float32Array(0);
+  let cols = 0;
+  let rows = 0;
+  let avgCharW = FONT_SIZE * 0.58;
+  let aspect = avgCharW / LINE_HEIGHT;
+  let aspect2 = aspect * aspect;
+  let frameId: number | null = null;
+  let resizeObserver: ResizeObserver | null = null;
+  let probeCanvas: HTMLCanvasElement | null = null;
+  let probeCtx: CanvasRenderingContext2D | null = null;
 
-  function clamp(v: number, lo: number, hi: number) {
-    return Math.min(Math.max(v, lo), hi);
+  function clamp(value: number, min: number, max: number) {
+    return Math.min(Math.max(value, min), max);
   }
 
-  function parseLineHeight(style: CSSStyleDeclaration) {
-    const fs = parseFloat(style.fontSize);
-    const raw = style.lineHeight;
-    if (!raw || raw === 'normal') return isFinite(fs) ? fs * 1.6 : 24;
-    const lh = parseFloat(raw);
-    return isFinite(lh) ? lh : (isFinite(fs) ? fs * 1.6 : 24);
+  function ensureProbeContext() {
+    if (!probeCanvas) {
+      probeCanvas = document.createElement('canvas');
+      probeCanvas.width = 32;
+      probeCanvas.height = 32;
+      probeCtx = probeCanvas.getContext('2d', { willReadFrequently: true });
+    }
   }
 
-  function sameCursor(a: Cursor, b: Cursor) {
-    return a.segmentIndex === b.segmentIndex && a.graphemeIndex === b.graphemeIndex;
-  }
+  function estimateBrightness(char: string, font: string) {
+    ensureProbeContext();
 
-  function isEligibleText(el: Element | null): el is HTMLElement {
-    if (!el || !(el instanceof HTMLElement)) return false;
-    if (!el.matches('p, li, blockquote')) return false;
-    if (el.childElementCount > 0) return false;
-    if (el.closest('nav, header, button, a, footer, .title-screen, .route-links, .warning-bar, .section-no')) return false;
-    if (el.closest('[role="button"], [role="link"]')) return false;
-    return (el.textContent?.trim().length ?? 0) > 30;
-  }
-
-  function getFontShorthand(style: CSSStyleDeclaration) {
-    return `${style.fontWeight || '400'} ${style.fontSize || '16px'} ${style.fontFamily || 'serif'}`;
-  }
-
-  function restoreActiveParagraph() {
-    if (!activeParagraph) return;
-    activeParagraph.el.style.color = activeParagraph.originalColor;
-    activeParagraph.el.style.position = activeParagraph.originalPosition;
-    activeParagraph.overlay.remove();
-    activeParagraph = null;
-  }
-
-  function setActiveParagraph(el: HTMLElement) {
-    if (!pretextApi) return;
-
-    if (activeParagraph?.el === el) {
-      // invalidate cached rect if user has scrolled
-      if (Math.abs(window.scrollY - activeParagraph.scrollY) > 4) {
-        activeParagraph.rect = el.getBoundingClientRect();
-        activeParagraph.scrollY = window.scrollY;
-      }
-      return;
+    if (!probeCtx) {
+      return 0;
     }
 
-    restoreActiveParagraph();
+    probeCtx.clearRect(0, 0, 32, 32);
+    probeCtx.font = font;
+    probeCtx.fillStyle = '#fff';
+    probeCtx.textBaseline = 'middle';
+    probeCtx.fillText(char, 2, 16);
 
-    const style = getComputedStyle(el);
-    const text = (el.textContent ?? '').trim();
-    const prepared = pretextApi.prepareWithSegments(text, getFontShorthand(style), { whiteSpace: 'normal' });
+    const pixels = probeCtx.getImageData(0, 0, 32, 32).data;
+    let sum = 0;
 
-    const originalPosition = el.style.position;
-    const originalColor = el.style.color;
-    const textColor = style.color;
-
-    if (!['relative', 'absolute', 'fixed', 'sticky'].includes(getComputedStyle(el).position)) {
-      el.style.position = 'relative';
-    }
-    // hide original text — overlay renders its own spans on top
-    el.style.color = 'transparent';
-
-    const overlay = document.createElement('div');
-    overlay.setAttribute('aria-hidden', 'true');
-    overlay.style.cssText = 'position:absolute;top:0;left:0;right:0;pointer-events:none;overflow:visible;';
-    el.appendChild(overlay);
-
-    activeParagraph = {
-      el, prepared,
-      lineHeight: parseLineHeight(style),
-      overlay, pool: [],
-      textColor, originalColor, originalPosition,
-      rect: el.getBoundingClientRect(),
-      scrollY: window.scrollY,
-    };
-  }
-
-  function hitsOrb(cx: number, cy: number, rect: DOMRect): boolean {
-    const nx = clamp(cx, rect.left, rect.right);
-    const ny = clamp(cy, rect.top, rect.bottom);
-    return (cx - nx) ** 2 + (cy - ny) ** 2 < (ORB_R + HIT_PAD) ** 2;
-  }
-
-  function isInsideStickyRect(x: number, y: number, rect: DOMRect) {
-    return (
-      x >= rect.left - PARAGRAPH_STICKY_PAD &&
-      x <= rect.right + PARAGRAPH_STICKY_PAD &&
-      y >= rect.top - PARAGRAPH_STICKY_PAD &&
-      y <= rect.bottom + PARAGRAPH_STICKY_PAD
-    );
-  }
-
-  function blockedRange(rect: DOMRect, lineMidY: number) {
-    const dy = Math.abs(lineMidY - orbY);
-    if (dy >= ORB_R) return null;
-    const dx = Math.sqrt(ORB_R * ORB_R - dy * dy) + INNER_GAP;
-    const cx = orbX - rect.left;
-    return {
-      left: clamp(cx - dx, 0, rect.width),
-      right: clamp(cx + dx, 0, rect.width),
-    };
-  }
-
-  function renderActiveLayout() {
-    if (!pretextApi || !activeParagraph) return;
-    const { prepared, lineHeight, overlay, pool, rect, textColor } = activeParagraph;
-
-    if (!hitsOrb(orbX, orbY, rect)) {
-      restoreActiveParagraph();
-      return;
+    for (let i = 3; i < pixels.length; i += 4) {
+      sum += pixels[i];
     }
 
-    let poolIdx = 0;
-    let lineTop = 0;
-    let done = false;
-    let safety = 0;
-    let cursor: Cursor = { segmentIndex: 0, graphemeIndex: 0 };
+    return sum / (255 * 32 * 32);
+  }
 
-    while (!done && safety < 400 && lineTop < 2000) {
-      const lineMidY = rect.top + lineTop + lineHeight * 0.5;
-      const blocked = blockedRange(rect, lineMidY);
-      const ranges: { start: number; end: number }[] = [];
+  function measureCharWidth(char: string, font: string) {
+    ensureProbeContext();
 
-      if (!blocked) {
-        ranges.push({ start: 0, end: rect.width });
-      } else {
-        if (blocked.left > 6) ranges.push({ start: 0, end: blocked.left });
-        if (blocked.right < rect.width - 6) ranges.push({ start: blocked.right, end: rect.width });
-      }
+    if (!probeCtx) {
+      return FONT_SIZE * 0.62;
+    }
 
-      let consumed = false;
+    probeCtx.font = font;
+    const width = probeCtx.measureText(char).width;
+    return width > 0 ? width : FONT_SIZE * 0.62;
+  }
 
-      for (const range of ranges) {
-        const w = range.end - range.start;
-        if (w < 10) continue;
-        const before = cursor;
-        const line = pretextApi.layoutNextLine(prepared, cursor, w);
-        if (!line) { done = true; break; }
-        if (sameCursor(before, line.end)) continue;
+  function buildCharset(source: string) {
+    const merged = Array.from(new Set((CHARSET_FALLBACK + source).replace(/\s+/g, '')));
+    return merged.join('');
+  }
 
-        // reuse pooled span — no createElement cost per frame
-        let span = pool[poolIdx];
-        if (!span) {
-          span = document.createElement('span');
-          pool.push(span);
-          overlay.appendChild(span);
-        }
-        if (span.textContent !== line.text) span.textContent = line.text;
-        const nl = Math.round(range.start);
-        const nt = Math.round(lineTop);
-        span.style.cssText = `position:absolute;white-space:pre;pointer-events:none;color:${textColor};font:inherit;left:${nl}px;top:${nt}px;display:block;`;
-        poolIdx++;
-        cursor = line.end;
-        consumed = true;
-      }
+  function buildPalette() {
+    const charset = buildCharset(text);
+    const next: PaletteEntry[] = [];
 
-      if (!consumed && !done) {
-        const fallback = pretextApi.layoutNextLine(prepared, cursor, rect.width);
-        if (!fallback || sameCursor(cursor, fallback.end)) {
-          done = true;
-        } else {
-          let span = pool[poolIdx];
-          if (!span) {
-            span = document.createElement('span');
-            pool.push(span);
-            overlay.appendChild(span);
+    for (const style of FONT_STYLES) {
+      for (const weight of WEIGHTS) {
+        const font = `${style === 'italic' ? 'italic ' : ''}${weight} ${FONT_SIZE}px ${FAMILY}`;
+
+        for (const char of charset) {
+          if (char === ' ') {
+            continue;
           }
-          if (span.textContent !== fallback.text) span.textContent = fallback.text;
-          const nt = Math.round(lineTop);
-          span.style.cssText = `position:absolute;white-space:pre;pointer-events:none;color:${textColor};font:inherit;left:0px;top:${nt}px;display:block;`;
-          poolIdx++;
-          cursor = fallback.end;
+
+          const pretextWidth = pretextApi ? (pretextApi.prepareWithSegments(char, font).widths?.[0] ?? 0) : 0;
+          const width = pretextWidth > 0 ? pretextWidth : measureCharWidth(char, font);
+
+          next.push({
+            char,
+            weight,
+            style,
+            width,
+            brightness: estimateBrightness(char, font)
+          });
         }
       }
-
-      lineTop += lineHeight;
-      safety++;
     }
 
-    // hide surplus pool spans rather than removing them
-    for (let i = poolIdx; i < pool.length; i++) {
-      if (pool[i].style.display !== 'none') pool[i].style.display = 'none';
+    const maxBrightness = Math.max(...next.map((entry) => entry.brightness), 1);
+    palette = next
+      .map((entry) => ({ ...entry, brightness: entry.brightness / maxBrightness }))
+      .sort((a, b) => a.brightness - b.brightness);
+
+    avgCharW = palette.reduce((sum, entry) => sum + entry.width, 0) / Math.max(1, palette.length);
+    aspect = avgCharW / LINE_HEIGHT;
+    aspect2 = aspect * aspect;
+  }
+
+  function weightClass(weight: number) {
+    return weight === 300 ? 'w3' : weight === 500 ? 'w5' : 'w8';
+  }
+
+  function escapeHtml(char: string) {
+    if (char === '&') return '&amp;';
+    if (char === '<') return '&lt;';
+    if (char === '>') return '&gt;';
+    return char;
+  }
+
+  function findBest(targetBrightness: number, targetWidth: number) {
+    if (palette.length === 0) {
+      return null;
     }
 
-    overlay.style.minHeight = `${Math.max(lineHeight, lineTop)}px`;
-  }
+    let lo = 0;
+    let hi = palette.length - 1;
 
-  function clearAll() {
-    restoreActiveParagraph();
-    lastRenderX = -2000;
-    lastRenderY = -2000;
-  }
-
-  function stopLoop() {
-    if (loopRaf !== null) { cancelAnimationFrame(loopRaf); loopRaf = null; }
-  }
-
-  function runFrame() {
-    if (!orbVisible) { loopRaf = null; return; }
-
-    orbX += (pointerX - orbX) * ORB_LERP;
-    orbY += (pointerY - orbY) * ORB_LERP;
-    if (Math.abs(pointerX - orbX) < 0.3) orbX = pointerX;
-    if (Math.abs(pointerY - orbY) < 0.3) orbY = pointerY;
-
-    if (activeParagraph) {
-      const movedEnough = Math.hypot(orbX - lastRenderX, orbY - lastRenderY) >= RELAYOUT_DISTANCE;
-      if (movedEnough) {
-        renderActiveLayout();
-        lastRenderX = orbX;
-        lastRenderY = orbY;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (palette[mid].brightness < targetBrightness) {
+        lo = mid + 1;
+      } else {
+        hi = mid;
       }
     }
 
-    loopRaf = requestAnimationFrame(runFrame);
-  }
+    let best = palette[lo];
+    let bestScore = Infinity;
 
-  function onMouseMove(e: MouseEvent) {
-    if (!pretextApi) return;
-    const hovered = document.elementFromPoint(e.clientX, e.clientY)?.closest('p, li, blockquote') ?? null;
+    for (let i = Math.max(0, lo - 14); i < Math.min(palette.length, lo + 14); i += 1) {
+      const entry = palette[i];
+      const score = Math.abs(entry.brightness - targetBrightness) * 2.4 + Math.abs(entry.width - targetWidth) / Math.max(1, targetWidth);
 
-    if (!isEligibleText(hovered) && activeParagraph) {
-      if (Math.abs(window.scrollY - activeParagraph.scrollY) > 4) {
-        activeParagraph.rect = activeParagraph.el.getBoundingClientRect();
-        activeParagraph.scrollY = window.scrollY;
-      }
-
-      if (isInsideStickyRect(e.clientX, e.clientY, activeParagraph.rect)) {
-        pointerX = e.clientX;
-        pointerY = e.clientY;
-
-        if (!orbVisible) {
-          orbX = pointerX;
-          orbY = pointerY;
-          orbVisible = true;
-        }
-
-        if (loopRaf === null) loopRaf = requestAnimationFrame(runFrame);
-        return;
+      if (score < bestScore) {
+        bestScore = score;
+        best = entry;
       }
     }
 
-    if (!isEligibleText(hovered)) {
-      if (orbVisible) {
-        orbVisible = false;
-        pointerX = -2000; pointerY = -2000;
-        orbX = -2000; orbY = -2000;
-        clearAll();
-        stopLoop();
-      }
+    return best;
+  }
+
+  function initGrid() {
+    if (!host || !artEl) {
       return;
     }
 
-    setActiveParagraph(hovered);
-    pointerX = e.clientX;
-    pointerY = e.clientY;
+    cols = Math.min(MAX_COLS, Math.max(MIN_COLS, Math.floor(host.clientWidth / Math.max(avgCharW, 6))));
+    rows = Math.min(MAX_ROWS, Math.max(MIN_ROWS, Math.floor(host.clientHeight / LINE_HEIGHT)));
 
-    if (!orbVisible) {
-      orbX = pointerX; orbY = pointerY;
-      orbVisible = true;
+    density = new Float32Array(cols * rows);
+    tempDensity = new Float32Array(cols * rows);
+
+    artEl.innerHTML = '';
+    rowEls = [];
+
+    for (let r = 0; r < rows; r += 1) {
+      const row = document.createElement('div');
+      row.className = 'r';
+      row.style.height = `${LINE_HEIGHT}px`;
+      row.style.lineHeight = `${LINE_HEIGHT}px`;
+      artEl.appendChild(row);
+      rowEls.push(row);
+    }
+  }
+
+  function edgeFactor(c: number, r: number) {
+    const nx = c / Math.max(1, cols - 1);
+    const ny = r / Math.max(1, rows - 1);
+    const side = clamp((Math.abs(nx - 0.5) * 2 - 0.08) / 0.92, 0, 1);
+    const top = clamp((0.42 - ny) / 0.42, 0, 1) * 0.72;
+    const cornerLift = clamp((Math.abs(nx - 0.5) * 1.6 + (0.34 - ny)) * 0.9, 0, 1);
+    const holeX = Math.abs(nx - 0.5) / 0.19;
+    const holeY = Math.abs(ny - 0.46) / 0.26;
+    const centerHole = clamp(Math.max(holeX, holeY) - 0.78, 0, 1);
+    return clamp(Math.max(side, top, cornerLift) * centerHole, 0, 1);
+  }
+
+  function getVelocity(c: number, r: number, time: number) {
+    const nx = c / Math.max(1, cols - 1);
+    const ny = r / Math.max(1, rows - 1);
+
+    let vx =
+      Math.sin(ny * 6.2 + time * 0.35) * 1.65 +
+      Math.cos((nx + ny) * 11.4 + time * 0.48) * 0.72 +
+      Math.sin(nx * 18 - ny * 14 + time * 0.86) * 0.24;
+
+    let vy =
+      -0.42 +
+      Math.cos(nx * 4.8 + time * 0.39) * 0.82 +
+      Math.sin((nx - ny) * 9.6 + time * 0.44) * 0.58;
+
+    vy *= aspect;
+    return [vx, vy];
+  }
+
+  function updateSimulation(time: number) {
+    if (cols === 0 || rows === 0) {
+      return;
     }
 
-    if (loopRaf === null) loopRaf = requestAnimationFrame(runFrame);
+    for (let r = 0; r < rows; r += 1) {
+      for (let c = 0; c < cols; c += 1) {
+        const [vx, vy] = getVelocity(c, r, time);
+        const sx = clamp(c - vx, 0, cols - 1.001);
+        const sy = clamp(r - vy, 0, rows - 1.001);
+        const x0 = sx | 0;
+        const y0 = sy | 0;
+        const x1 = Math.min(x0 + 1, cols - 1);
+        const y1 = Math.min(y0 + 1, rows - 1);
+        const fx = sx - x0;
+        const fy = sy - y0;
+
+        tempDensity[r * cols + c] =
+          density[y0 * cols + x0] * (1 - fx) * (1 - fy) +
+          density[y0 * cols + x1] * fx * (1 - fy) +
+          density[y1 * cols + x0] * (1 - fx) * fy +
+          density[y1 * cols + x1] * fx * fy;
+      }
+    }
+
+    [density, tempDensity] = [tempDensity, density];
+
+    for (let r = 1; r < rows - 1; r += 1) {
+      for (let c = 1; c < cols - 1; c += 1) {
+        const i = r * cols + c;
+        const avg = (density[i - 1] + density[i + 1] + (density[i - cols] + density[i + cols]) * aspect2) / (2 + 2 * aspect2);
+        tempDensity[i] = density[i] * 0.915 + avg * 0.085;
+      }
+    }
+
+    [density, tempDensity] = [tempDensity, density];
+
+    const spread = 4;
+    for (const emitter of emitters) {
+      const ex = (emitter.cx + Math.cos(time * emitter.freq + emitter.phase) * emitter.orbitX) * cols;
+      const ey = (emitter.cy + Math.sin(time * emitter.freq * 0.78 + emitter.phase) * emitter.orbitY) * rows;
+      const ec = ex | 0;
+      const er = ey | 0;
+
+      for (let dr = -spread; dr <= spread; dr += 1) {
+        for (let dc = -spread; dc <= spread; dc += 1) {
+          const rr = er + dr;
+          const cc = ec + dc;
+
+          if (rr >= 0 && rr < rows && cc >= 0 && cc < cols) {
+            const dist = Math.sqrt(dc * dc + (dr / Math.max(aspect, 0.001)) ** 2);
+            const strength = Math.max(0, 1 - dist / (spread + 1));
+            density[rr * cols + cc] = Math.min(1, density[rr * cols + cc] + strength * emitter.strength * edgeFactor(cc, rr));
+          }
+        }
+      }
+    }
+
+    for (let i = 0; i < density.length; i += 1) {
+      density[i] *= 0.985;
+    }
   }
 
-  function onMouseLeave() {
-    orbVisible = false;
-    pointerX = -2000; pointerY = -2000;
-    orbX = -2000; orbY = -2000;
-    clearAll();
-    stopLoop();
-  }
+  function render(now: number) {
+    const time = now / 1000;
+    updateSimulation(time);
 
-  afterNavigate(() => {
-    orbVisible = false;
-    pointerX = -2000; pointerY = -2000;
-    orbX = -2000; orbY = -2000;
-    clearAll();
-    stopLoop();
-  });
+    if (palette.length > 0 && cols > 0) {
+      const cellWidth = (host?.clientWidth ?? cols * avgCharW) / cols;
+
+      for (let r = 0; r < rows; r += 1) {
+        let html = '';
+
+        for (let c = 0; c < cols; c += 1) {
+          const densityValue = density[r * cols + c] * edgeFactor(c, r);
+
+          if (densityValue < 0.016) {
+            html += ' ';
+            continue;
+          }
+
+          const entry = findBest(densityValue, cellWidth);
+          if (!entry) {
+            html += ' ';
+            continue;
+          }
+
+          const alphaIndex = Math.max(1, Math.min(10, Math.round(densityValue * 10)));
+          const classes = `${weightClass(entry.weight)}${entry.style === 'italic' ? ' it' : ''} a${alphaIndex}`;
+          html += `<span class="${classes}">${escapeHtml(entry.char)}</span>`;
+        }
+
+        const rowEl = rowEls[r];
+        if (rowEl) {
+          rowEl.innerHTML = html;
+          rowEl.style.paddingLeft = `${Math.max(0, Math.sin(time * 0.32 + r * 0.27) * 4 + 2)}px`;
+        }
+      }
+    }
+
+    frameId = requestAnimationFrame(render);
+  }
 
   onMount(async () => {
-    mounted = true;
-    try { pretextApi = (await import('@chenglou/pretext')) as PretextApi; }
-    catch { pretextApi = null; }
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseleave', onMouseLeave);
+    try {
+      pretextApi = (await import('@chenglou/pretext')) as PretextApi;
+    } catch {
+      pretextApi = null;
+    }
+
+    buildPalette();
+    initGrid();
+
+    resizeObserver = new ResizeObserver(() => {
+      initGrid();
+    });
+
+    if (host) {
+      resizeObserver.observe(host);
+    }
+
+    frameId = requestAnimationFrame(render);
+
     return () => {
-      mounted = false;
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseleave', onMouseLeave);
-      clearAll();
-      stopLoop();
+      resizeObserver?.disconnect();
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId);
+      }
     };
   });
 </script>
 
-<div class="dadri-shell">
-  <slot />
+<div class="dadri-smoke" bind:this={host} aria-hidden="true">
+  <div class="art" bind:this={artEl}></div>
 </div>
 
-{#if mounted && orbVisible}
-  <div
-    class="dadri-orb"
-    aria-hidden="true"
-    style="left:{orbX}px;top:{orbY}px;"
-  ></div>
-{/if}
-
 <style>
-  .dadri-shell {
-    width: 100%;
+  .dadri-smoke {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+    opacity: 1;
+    mix-blend-mode: normal;
+    mask-image: radial-gradient(ellipse at 50% 46%, transparent 0 14%, rgba(0, 0, 0, 0.55) 24%, black 48%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 46%, transparent 0 14%, rgba(0, 0, 0, 0.55) 24%, black 48%);
   }
 
-  .dadri-orb {
-    position: fixed;
-    width: 35px;
-    height: 35px;
-    transform: translate(-50%, -50%);
-    border-radius: 999px;
-    pointer-events: none;
-    z-index: 8000;
-    border: 1px solid color-mix(in srgb, var(--accent) 58%, var(--line));
-    background:
-      radial-gradient(
-        circle at 34% 24%,
-        color-mix(in srgb, var(--accent) 38%, transparent),
-        transparent 60%
-      ),
-      color-mix(in srgb, var(--surface) 88%, transparent);
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--line) 38%, transparent),
-      0 3px 8px color-mix(in srgb, black 16%, transparent);
+  .art {
+    position: absolute;
+    inset: 0;
+    padding: 0.2rem 0;
+    font-size: 14px;
+    overflow: hidden;
+    user-select: none;
+    text-rendering: geometricPrecision;
+    filter: blur(0.15px);
+  }
+
+  .r {
+    white-space: pre;
+    font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+    letter-spacing: 0;
+  }
+
+  .w3 {
+    font-weight: 300;
+  }
+
+  .w5 {
+    font-weight: 500;
+  }
+
+  .w8 {
+    font-weight: 800;
+  }
+
+  .it {
+    font-style: italic;
+  }
+
+  .a1 { color: rgba(225, 214, 202, 0.12); }
+  .a2 { color: rgba(226, 208, 193, 0.17); }
+  .a3 { color: rgba(228, 202, 184, 0.24); }
+  .a4 { color: rgba(231, 192, 170, 0.32); }
+  .a5 { color: rgba(233, 181, 156, 0.41); }
+  .a6 { color: rgba(236, 168, 141, 0.5); }
+  .a7 { color: rgba(238, 155, 126, 0.6); }
+  .a8 { color: rgba(240, 143, 112, 0.7); }
+  .a9 { color: rgba(242, 132, 99, 0.8); }
+  .a10 {
+    color: rgba(245, 124, 90, 0.9);
+    text-shadow: 0 0 12px rgba(245, 124, 90, 0.24);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dadri-smoke {
+      display: none;
+    }
   }
 </style>
-
