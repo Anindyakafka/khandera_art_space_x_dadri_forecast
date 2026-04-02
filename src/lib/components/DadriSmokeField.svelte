@@ -26,24 +26,24 @@
 
   export let text = '';
 
-  const FONT_SIZE = 12;
-  const LINE_HEIGHT = 17;
+  const FONT_SIZE = 14;
+  const LINE_HEIGHT = 18;
   const FAMILY = '"IBM Plex Sans", "Segoe UI", sans-serif';
   const FONT_STYLES = ['normal', 'italic'] as const;
   const WEIGHTS = [300, 500, 800] as const;
-  const MAX_COLS = 92;
-  const MAX_ROWS = 34;
-  const MIN_COLS = 48;
+  const MAX_COLS = 84;
+  const MAX_ROWS = 32;
+  const MIN_COLS = 42;
   const MIN_ROWS = 18;
   const SPACE_W = FONT_SIZE * 0.28;
   const CHARSET_FALLBACK = '.,:;!+-=*#@%&abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
   const emitters: Emitter[] = [
-    { cx: 0.08, cy: 0.18, orbitX: 0.05, orbitY: 0.08, freq: 0.22, phase: 0.0, strength: 0.18 },
-    { cx: 0.92, cy: 0.16, orbitX: 0.05, orbitY: 0.08, freq: 0.25, phase: 1.7, strength: 0.18 },
-    { cx: 0.12, cy: 0.72, orbitX: 0.04, orbitY: 0.06, freq: 0.19, phase: 3.1, strength: 0.12 },
-    { cx: 0.88, cy: 0.68, orbitX: 0.04, orbitY: 0.06, freq: 0.24, phase: 4.4, strength: 0.12 },
-    { cx: 0.5, cy: 0.08, orbitX: 0.18, orbitY: 0.03, freq: 0.15, phase: 0.8, strength: 0.07 }
+    { cx: 0.08, cy: 0.18, orbitX: 0.06, orbitY: 0.09, freq: 0.22, phase: 0.0, strength: 0.26 },
+    { cx: 0.92, cy: 0.16, orbitX: 0.06, orbitY: 0.09, freq: 0.25, phase: 1.7, strength: 0.26 },
+    { cx: 0.12, cy: 0.72, orbitX: 0.05, orbitY: 0.07, freq: 0.19, phase: 3.1, strength: 0.16 },
+    { cx: 0.88, cy: 0.68, orbitX: 0.05, orbitY: 0.07, freq: 0.24, phase: 4.4, strength: 0.16 },
+    { cx: 0.5, cy: 0.08, orbitX: 0.2, orbitY: 0.03, freq: 0.15, phase: 0.8, strength: 0.11 }
   ];
 
   let host: HTMLDivElement | null = null;
@@ -221,12 +221,13 @@
   function edgeFactor(c: number, r: number) {
     const nx = c / Math.max(1, cols - 1);
     const ny = r / Math.max(1, rows - 1);
-    const side = clamp((Math.abs(nx - 0.5) * 2 - 0.16) / 0.84, 0, 1);
-    const top = clamp((0.34 - ny) / 0.34, 0, 1) * 0.55;
-    const holeX = Math.abs(nx - 0.5) / 0.24;
-    const holeY = Math.abs(ny - 0.46) / 0.3;
-    const centerHole = clamp(Math.max(holeX, holeY) - 0.9, 0, 1);
-    return clamp(Math.max(side, top) * centerHole, 0, 1);
+    const side = clamp((Math.abs(nx - 0.5) * 2 - 0.08) / 0.92, 0, 1);
+    const top = clamp((0.42 - ny) / 0.42, 0, 1) * 0.72;
+    const cornerLift = clamp((Math.abs(nx - 0.5) * 1.6 + (0.34 - ny)) * 0.9, 0, 1);
+    const holeX = Math.abs(nx - 0.5) / 0.19;
+    const holeY = Math.abs(ny - 0.46) / 0.26;
+    const centerHole = clamp(Math.max(holeX, holeY) - 0.78, 0, 1);
+    return clamp(Math.max(side, top, cornerLift) * centerHole, 0, 1);
   }
 
   function getVelocity(c: number, r: number, time: number) {
@@ -323,7 +324,7 @@
         for (let c = 0; c < cols; c += 1) {
           const densityValue = density[r * cols + c] * edgeFactor(c, r);
 
-          if (densityValue < 0.026) {
+          if (densityValue < 0.016) {
             html += ' ';
             continue;
           }
@@ -390,17 +391,17 @@
     pointer-events: none;
     z-index: 0;
     overflow: hidden;
-    opacity: 0.9;
+    opacity: 1;
     mix-blend-mode: screen;
-    mask-image: radial-gradient(ellipse at 50% 44%, transparent 0 20%, rgba(0, 0, 0, 0.22) 34%, black 58%);
-    -webkit-mask-image: radial-gradient(ellipse at 50% 44%, transparent 0 20%, rgba(0, 0, 0, 0.22) 34%, black 58%);
+    mask-image: radial-gradient(ellipse at 50% 46%, transparent 0 16%, rgba(0, 0, 0, 0.4) 28%, black 52%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 46%, transparent 0 16%, rgba(0, 0, 0, 0.4) 28%, black 52%);
   }
 
   .art {
     position: absolute;
     inset: 0;
-    padding: 0.4rem 0;
-    font-size: 12px;
+    padding: 0.2rem 0;
+    font-size: 14px;
     overflow: hidden;
     user-select: none;
     text-rendering: geometricPrecision;
@@ -428,18 +429,18 @@
     font-style: italic;
   }
 
-  .a1 { color: rgba(215, 205, 192, 0.07); }
-  .a2 { color: rgba(216, 200, 184, 0.11); }
-  .a3 { color: rgba(219, 196, 178, 0.16); }
-  .a4 { color: rgba(222, 188, 168, 0.22); }
-  .a5 { color: rgba(224, 178, 155, 0.29); }
-  .a6 { color: rgba(227, 166, 140, 0.38); }
-  .a7 { color: rgba(230, 151, 124, 0.47); }
-  .a8 { color: rgba(232, 138, 110, 0.56); }
-  .a9 { color: rgba(235, 129, 100, 0.66); }
+  .a1 { color: rgba(225, 214, 202, 0.12); }
+  .a2 { color: rgba(226, 208, 193, 0.17); }
+  .a3 { color: rgba(228, 202, 184, 0.24); }
+  .a4 { color: rgba(231, 192, 170, 0.32); }
+  .a5 { color: rgba(233, 181, 156, 0.41); }
+  .a6 { color: rgba(236, 168, 141, 0.5); }
+  .a7 { color: rgba(238, 155, 126, 0.6); }
+  .a8 { color: rgba(240, 143, 112, 0.7); }
+  .a9 { color: rgba(242, 132, 99, 0.8); }
   .a10 {
-    color: rgba(239, 120, 90, 0.76);
-    text-shadow: 0 0 10px rgba(239, 120, 90, 0.16);
+    color: rgba(245, 124, 90, 0.9);
+    text-shadow: 0 0 12px rgba(245, 124, 90, 0.24);
   }
 
   @media (prefers-reduced-motion: reduce) {
