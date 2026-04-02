@@ -1,5 +1,8 @@
 <script lang="ts">
+  import DadriSmokeField from '$lib/components/DadriSmokeField.svelte';
   import { renderSimpleMarkdown } from '$lib/content/markdown';
+  import { dadriSmokeCorpus } from '$lib/content/smokeCorpus';
+
   export let data;
 
   const dadriLogoPath = '/media/images/dadri-forecast/logo.png';
@@ -8,6 +11,8 @@
 
 <main class="dadri-root">
   <section class="title-screen" aria-label="Dadri Forecast introduction">
+    <DadriSmokeField text={dadriSmokeCorpus} />
+
     <div class="title-center">
       <img class="hero-logo" src={dadriLogoPath} alt="Dadri Forecast logo" />
       <h1>दादरी Forecast</h1>
@@ -54,12 +59,15 @@
     display: grid;
     place-items: center;
     padding: 1rem;
+    position: relative;
+    overflow: clip;
   }
 
   .title-center {
     text-align: center;
     width: min(92vw, 760px);
     position: relative;
+    z-index: 2;
     padding: 1rem 0;
   }
 
