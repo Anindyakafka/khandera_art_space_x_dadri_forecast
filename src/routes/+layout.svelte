@@ -24,6 +24,7 @@
     { href: '/dadri-forecast/events', label: 'Events' }
   ];
   const dadriLogoPath = '/media/images/dadri-forecast/logo.png';
+  const enableDadriFractal = false;
   let activeTheme = themeOptions[0].id;
   let mobileMenuOpen = false;
   let dadriNoiseA: SVGFETurbulenceElement | null = null;
@@ -97,7 +98,7 @@
     document.documentElement.classList.toggle('dadri-mode', isDadriSection);
   }
   $: if (typeof window !== 'undefined') {
-    if (isDadriSection) {
+    if (isDadriSection && enableDadriFractal) {
       startFractalNoise();
     } else {
       stopFractalNoise();
@@ -145,7 +146,7 @@
   </div>
 {/if}
 
-{#if isDadriSection}
+{#if isDadriSection && enableDadriFractal}
   <div class="dadri-fractal-overlay" aria-hidden="true">
     <svg viewBox="0 0 100 100" preserveAspectRatio="none" role="presentation">
       <defs>
