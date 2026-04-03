@@ -1,15 +1,15 @@
 <script lang="ts">
   import DadriSmokeField from '$lib/components/DadriSmokeField.svelte';
   import FlowAroundOrb from '$lib/components/FlowAroundOrb.svelte';
-  import { renderSimpleMarkdown } from '$lib/content/markdown';
+  import { parseSimpleMarkdown } from '$lib/content/markdown';
   import { dadriSmokeCorpus } from '$lib/content/smokeCorpus';
 
   export let data;
 
   const dadriLogoPath = '/media/images/dadri-forecast/logo.png';
-  const manifestoHtml = renderSimpleMarkdown(data.manifestoMarkdown);
+  const manifestoBlocks = parseSimpleMarkdown(data.manifestoMarkdown);
   const orbText =
-    'Dadri Forecast tracks land grabs, smoke, wetlands, labor, memory, and communal fracture as shared weather. Drag the orb to force the passage to reroute itself around pressure, blockage, and refusal.';
+    'Dadri Forecast tracks land grabs, smoke, wetlands, labor, memory, and communal fracture as shared weather. Move through the paragraph and the small cursor-orb reroutes the text around pressure, blockage, and refusal.';
 </script>
 
 <main class="dadri-root">
@@ -30,11 +30,11 @@
         <p class="section-no" aria-hidden="true">01</p>
         <h2>Signal field</h2>
         <p>
-          The Cheng Lou Pretext orb is active again. Drag it to watch the text genuinely reflow around the obstruction.
+          The Cheng Lou Pretext flow is now tied to hover. Move across the text and a small orb appears just under the cursor while the lines re-route around it.
         </p>
       </header>
 
-      <FlowAroundOrb text={orbText} lineHeight={30} orbRadius={78} />
+      <FlowAroundOrb text={orbText} lineHeight={30} orbRadius={22} hoverOnly={true} orbOffsetY={10} minHeight={172} />
     </article>
   </section>
 
@@ -58,7 +58,32 @@
 
       <div class="doc-card">
         <span class="warning-bar">Archive Text: Counter Narrative Material</span>
-        {@html manifestoHtml}
+
+        {#each manifestoBlocks as block, index (index)}
+          {#if block.type === 'heading'}
+            <svelte:element this={`h${block.level}`}>{@html block.html}</svelte:element>
+          {:else if block.type === 'paragraph'}
+            <FlowAroundOrb
+              text={block.text}
+              lineHeight={28}
+              font={'500 0.98rem "IBM Plex Sans", "Segoe UI", sans-serif'}
+              orbRadius={18}
+              minHeight={62}
+              hoverOnly={true}
+              compact={true}
+              showKicker={false}
+              orbOffsetY={9}
+            />
+          {:else if block.type === 'list'}
+            <ul>
+              {#each block.items as item, itemIndex (itemIndex)}
+                <li>{@html item.html}</li>
+              {/each}
+            </ul>
+          {:else}
+            <hr />
+          {/if}
+        {/each}
       </div>
     </article>
   </section>

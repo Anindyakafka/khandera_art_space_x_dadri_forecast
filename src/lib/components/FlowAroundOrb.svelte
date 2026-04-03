@@ -30,6 +30,12 @@
   export let lineHeight = 30;
   export let font = '500 1rem "IBM Plex Sans", "Segoe UI", sans-serif';
   export let orbRadius = 76;
+  export let minHeight = 260;
+  export let hoverOnly = false;
+  export let showKicker = true;
+  export let compact = false;
+  export let orbOffsetX = 0;
+  export let orbOffsetY = 0;
 
   let host: HTMLElement | null = null;
 
@@ -38,6 +44,7 @@
   let orbX = 210;
   let orbY = 126;
   let dragging = false;
+  let hovering = false;
 
   let segments: Segment[] = [];
   let canvasCtx: CanvasRenderingContext2D | null = null;
@@ -93,6 +100,10 @@
   }
 
   function getBlockedRange(midY: number) {
+    if (hoverOnly && !hovering) {
+      return null;
+    }
+
     const dy = Math.abs(midY - orbY);
     if (dy >= orbRadius) {
       return null;
@@ -212,7 +223,7 @@
     }
 
     segments = nextSegments;
-    hostHeight = Math.max(260, lineTop + lineHeight * 0.7);
+    hostHeight = Math.max(minHeight, lineTop + lineHeight * 0.7);
     return true;
   }
 
@@ -284,7 +295,7 @@
       lineTop += lineHeight;
     }
 
-    hostHeight = Math.max(260, lineTop + lineHeight * 0.7);
+    hostHeight = Math.max(minHeight, lineTop + lineHeight * 0.7);
   }
 
   function layoutTextAroundOrb() {
@@ -317,13 +328,40 @@
     }
 
     const rect = host.getBoundingClientRect();
-    orbX = clamp(event.clientX - rect.left, orbRadius + 8, hostWidth - orbRadius - 8);
-    orbY = clamp(event.clientY - rect.top, orbRadius + 8, hostHeight - orbRadius - 8);
+    orbX = clamp(event.clientX - rect.left + orbOffsetX, orbRadius + 8, hostWidth - orbRadius - 8);
+    orbY = clamp(event.clientY - rect.top + orbOffsetY, orbRadius + 8, hostHeight - orbRadius - 8);
+    layoutTextAroundOrb();
+  }
+
+  function onPointerEnter(event: PointerEvent) {
+    if (!hoverOnly) {
+      return;
+    }
+
+    hovering = true;
+    updateOrbFromPointer(event);
+  }
+
+  function onLocalPointerMove(event: PointerEvent) {
+    if (!hoverOnly) {
+      return;
+    }
+
+    hovering = true;
+    updateOrbFromPointer(event);
+  }
+
+  function onPointerLeave() {
+    if (!hoverOnly) {
+      return;
+    }
+
+    hovering = false;
     layoutTextAroundOrb();
   }
 
   function onPointerDown(event: PointerEvent) {
-    if (!(event.target instanceof HTMLElement) || !event.target.closest('.orb')) {
+    if (hoverOnly || !(event.target instanceof HTMLElement) || !event.target.closest('.orb')) {
       return;
     }
 
@@ -343,7 +381,7 @@
     dragging = false;
   }
 
-  onMount(async () => {
+  onMount(() => {
     const canvas = document.createElement('canvas');
     canvasCtx = canvas.getContext('2d');
 
@@ -354,14 +392,16 @@
     prepareLayoutData();
     syncHostBounds();
 
-    try {
-      pretextApi = (await import('@chenglou/pretext')) as PretextApi;
-    } catch {
-      pretextApi = null;
-    }
+    void (async () => {
+      try {
+        pretextApi = (await import('@chenglou/pretext')) as PretextApi;
+      } catch {
+        pretextApi = null;
+      }
 
-    prepareLayoutData();
-    layoutTextAroundOrb();
+      prepareLayoutData();
+      layoutTextAroundOrb();
+    })();
 
     const resizeObserver = new ResizeObserver(() => {
       prepareLayoutData();
@@ -372,24 +412,37 @@
       resizeObserver.observe(host);
     }
 
-    window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp);
+    if (!hoverOnly) {
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerUp);
+    }
 
     return () => {
       resizeObserver.disconnect();
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerup', onPointerUp);
+
+      if (!hoverOnly) {
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', onPointerUp);
+      }
     };
   });
 </script>
 
 <section
   class="flow-wrap"
+  class:compact
+  class:hover-only={hoverOnly}
+  role="group"
   bind:this={host}
+  on:pointerenter={onPointerEnter}
+  on:pointermove={onLocalPointerMove}
+  on:pointerleave={onPointerLeave}
   on:pointerdown={onPointerDown}
-  style={`--orb-size:${orbRadius * 2}px; min-height:${Math.ceil(hostHeight)}px;`}
+  style={`--orb-size:${orbRadius * 2}px; min-height:${Math.ceil(hostHeight)}px; --flow-font:${font}; --flow-line-height:${lineHeight}px;`}
 >
-  <p class="flow-kicker">{usingPretext ? 'Cheng Lou Pretext // active' : 'Drag orb // fallback wrap'}</p>
+  {#if showKicker}
+    <p class="flow-kicker">{usingPretext ? 'Cheng Lou Pretext // active' : hoverOnly ? 'Hover text // fallback wrap' : 'Drag orb // fallback wrap'}</p>
+  {/if}
 
   <div class="line-layer">
     {#each segments as segment, index (index)}
@@ -397,14 +450,23 @@
     {/each}
   </div>
 
-  <button
-    type="button"
-    class="orb"
-    aria-label="Drag text repeller"
-    style={`left:${orbX - orbRadius}px; top:${orbY - orbRadius}px;`}
-  >
-    <span>{dragging ? 'Move' : 'Drag'}</span>
-  </button>
+  {#if hoverOnly}
+    <div
+      class="orb orb-hover"
+      class:is-visible={hovering}
+      aria-hidden="true"
+      style={`left:${orbX - orbRadius}px; top:${orbY - orbRadius}px;`}
+    ></div>
+  {:else}
+    <button
+      type="button"
+      class="orb"
+      aria-label="Drag text repeller"
+      style={`left:${orbX - orbRadius}px; top:${orbY - orbRadius}px;`}
+    >
+      <span>{dragging ? 'Move' : 'Drag'}</span>
+    </button>
+  {/if}
 </section>
 
 <style>
@@ -421,6 +483,19 @@
     touch-action: none;
   }
 
+  .flow-wrap.hover-only {
+    touch-action: auto;
+    cursor: text;
+  }
+
+  .flow-wrap.compact {
+    width: 100%;
+    margin: 0.16rem 0 0.52rem;
+    border-top: 0;
+    border-bottom: 0;
+    background: transparent;
+  }
+
   .flow-kicker {
     margin: 0;
     padding: 0.65rem 0.8rem 0;
@@ -432,15 +507,21 @@
 
   .line-layer {
     position: relative;
+    z-index: 2;
     width: 100%;
     min-height: inherit;
     padding: 0.75rem 0;
   }
 
+  .flow-wrap.compact .line-layer {
+    padding: 0.12rem 0;
+  }
+
   .line-fragment {
     position: absolute;
     display: inline-block;
-    font: 500 1rem/1.85 "IBM Plex Sans", "Segoe UI", sans-serif;
+    font: var(--flow-font);
+    line-height: var(--flow-line-height);
     letter-spacing: 0.01em;
     color: color-mix(in srgb, var(--text) 92%, transparent);
     white-space: pre;
@@ -448,8 +529,13 @@
     pointer-events: none;
   }
 
+  .flow-wrap.compact .line-fragment {
+    color: color-mix(in srgb, var(--text) 94%, transparent);
+  }
+
   .orb {
     position: absolute;
+    z-index: 3;
     width: var(--orb-size);
     height: var(--orb-size);
     border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--line));
@@ -464,15 +550,42 @@
       radial-gradient(circle at 32% 26%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 54%),
       radial-gradient(circle at 74% 74%, color-mix(in srgb, var(--text) 14%, transparent), transparent 58%),
       color-mix(in srgb, var(--surface) 94%, transparent);
-    cursor: grab;
     box-shadow:
       0 0 0 1px color-mix(in srgb, var(--line) 60%, transparent),
       0 12px 34px color-mix(in srgb, black 25%, transparent);
   }
 
-  .orb:active {
+  button.orb {
+    cursor: grab;
+  }
+
+  button.orb:active {
     cursor: grabbing;
     transform: scale(0.985);
+  }
+
+  .orb-hover {
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.88);
+    transition:
+      opacity 140ms ease,
+      transform 140ms ease;
+  }
+
+  .orb-hover.is-visible {
+    opacity: 0.92;
+    transform: scale(1);
+  }
+
+  .flow-wrap.compact .orb-hover {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--line) 42%, transparent),
+      0 10px 24px color-mix(in srgb, black 18%, transparent);
+    background:
+      radial-gradient(circle at 32% 26%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 56%),
+      color-mix(in srgb, var(--surface) 90%, transparent);
   }
 
   .orb span {
@@ -481,9 +594,8 @@
   }
 
   @media (max-width: 720px) {
-    .line-fragment {
-      font-size: 0.94rem;
-      line-height: 1.78;
+    .flow-wrap {
+      margin-top: 0.75rem;
     }
   }
 </style>

@@ -1,3 +1,14 @@
+export type MarkdownListItem = {
+  html: string;
+  text: string;
+};
+
+export type MarkdownBlock =
+  | { type: 'heading'; level: 1 | 2 | 3; html: string }
+  | { type: 'paragraph'; html: string; text: string }
+  | { type: 'list'; items: MarkdownListItem[] }
+  | { type: 'hr' };
+
 function escapeHtml(input: string): string {
   return input
     .replace(/&/g, '&amp;')
@@ -5,6 +16,13 @@ function escapeHtml(input: string): string {
     .replace(/>/g, '&gt;')
     .replace(/\"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function stripInlineMarkdown(input: string): string {
+  return input
+    .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g, '$1')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1');
 }
 
 function renderInline(input: string): string {
@@ -15,15 +33,15 @@ function renderInline(input: string): string {
     .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 }
 
-export function renderSimpleMarkdown(markdown: string): string {
+export function parseSimpleMarkdown(markdown: string): MarkdownBlock[] {
   const lines = markdown.split(/\r?\n/);
-  const html: string[] = [];
-  let inList = false;
+  const blocks: MarkdownBlock[] = [];
+  let currentList: MarkdownListItem[] = [];
 
-  const closeList = () => {
-    if (inList) {
-      html.push('</ul>');
-      inList = false;
+  const flushList = () => {
+    if (currentList.length > 0) {
+      blocks.push({ type: 'list', items: currentList });
+      currentList = [];
     }
   };
 
@@ -31,47 +49,67 @@ export function renderSimpleMarkdown(markdown: string): string {
     const line = rawLine.trim();
 
     if (!line) {
-      closeList();
+      flushList();
       continue;
     }
 
     if (line.startsWith('### ')) {
-      closeList();
-      html.push(`<h3>${renderInline(line.slice(4))}</h3>`);
+      flushList();
+      blocks.push({ type: 'heading', level: 3, html: renderInline(line.slice(4)) });
       continue;
     }
 
     if (line.startsWith('## ')) {
-      closeList();
-      html.push(`<h2>${renderInline(line.slice(3))}</h2>`);
+      flushList();
+      blocks.push({ type: 'heading', level: 2, html: renderInline(line.slice(3)) });
       continue;
     }
 
     if (line.startsWith('# ')) {
-      closeList();
-      html.push(`<h1>${renderInline(line.slice(2))}</h1>`);
+      flushList();
+      blocks.push({ type: 'heading', level: 1, html: renderInline(line.slice(2)) });
       continue;
     }
 
     if (/^(-{3,}|\*{3,}|_{3,})$/.test(line)) {
-      closeList();
-      html.push('<hr />');
+      flushList();
+      blocks.push({ type: 'hr' });
       continue;
     }
 
     if (line.startsWith('- ')) {
-      if (!inList) {
-        html.push('<ul>');
-        inList = true;
-      }
-      html.push(`<li>${renderInline(line.slice(2))}</li>`);
+      currentList.push({
+        html: renderInline(line.slice(2)),
+        text: stripInlineMarkdown(line.slice(2))
+      });
       continue;
     }
 
-    closeList();
-    html.push(`<p>${renderInline(line)}</p>`);
+    flushList();
+    blocks.push({
+      type: 'paragraph',
+      html: renderInline(line),
+      text: stripInlineMarkdown(line)
+    });
   }
 
-  closeList();
-  return html.join('\n');
+  flushList();
+  return blocks;
+}
+
+export function renderSimpleMarkdown(markdown: string): string {
+  return parseSimpleMarkdown(markdown)
+    .map((block) => {
+      switch (block.type) {
+        case 'heading':
+          return `<h${block.level}>${block.html}</h${block.level}>`;
+        case 'paragraph':
+          return `<p>${block.html}</p>`;
+        case 'list':
+          return `<ul>\n${block.items.map((item) => `  <li>${item.html}</li>`).join('\n')}\n</ul>`;
+        case 'hr':
+          return '<hr />';
+      }
+    })
+    .join('\n');
 }
