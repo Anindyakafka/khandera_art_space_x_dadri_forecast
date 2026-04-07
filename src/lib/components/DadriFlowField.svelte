@@ -36,6 +36,8 @@
   const BLOCK_SELECTOR = 'p, li, blockquote, [data-flow-copy], .dadri-flow-orb';
   const IGNORE_SELECTOR =
     '[data-flow-ignore], .section-no, .kicker, .warning-bar, .label, .jump-link, .download-row';
+  const POINTER_SLOP_X = 18;
+  const POINTER_SLOP_Y = 18;
 
   let shell: HTMLDivElement | null = null;
   let contentEl: HTMLDivElement | null = null;
@@ -433,12 +435,21 @@
     renderLayout();
   }
 
-  function findEligibleTextBlock(target: EventTarget | null) {
-    if (!(target instanceof Element) || !contentEl) {
+  function pointNearRect(clientX: number, clientY: number, rect: DOMRect) {
+    return (
+      clientX >= rect.left - POINTER_SLOP_X &&
+      clientX <= rect.right + POINTER_SLOP_X &&
+      clientY >= rect.top - POINTER_SLOP_Y &&
+      clientY <= rect.bottom + POINTER_SLOP_Y
+    );
+  }
+
+  function resolveCandidateBlock(element: Element | null) {
+    if (!element || !contentEl) {
       return null;
     }
 
-    const candidate = target.closest(BLOCK_SELECTOR);
+    const candidate = element.closest(BLOCK_SELECTOR);
 
     if (!(candidate instanceof HTMLElement) || !contentEl.contains(candidate)) {
       return null;
@@ -453,6 +464,57 @@
     }
 
     return isBigTextBlock(candidate) ? candidate : null;
+  }
+
+  function findNearbyTextBlock(target: Element | null, clientX: number, clientY: number) {
+    if (!contentEl) {
+      return null;
+    }
+
+    const scope = target?.closest('article, main, section, div') ?? contentEl;
+    const blocks = Array.from(scope.querySelectorAll<HTMLElement>('p, li, blockquote, [data-flow-copy]'));
+
+    for (const block of blocks) {
+      if (block.matches(IGNORE_SELECTOR) || !isBigTextBlock(block)) {
+        continue;
+      }
+
+      if (pointNearRect(clientX, clientY, block.getBoundingClientRect())) {
+        return block;
+      }
+    }
+
+    return null;
+  }
+
+  function findEligibleTextBlock(target: EventTarget | null, clientX?: number, clientY?: number) {
+    if (!contentEl) {
+      return null;
+    }
+
+    const elements = [
+      ...(target instanceof Element ? [target] : []),
+      ...(typeof clientX === 'number' && typeof clientY === 'number' ? document.elementsFromPoint(clientX, clientY) : [])
+    ];
+
+    for (const element of elements) {
+      const candidate = resolveCandidateBlock(element);
+      if (candidate) {
+        return candidate;
+      }
+    }
+
+    if (activeBlock && typeof clientX === 'number' && typeof clientY === 'number') {
+      if (pointNearRect(clientX, clientY, activeBlock.getBoundingClientRect())) {
+        return activeBlock;
+      }
+    }
+
+    if (typeof clientX === 'number' && typeof clientY === 'number') {
+      return findNearbyTextBlock(target instanceof Element ? target : null, clientX, clientY);
+    }
+
+    return null;
   }
 
   function positionOrbFromPointer(event: PointerEvent, useDragOffset = false) {
@@ -495,7 +557,7 @@
       return;
     }
 
-    const block = findEligibleTextBlock(event.target);
+    const block = findEligibleTextBlock(event.target, event.clientX, event.clientY);
 
     if (!block) {
       clearActiveBlock();
@@ -526,7 +588,10 @@
     dragging = false;
     syncOrbVisual();
 
-    const hovered = event ? findEligibleTextBlock(document.elementFromPoint(event.clientX, event.clientY)) : null;
+    const hovered = event
+      ? findEligibleTextBlock(document.elementFromPoint(event.clientX, event.clientY), event.clientX, event.clientY)
+      : null;
+
     if (!hovered) {
       clearActiveBlock();
     }
