@@ -60,3 +60,4 @@ export function getDadriForecastContent() {
     manifestoMarkdown: manifestoContent
   };
 }
+// Add more content retrieval functions as needed
