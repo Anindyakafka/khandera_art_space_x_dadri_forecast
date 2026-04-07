@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-
+// Cheng Lou's Pretext is an optional dependency. If it's not available, the component will fall back to a simpler layout algorithm.
   type Cursor = {
     segmentIndex: number;
     graphemeIndex: number;
