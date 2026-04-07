@@ -1,4 +1,4 @@
-<main class="dadri-page">
+<main class="dadri-page" data-flow-copy>
   <p class="section-no" aria-hidden="true">05</p>
   <p class="kicker">Dadri Forecast</p>
   <h1>Events</h1>

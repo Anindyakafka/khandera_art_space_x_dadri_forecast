@@ -34,7 +34,7 @@
         <a href={data.site.manifestoDocumentPath} target="_blank" rel="noopener noreferrer">Manifesto Document</a>
       </nav>
 
-      <div class="doc-card">
+      <div class="doc-card" data-flow-copy>
         <span class="warning-bar">Archive Text: Counter Narrative Material</span>
         {@html manifestoHtml}
       </div>

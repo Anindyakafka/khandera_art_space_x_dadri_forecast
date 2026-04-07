@@ -34,6 +34,7 @@
   const MIN_COPY_LENGTH = 48;
   const MAX_LAYOUT_HEIGHT = 1400;
   const BLOCK_SELECTOR = 'p, li, blockquote, [data-flow-copy], .dadri-flow-orb';
+  const COPY_NODE_SELECTOR = 'p:not(.section-no):not(.kicker):not(.label), li, blockquote';
   const IGNORE_SELECTOR =
     '[data-flow-ignore], .section-no, .kicker, .warning-bar, .label, .jump-link, .download-row';
   const POINTER_SLOP_X = 18;
@@ -52,11 +53,13 @@
   let blockText = '';
   let blockWidth = 0;
   let blockMinHeight = 0;
+  let originalBlockHeight = 0;
   let leftInset = 0;
   let topInset = 0;
   let bottomInset = 0;
   let lineHeight = 28;
   let font = '500 1rem "IBM Plex Sans", "Segoe UI", sans-serif';
+  let copyNodes: HTMLElement[] = [];
   let orbCenterX = ORB_RADIUS + 12;
   let orbCenterY = ORB_RADIUS + 12;
   let offsetX = 0;
@@ -112,6 +115,22 @@
     return text.length >= MIN_COPY_LENGTH || rect.height >= 56;
   }
 
+  function getCopyNodes(block: HTMLElement) {
+    if (block.matches('p, li, blockquote')) {
+      return [block];
+    }
+
+    const nodes = Array.from(block.querySelectorAll<HTMLElement>(COPY_NODE_SELECTOR)).filter((node) => {
+      if (node.matches(IGNORE_SELECTOR) || node.closest(`nav, ${IGNORE_SELECTOR}`)) {
+        return false;
+      }
+
+      return extractPlainText(node).length > 0;
+    });
+
+    return nodes.length > 0 ? nodes : [block];
+  }
+
   function ensureArtifacts() {
     if (typeof document === 'undefined') {
       return;
@@ -155,18 +174,29 @@
       return;
     }
 
-    const style = getComputedStyle(activeBlock);
-    const rect = activeBlock.getBoundingClientRect();
-    const rightInset = Number.parseFloat(style.paddingRight) || 0;
+    copyNodes = getCopyNodes(activeBlock);
 
-    leftInset = Number.parseFloat(style.paddingLeft) || 0;
-    topInset = Number.parseFloat(style.paddingTop) || 0;
-    bottomInset = Number.parseFloat(style.paddingBottom) || 0;
+    const rect = activeBlock.getBoundingClientRect();
+    const firstNode = copyNodes[0] ?? activeBlock;
+    const lastNode = copyNodes[copyNodes.length - 1] ?? activeBlock;
+    const style = getComputedStyle(firstNode);
+    const firstRect = firstNode.getBoundingClientRect();
+    const lastRect = lastNode.getBoundingClientRect();
+    const minLeft = Math.min(...copyNodes.map((node) => node.getBoundingClientRect().left));
+    const maxRight = Math.max(...copyNodes.map((node) => node.getBoundingClientRect().right));
+
+    originalBlockHeight = rect.height;
+    leftInset = Math.max(0, minLeft - rect.left);
+    topInset = Math.max(0, firstRect.top - rect.top);
+    bottomInset = Math.max(0, rect.bottom - lastRect.bottom);
     lineHeight = resolveLineHeight(style);
     font = resolveFont(style);
-    blockWidth = Math.max(160, rect.width - leftInset - rightInset);
-    blockMinHeight = Math.max(lineHeight * 2, rect.height - topInset - bottomInset);
-    blockText = activeBlock.dataset.flowText ?? extractPlainText(activeBlock);
+    blockWidth = Math.max(160, maxRight - minLeft);
+    blockMinHeight = Math.max(lineHeight * 2, lastRect.bottom - firstRect.top);
+    blockText = copyNodes
+      .map((node) => extractPlainText(node))
+      .filter(Boolean)
+      .join('\n\n');
 
     widthCache.clear();
 
@@ -399,7 +429,7 @@
       )
       .join('');
 
-    activeBlock.style.minHeight = `${Math.ceil(layout.height + topInset + bottomInset)}px`;
+    activeBlock.style.minHeight = `${Math.ceil(Math.max(originalBlockHeight, layout.height + topInset + bottomInset))}px`;
     syncOrbVisual();
   }
 
@@ -447,6 +477,11 @@
   function resolveCandidateBlock(element: Element | null) {
     if (!element || !contentEl) {
       return null;
+    }
+
+    const explicitContainer = element.closest('[data-flow-copy]');
+    if (explicitContainer instanceof HTMLElement && contentEl.contains(explicitContainer)) {
+      return explicitContainer;
     }
 
     const candidate = element.closest(BLOCK_SELECTOR);
@@ -672,10 +707,15 @@
 
   :global(.dadri-flow-copy-active) {
     position: relative;
+  }
+
+  :global(.dadri-flow-copy-active:is(p, li, blockquote)) {
     color: transparent !important;
   }
 
-  :global(.dadri-flow-copy-active > *) {
+  :global(.dadri-flow-copy-active[data-flow-copy] p:not(.section-no):not(.kicker):not(.label)),
+  :global(.dadri-flow-copy-active[data-flow-copy] li),
+  :global(.dadri-flow-copy-active[data-flow-copy] blockquote) {
     color: transparent !important;
   }
 

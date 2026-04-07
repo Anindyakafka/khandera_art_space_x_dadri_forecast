@@ -5,19 +5,19 @@
   <span class="warning-bar">Embodied Practice // Collective Voice // Refusal</span>
 
   <div class="list">
-    <a class="artist-card" href="/dadri-forecast/artists/subhankar-sengupta">
+    <a class="artist-card" href="/dadri-forecast/artists/subhankar-sengupta" data-flow-copy>
       <p class="role">Visual Artist / Open Studio Lead</p>
       <h2>Subhankar Sengupta</h2>
       <p>A visual artist whose practice spans printmaking, sculpture, projection mapping, and video. His research connects the micro-politics of everyday life in Dadri with broader histories of extraction, erasure, and communal violence across West Bengal.</p>
     </a>
 
-    <a class="artist-card" href="/dadri-forecast/artists/susanta-das">
+    <a class="artist-card" href="/dadri-forecast/artists/susanta-das" data-flow-copy>
       <p class="role">Mime Practitioner / Facilitator</p>
       <h2>Susanta Das</h2>
       <p>A socio-politically engaged mime practitioner whose methods are grounded in friction, not ease. His practice builds collective non-verbal vocabularies for cultural intervention and resistance.</p>
     </a>
 
-    <a class="artist-card" href="/dadri-forecast/artists/collective-participants">
+    <a class="artist-card" href="/dadri-forecast/artists/collective-participants" data-flow-copy>
       <p class="role">Young Artists from Khandera Village</p>
       <h2>Collective Participants</h2>
       <p>Young participants who, over 13 days, endured heat, blackout, and infrastructural neglect to co-author a performance vocabulary rooted in embodied experience and defiance.</p>
