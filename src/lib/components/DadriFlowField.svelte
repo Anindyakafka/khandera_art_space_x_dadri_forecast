@@ -33,7 +33,7 @@
   const ORB_RADIUS = ORB_SIZE / 2;
   const MIN_COPY_LENGTH = 48;
   const MAX_LAYOUT_HEIGHT = 1400;
-  const BLOCK_SELECTOR = 'p, li, blockquote, [data-flow-copy], .dadri-flow-orb';
+  const BLOCK_SELECTOR = 'p, li, blockquote, .dadri-flow-orb';
   const COPY_NODE_SELECTOR = 'p:not(.section-no):not(.kicker):not(.label), li, blockquote';
   const IGNORE_SELECTOR =
     '[data-flow-ignore], .section-no, .kicker, .warning-bar, .label, .jump-link, .download-row';
@@ -60,6 +60,7 @@
   let lineHeight = 28;
   let font = '500 1rem "IBM Plex Sans", "Segoe UI", sans-serif';
   let copyNodes: HTMLElement[] = [];
+  let activeSourceNode: HTMLElement | null = null;
   let orbCenterX = ORB_RADIUS + 12;
   let orbCenterY = ORB_RADIUS + 12;
   let offsetX = 0;
@@ -115,6 +116,24 @@
     return text.length >= MIN_COPY_LENGTH || rect.height >= 56;
   }
 
+  function isRenderableCopyNode(node: Element | null): node is HTMLElement {
+    return (
+      node instanceof HTMLElement &&
+      node.matches(COPY_NODE_SELECTOR) &&
+      !node.matches(IGNORE_SELECTOR) &&
+      !node.closest(`nav, ${IGNORE_SELECTOR}`) &&
+      extractPlainText(node).length > 0
+    );
+  }
+
+  function shouldBreakFlowGroup(node: Element | null) {
+    return !!(
+      node instanceof HTMLElement &&
+      (node.matches(IGNORE_SELECTOR) ||
+        node.matches('h1, h2, h3, h4, h5, h6, hr, figure, nav, img, video, table, pre, .warning-bar'))
+    );
+  }
+
   function getCopyNodes(block: HTMLElement) {
     if (block.matches('p, li, blockquote')) {
       return [block];
@@ -128,7 +147,57 @@
       return extractPlainText(node).length > 0;
     });
 
-    return nodes.length > 0 ? nodes : [block];
+    if (nodes.length === 0) {
+      return [block];
+    }
+
+    const source = activeSourceNode && nodes.includes(activeSourceNode) ? activeSourceNode : nodes[0];
+    const parent = source.parentElement;
+
+    if (!parent || !block.contains(parent)) {
+      return [source];
+    }
+
+    const siblings = Array.from(parent.children);
+    const sourceIndex = siblings.indexOf(source);
+
+    if (sourceIndex === -1) {
+      return [source];
+    }
+
+    const group: HTMLElement[] = [source];
+
+    for (let index = sourceIndex - 1; index >= 0; index -= 1) {
+      const node = siblings[index];
+
+      if (shouldBreakFlowGroup(node)) {
+        break;
+      }
+
+      if (isRenderableCopyNode(node)) {
+        group.unshift(node);
+        continue;
+      }
+
+      break;
+    }
+
+    for (let index = sourceIndex + 1; index < siblings.length; index += 1) {
+      const node = siblings[index];
+
+      if (shouldBreakFlowGroup(node)) {
+        break;
+      }
+
+      if (isRenderableCopyNode(node)) {
+        group.push(node);
+        continue;
+      }
+
+      break;
+    }
+
+    return group;
   }
 
   function ensureArtifacts() {
@@ -453,19 +522,24 @@
     lineLayerEl?.remove();
     orbEl?.remove();
     activeBlock = null;
+    activeSourceNode = null;
     prepared = null;
     blockText = '';
   }
 
   function activateBlock(block: HTMLElement) {
-    if (activeBlock === block) {
+    const flowRoot = block.closest('[data-flow-copy]');
+    const nextActiveBlock = flowRoot instanceof HTMLElement ? flowRoot : block;
+
+    if (activeBlock === nextActiveBlock && activeSourceNode === block) {
       return;
     }
 
     clearActiveBlock();
     ensureArtifacts();
 
-    activeBlock = block;
+    activeSourceNode = block;
+    activeBlock = nextActiveBlock;
     activeBlock.dataset.flowText = extractPlainText(block);
     activeBlock.classList.add('dadri-flow-copy-active');
     lineLayerEl && activeBlock.append(lineLayerEl);
@@ -487,11 +561,6 @@
   function resolveCandidateBlock(element: Element | null) {
     if (!element || !contentEl) {
       return null;
-    }
-
-    const explicitContainer = element.closest('[data-flow-copy]');
-    if (explicitContainer instanceof HTMLElement && contentEl.contains(explicitContainer)) {
-      return explicitContainer;
     }
 
     const candidate = element.closest(BLOCK_SELECTOR);
@@ -517,7 +586,7 @@
     }
 
     const scope = target?.closest('article, main, section, div') ?? contentEl;
-    const blocks = Array.from(scope.querySelectorAll<HTMLElement>('p, li, blockquote, [data-flow-copy]'));
+    const blocks = Array.from(scope.querySelectorAll<HTMLElement>('p, li, blockquote'));
 
     for (const block of blocks) {
       if (block.matches(IGNORE_SELECTOR) || !isBigTextBlock(block)) {

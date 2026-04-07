@@ -53,3 +53,4 @@ Paths in JSON should point to `/media/...` URLs.
 
 - Placeholder media files are included so routes render out of the box.
 - Replace `static/media/docs/manifesto.md` with your public document or update `content/data/site.json` to point to a PDF.
+- Dadri Forecast long-form text reflow/orb interaction is currently being refined on Dadri pages only.
