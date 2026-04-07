@@ -4,7 +4,7 @@
   <h1>Collective Participants</h1>
   <span class="warning-bar">Young Artists from Khandera Village // Collective Practice</span>
 
-  <div class="profile-grid">
+  <div class="profile-grid" data-flow-copy>
     <article class="profile-card">
       <p class="label">Role</p>
       <h2>Young Artists from Khandera Village</h2>

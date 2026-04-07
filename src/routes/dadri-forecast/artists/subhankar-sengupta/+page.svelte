@@ -4,7 +4,7 @@
   <h1>Subhankar Sengupta</h1>
   <span class="warning-bar">Visual Artist // Open Studio Lead // Lecture-Performance</span>
 
-  <div class="profile-grid">
+  <div class="profile-grid" data-flow-copy>
     <article class="profile-card">
       <p class="label">Role</p>
       <h2>Visual Artist / Open Studio Lead</h2>

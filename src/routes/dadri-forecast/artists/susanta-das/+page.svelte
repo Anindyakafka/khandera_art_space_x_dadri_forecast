@@ -4,7 +4,7 @@
   <h1>Susanta Das</h1>
   <span class="warning-bar">Mime Practitioner // Facilitator // Collective Process</span>
 
-  <div class="profile-grid">
+  <div class="profile-grid" data-flow-copy>
     <article class="profile-card">
       <p class="label">Role</p>
       <h2>Mime Practitioner / Facilitator</h2>

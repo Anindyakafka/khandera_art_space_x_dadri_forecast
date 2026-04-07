@@ -309,7 +309,7 @@
       </div>
     </section>
 
-    <section class="writing" aria-labelledby="writeup-heading">
+    <section class="writing" aria-labelledby="writeup-heading" data-flow-copy>
       <p class="section-no" aria-hidden="true">08</p>
       <div class="writing-head">
         <h2 id="writeup-heading">What? Why?</h2>

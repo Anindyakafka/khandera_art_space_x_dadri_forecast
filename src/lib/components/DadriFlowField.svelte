@@ -210,7 +210,7 @@
     }
 
     try {
-      prepared = pretextApi.prepareWithSegments(blockText, font, { whiteSpace: 'normal' });
+      prepared = pretextApi.prepareWithSegments(blockText, font, { whiteSpace: 'pre-wrap' });
     } catch {
       prepared = null;
     }
@@ -369,11 +369,13 @@
         const lineStart = cursor;
         let localCursor = cursor;
 
+        let hitHardBreak = false;
+
         while (localCursor < blockText.length) {
           const char = blockText[localCursor];
 
           if (char === '\n') {
-            localCursor += 1;
+            hitHardBreak = true;
             break;
           }
 
@@ -391,11 +393,19 @@
         }
 
         if (localCursor === lineStart) {
-          const singleChar = blockText.slice(localCursor, localCursor + 1);
-          pushLineSegment(segments, singleChar, range.start, lineTop);
-          localCursor += 1;
+          if (hitHardBreak) {
+            localCursor += 1;
+          } else {
+            const singleChar = blockText.slice(localCursor, localCursor + 1);
+            pushLineSegment(segments, singleChar, range.start, lineTop);
+            localCursor += 1;
+          }
         } else {
           pushLineSegment(segments, blockText.slice(lineStart, localCursor), range.start, lineTop);
+
+          if (hitHardBreak) {
+            localCursor += 1;
+          }
         }
 
         cursor = localCursor;
