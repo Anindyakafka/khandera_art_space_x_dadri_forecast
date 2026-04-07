@@ -1,41 +1,19 @@
 <script lang="ts">
-  import DadriSmokeField from '$lib/components/DadriSmokeField.svelte';
-  import FlowAroundOrb from '$lib/components/FlowAroundOrb.svelte';
-  import { parseSimpleMarkdown } from '$lib/content/markdown';
-  import { dadriSmokeCorpus } from '$lib/content/smokeCorpus';
-
+  import { renderSimpleMarkdown } from '$lib/content/markdown';
   export let data;
 
   const dadriLogoPath = '/media/images/dadri-forecast/logo.png';
-  const manifestoBlocks = parseSimpleMarkdown(data.manifestoMarkdown);
-  const orbText =
-    'Dadri Forecast tracks land grabs, smoke, wetlands, labor, memory, and communal fracture as shared weather. Move through the paragraph and the small cursor-orb reroutes the text around pressure, blockage, and refusal.';
+  const manifestoHtml = renderSimpleMarkdown(data.manifestoMarkdown);
 </script>
 
 <main class="dadri-root">
   <section class="title-screen" aria-label="Dadri Forecast introduction">
-    <DadriSmokeField text={dadriSmokeCorpus} />
-
     <div class="title-center">
       <img class="hero-logo" src={dadriLogoPath} alt="Dadri Forecast logo" />
       <h1>दादरी Forecast</h1>
       <span class="warning-bar">Militant Research Zone</span>
       <p class="scroll-hint">Scroll to enter the archive</p>
     </div>
-  </section>
-
-  <section class="signal-panel" aria-label="Dadri Forecast signal field">
-    <article class="doc-root">
-      <header class="panel-head">
-        <p class="section-no" aria-hidden="true">01</p>
-        <h2>Signal field</h2>
-        <p>
-          The Cheng Lou Pretext flow is now tied to hover. Move across the text and a small orb appears just under the cursor while the lines re-route around it.
-        </p>
-      </header>
-
-      <FlowAroundOrb text={orbText} lineHeight={30} orbRadius={22} hoverOnly={true} orbOffsetY={10} minHeight={172} />
-    </article>
   </section>
 
   <section class="reveal-panel" aria-label="Dadri Forecast details">
@@ -58,32 +36,7 @@
 
       <div class="doc-card">
         <span class="warning-bar">Archive Text: Counter Narrative Material</span>
-
-        {#each manifestoBlocks as block, index (index)}
-          {#if block.type === 'heading'}
-            <svelte:element this={`h${block.level}`}>{@html block.html}</svelte:element>
-          {:else if block.type === 'paragraph'}
-            <FlowAroundOrb
-              text={block.text}
-              lineHeight={28}
-              font={'500 0.98rem "IBM Plex Sans", "Segoe UI", sans-serif'}
-              orbRadius={18}
-              minHeight={62}
-              hoverOnly={true}
-              compact={true}
-              showKicker={false}
-              orbOffsetY={9}
-            />
-          {:else if block.type === 'list'}
-            <ul>
-              {#each block.items as item, itemIndex (itemIndex)}
-                <li>{@html item.html}</li>
-              {/each}
-            </ul>
-          {:else}
-            <hr />
-          {/if}
-        {/each}
+        {@html manifestoHtml}
       </div>
     </article>
   </section>
@@ -101,15 +54,12 @@
     display: grid;
     place-items: center;
     padding: 1rem;
-    position: relative;
-    overflow: clip;
   }
 
   .title-center {
     text-align: center;
     width: min(92vw, 760px);
     position: relative;
-    z-index: 2;
     padding: 1rem 0;
   }
 
@@ -157,17 +107,9 @@
     color: var(--muted);
   }
 
-  .signal-panel,
   .reveal-panel {
     width: min(1100px, 96vw);
     margin: 0 auto;
-  }
-
-  .signal-panel {
-    padding: 0 0 clamp(1rem, 3vw, 1.6rem);
-  }
-
-  .reveal-panel {
     border-top: 2px solid color-mix(in srgb, var(--accent) 64%, var(--line));
     padding: clamp(1rem, 3.5vw, 2.6rem) 0 clamp(2rem, 5vw, 4rem);
   }
