@@ -37,8 +37,8 @@
   const COPY_NODE_SELECTOR = 'p:not(.section-no):not(.kicker):not(.label), li, blockquote';
   const IGNORE_SELECTOR =
     '[data-flow-ignore], .section-no, .kicker, .warning-bar, .label, .jump-link, .download-row';
-  const POINTER_SLOP_X = 20;
-  const POINTER_SLOP_Y = 28;
+  const POINTER_SLOP_X = 16;
+  const POINTER_SLOP_Y = 14;
 
   let shell: HTMLDivElement | null = null;
   let contentEl: HTMLDivElement | null = null;
@@ -555,28 +555,8 @@
     );
   }
 
-  function getActiveStabilityNodes() {
-    if (!activeBlock) {
-      return copyNodes;
-    }
-
-    if (!activeBlock.hasAttribute('data-flow-copy')) {
-      return copyNodes;
-    }
-
-    const nodes = Array.from(activeBlock.querySelectorAll<HTMLElement>(COPY_NODE_SELECTOR)).filter((node) => {
-      if (node.matches(IGNORE_SELECTOR) || node.closest(`nav, ${IGNORE_SELECTOR}`)) {
-        return false;
-      }
-
-      return extractPlainText(node).length > 0;
-    });
-
-    return nodes.length > 0 ? nodes : copyNodes;
-  }
-
   function pointNearActiveCopy(clientX: number, clientY: number) {
-    const nodes = getActiveStabilityNodes();
+    const nodes = copyNodes;
     if (nodes.length === 0) {
       return false;
     }

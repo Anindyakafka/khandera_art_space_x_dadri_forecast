@@ -4,6 +4,7 @@ A running record of key project decisions, updates, and the reasons behind them,
 
 | Date | Area | Decision / Change | Why | Status |
 | --- | --- | --- | --- | --- |
+| 2026-04-08 | Paragraph flicker isolation | Narrowed hover persistence back to the active paragraph instead of the whole text container while tuning the gap tolerance. | The first paragraph was stable, but deeper paragraphs were still fluttering because nearby paragraph zones were competing during hover. | In progress |
 | 2026-04-08 | Paragraph transition smoothing | Updated the Dadri flow logic to switch between nearby paragraphs without tearing down the orb overlay, and to prefer the nearest text block during hover. | Reduce the heavy flicker that appeared after the first paragraph while moving through manifesto and other long-form text. | In progress |
 | 2026-04-08 | Flicker refinement | Expanded hover tolerance across normal paragraph gaps and increased heading/body separation in the Dadri manifesto area. | Reduce orb flicker in line spacing while keeping text from creeping too close to headings. | In progress |
 | 2026-04-08 | Hover stability | Reduced the Dadri orb size and narrowed active reflow to the hovered paragraph so manifesto/body text no longer pushes under headings as aggressively. | Keep the interaction readable, stop heading overlap, and reduce flicker in airy text spacing. | In progress |
