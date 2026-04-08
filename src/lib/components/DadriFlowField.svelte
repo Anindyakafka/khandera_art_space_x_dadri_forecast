@@ -521,8 +521,13 @@
       return;
     }
 
-    if (activeBlock === nextActiveBlock && copyNodes.includes(block)) {
+    if (activeBlock === nextActiveBlock) {
+      clearHiddenNodes();
       activeSourceNode = block;
+      activeBlock.dataset.flowText = extractPlainText(block);
+      prepareActiveBlock();
+      copyNodes.forEach((node) => node.classList.add('dadri-flow-hidden-node'));
+      renderLayout();
       return;
     }
 
@@ -650,17 +655,30 @@
     const scope = target?.closest('article, main, section, div') ?? contentEl;
     const blocks = Array.from(scope.querySelectorAll<HTMLElement>('p, li, blockquote'));
 
+    let bestBlock: HTMLElement | null = null;
+    let bestScore = Number.POSITIVE_INFINITY;
+
     for (const block of blocks) {
       if (block.matches(IGNORE_SELECTOR) || !isBigTextBlock(block)) {
         continue;
       }
 
-      if (pointNearRect(clientX, clientY, block.getBoundingClientRect())) {
-        return block;
+      const rect = block.getBoundingClientRect();
+      if (!pointNearRect(clientX, clientY, rect)) {
+        continue;
+      }
+
+      const dx = clientX < rect.left ? rect.left - clientX : clientX > rect.right ? clientX - rect.right : 0;
+      const dy = clientY < rect.top ? rect.top - clientY : clientY > rect.bottom ? clientY - rect.bottom : 0;
+      const score = dx + dy * 1.5;
+
+      if (score < bestScore) {
+        bestScore = score;
+        bestBlock = block;
       }
     }
 
-    return null;
+    return bestBlock;
   }
 
   function findEligibleTextBlock(target: EventTarget | null, clientX?: number, clientY?: number) {

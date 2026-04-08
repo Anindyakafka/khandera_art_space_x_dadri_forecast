@@ -4,6 +4,7 @@ A running record of key project decisions, updates, and the reasons behind them,
 
 | Date | Area | Decision / Change | Why | Status |
 | --- | --- | --- | --- | --- |
+| 2026-04-08 | Paragraph transition smoothing | Updated the Dadri flow logic to switch between nearby paragraphs without tearing down the orb overlay, and to prefer the nearest text block during hover. | Reduce the heavy flicker that appeared after the first paragraph while moving through manifesto and other long-form text. | In progress |
 | 2026-04-08 | Flicker refinement | Expanded hover tolerance across normal paragraph gaps and increased heading/body separation in the Dadri manifesto area. | Reduce orb flicker in line spacing while keeping text from creeping too close to headings. | In progress |
 | 2026-04-08 | Hover stability | Reduced the Dadri orb size and narrowed active reflow to the hovered paragraph so manifesto/body text no longer pushes under headings as aggressively. | Keep the interaction readable, stop heading overlap, and reduce flicker in airy text spacing. | In progress |
 | 2026-04-08 | Deployment note | Logged another small repo update to ensure there is always a visible commit-worthy change during iteration. | Make it easier to trigger Netlify deploys while ongoing interaction refinements are still in progress. | Active |
