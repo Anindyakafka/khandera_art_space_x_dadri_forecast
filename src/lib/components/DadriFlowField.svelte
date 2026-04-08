@@ -123,7 +123,9 @@
 
   function extractStructuredText(block: HTMLElement) {
     const clone = block.cloneNode(true) as HTMLElement;
-    clone.querySelectorAll('.dadri-flow-orb, .dadri-flow-line-layer').forEach((node) => node.remove());
+    clone
+      .querySelectorAll('.dadri-flow-orb, .dadri-flow-line-layer, .dadri-flow-particle-layer')
+      .forEach((node) => node.remove());
     clone.querySelectorAll('br').forEach((node) => node.replaceWith('\n'));
 
     return clone.textContent
@@ -230,8 +232,15 @@
       orbEl.className = 'dadri-flow-orb';
       orbEl.tabIndex = -1;
       orbEl.setAttribute('aria-hidden', 'true');
-      orbEl.setAttribute('aria-label', 'Drag ember to reflow text');
-      orbEl.innerHTML = '<span>burn</span>';
+      orbEl.setAttribute('aria-label', 'Drag dragon ember to reflow text');
+      orbEl.innerHTML = `
+        <span class="dragon" aria-hidden="true">
+          <span class="dragon-tail"></span>
+          <span class="dragon-core"></span>
+          <span class="dragon-head"><span class="dragon-eye"></span></span>
+          <span class="dragon-flame"></span>
+        </span>
+      `;
       orbEl.addEventListener('pointerdown', onOrbPointerDown);
     }
 
@@ -322,11 +331,66 @@
     }
 
     constrainOrb();
+    const angle = (Math.atan2(moveDirectionY, moveDirectionX) * 180) / Math.PI;
+
     orbEl.classList.toggle('is-dragging', dragging);
     orbEl.style.width = `${ORB_SIZE}px`;
     orbEl.style.height = `${ORB_SIZE}px`;
     orbEl.style.left = `${leftInset + orbCenterX - ORB_RADIUS}px`;
     orbEl.style.top = `${topInset + orbCenterY - ORB_RADIUS}px`;
+    orbEl.style.setProperty('--dragon-rot', `${angle}deg`);
+  }
+
+  function mixChannel(from: number, to: number, amount: number) {
+    return Math.round(from + (to - from) * clamp(amount, 0, 1));
+  }
+
+  function getLineBurnAmount(segment: Segment) {
+    const segmentWidth = measureTextWidth(segment.text);
+    const centerX = segment.x + segmentWidth * 0.5;
+    const centerY = segment.y + lineHeight * 0.55;
+    const dx = centerX - orbCenterX;
+    const dy = centerY - orbCenterY;
+    const distance = Math.hypot(dx, dy);
+    const proximity = clamp(1 - distance / (ORB_RADIUS * 2.9), 0, 1);
+
+    if (proximity <= 0) {
+      return 0;
+    }
+
+    const length = Math.hypot(moveDirectionX, moveDirectionY) || 1;
+    const dirX = moveDirectionX / length;
+    const dirY = moveDirectionY / length;
+    const dot = distance > 0.001 ? (dx * dirX + dy * dirY) / distance : 1;
+    const forward = clamp((dot + 0.35) / 1.35, 0, 1);
+    const firingBoost = orbEl?.classList.contains('is-firing') ? 0.3 : 0.12;
+
+    return clamp(proximity * (0.55 + forward * 0.45 + firingBoost), 0, 1);
+  }
+
+  function getBurnClass(burn: number) {
+    if (burn > 0.55) {
+      return 'dadri-flow-line is-superheated';
+    }
+
+    if (burn > 0.2) {
+      return 'dadri-flow-line is-scorched';
+    }
+
+    return 'dadri-flow-line';
+  }
+
+  function getBurnStyle(segment: Segment) {
+    const burn = getLineBurnAmount(segment);
+    const warm = `rgba(${mixChannel(219, 255, burn)}, ${mixChannel(221, 218, burn)}, ${mixChannel(224, 170, burn)}, 0.98)`;
+    const glow = `rgba(${mixChannel(255, 255, burn)}, ${mixChannel(124, 176, burn)}, ${mixChannel(42, 84, burn)}, ${(0.08 + burn * 0.3).toFixed(3)})`;
+    const ember = `rgba(${mixChannel(255, 255, burn)}, ${mixChannel(82, 118, burn)}, ${mixChannel(18, 34, burn)}, ${(0.05 + burn * 0.22).toFixed(3)})`;
+    const shift = `${(Math.max(0, burn - 0.2) * moveDirectionX * 4).toFixed(2)}px`;
+
+    return {
+      className: getBurnClass(burn),
+      style: `left:${segment.x}px; top:${segment.y}px; color:${warm}; --burn:${burn.toFixed(3)}; --burn-shift:${shift}; --burn-glow:${glow}; --burn-ember:${ember};`
+    };
   }
 
   function getBlockedRange(midY: number) {
@@ -565,6 +629,8 @@
         -0.01 - Math.random() * 0.012
       );
     }
+
+    renderLayout();
   }
 
   function renderParticles() {
@@ -725,10 +791,10 @@
     lineLayerEl.style.setProperty('--flow-line-height', `${lineHeight}px`);
     lineLayerEl.style.height = `${Math.ceil(layout.height)}px`;
     lineLayerEl.innerHTML = layout.segments
-      .map(
-        (segment) =>
-          `<span class="dadri-flow-line" style="left:${segment.x}px; top:${segment.y}px;">${escapeHtml(segment.text)}</span>`
-      )
+      .map((segment) => {
+        const burn = getBurnStyle(segment);
+        return `<span class="${burn.className}" style="${burn.style}">${escapeHtml(segment.text)}</span>`;
+      })
       .join('');
 
     activeBlock.style.minHeight = `${Math.ceil(originalBlockHeight)}px`;
@@ -1202,53 +1268,145 @@
     color: color-mix(in srgb, var(--text) 92%, transparent);
     pointer-events: none;
     user-select: none;
+    transform: translate3d(var(--burn-shift, 0px), 0, 0);
+    text-shadow:
+      0 0 calc(8px * var(--burn, 0)) var(--burn-glow, rgba(255, 124, 42, 0)),
+      0 0 calc(18px * var(--burn, 0)) var(--burn-ember, rgba(255, 82, 18, 0));
+    filter: saturate(calc(1 + var(--burn, 0) * 0.45)) brightness(calc(1 + var(--burn, 0) * 0.16));
+    transition: color 120ms ease, text-shadow 120ms ease, transform 120ms ease, filter 120ms ease;
+  }
+
+  :global(.dadri-flow-line.is-scorched) {
+    letter-spacing: 0.014em;
+  }
+
+  :global(.dadri-flow-line.is-superheated) {
+    animation: dadri-flow-burn-flicker 280ms ease-in-out infinite alternate;
   }
 
   :global(.dadri-flow-orb) {
     position: absolute;
     z-index: 3;
-    border: 1px solid rgba(255, 178, 92, 0.42);
-    border-radius: 999px;
     display: grid;
     place-items: center;
-    background:
-      radial-gradient(circle at 34% 28%, rgba(255, 247, 223, 0.95), transparent 18%),
-      radial-gradient(circle at 46% 44%, rgba(255, 132, 36, 0.78), transparent 44%),
-      radial-gradient(circle at 72% 72%, rgba(122, 19, 4, 0.45), transparent 64%),
-      color-mix(in srgb, var(--surface) 82%, #260701);
-    color: color-mix(in srgb, #ffd18b 86%, var(--text));
-    font: 700 0.58rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    border: 0;
+    padding: 0;
+    background: transparent;
     cursor: grab;
     user-select: none;
     touch-action: none;
+    overflow: visible;
+    filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.26));
+    transition: transform 120ms ease, filter 120ms ease;
+  }
+
+  :global(.dadri-flow-orb .dragon) {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: rotate(var(--dragon-rot, 0deg));
+    transform-origin: 50% 50%;
+    transition: transform 120ms ease;
+    pointer-events: none;
+  }
+
+  :global(.dadri-flow-orb .dragon-core) {
+    position: absolute;
+    left: 9px;
+    top: 18px;
+    width: 24px;
+    height: 14px;
+    border-radius: 12px 15px 12px 10px;
+    background:
+      radial-gradient(circle at 30% 35%, rgba(255, 244, 216, 0.95), transparent 26%),
+      linear-gradient(90deg, rgba(112, 12, 3, 0.95), rgba(238, 86, 20, 0.96) 58%, rgba(255, 193, 96, 0.92));
     box-shadow:
-      0 0 0 1px rgba(255, 190, 112, 0.22),
-      0 0 18px rgba(255, 112, 28, 0.24),
-      0 14px 28px color-mix(in srgb, black 25%, transparent);
-    transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+      inset 0 -2px 4px rgba(72, 8, 2, 0.34),
+      0 0 12px rgba(255, 132, 46, 0.22);
+  }
+
+  :global(.dadri-flow-orb .dragon-tail) {
+    position: absolute;
+    left: 3px;
+    top: 21px;
+    width: 16px;
+    height: 7px;
+    border-radius: 999px 8px 8px 999px;
+    background: linear-gradient(90deg, rgba(72, 7, 3, 0.92), rgba(200, 70, 18, 0.88));
+    transform: rotate(-16deg);
+    transform-origin: right center;
+  }
+
+  :global(.dadri-flow-orb .dragon-head) {
+    position: absolute;
+    right: 7px;
+    top: 10px;
+    width: 17px;
+    height: 16px;
+    border-radius: 11px 11px 8px 8px;
+    background: linear-gradient(135deg, rgba(255, 205, 118, 0.96), rgba(232, 78, 16, 0.94));
+    clip-path: polygon(0 22%, 72% 0, 100% 48%, 74% 100%, 0 84%, 15% 52%);
+    box-shadow: inset 0 -2px 4px rgba(92, 10, 4, 0.34);
+  }
+
+  :global(.dadri-flow-orb .dragon-eye) {
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    width: 4px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 252, 240, 0.96);
+    box-shadow: 0 0 8px rgba(255, 244, 216, 0.42);
+  }
+
+  :global(.dadri-flow-orb .dragon-flame) {
+    position: absolute;
+    right: -5px;
+    top: 12px;
+    width: 14px;
+    height: 12px;
+    border-radius: 60% 100% 100% 60%;
+    background:
+      radial-gradient(circle at 18% 48%, rgba(255, 252, 231, 0.94), transparent 22%),
+      radial-gradient(circle at 44% 52%, rgba(255, 176, 68, 0.86), transparent 46%),
+      linear-gradient(90deg, rgba(255, 138, 38, 0.72), rgba(255, 58, 12, 0.1));
+    opacity: 0.42;
+    filter: blur(0.2px);
+    transform: scaleX(0.85);
+    transform-origin: left center;
+    transition: opacity 120ms ease, transform 120ms ease, width 120ms ease;
   }
 
   :global(.dadri-flow-orb.is-dragging) {
     cursor: grabbing;
-    filter: brightness(1.05) saturate(1.08);
-    transform: scale(1.02);
+    filter: brightness(1.06) saturate(1.08) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.3));
+    transform: scale(1.03);
   }
 
   :global(.dadri-flow-orb.is-firing) {
-    box-shadow:
-      0 0 0 1px rgba(255, 196, 118, 0.4),
-      0 0 28px rgba(255, 118, 28, 0.45),
-      0 0 52px rgba(255, 72, 12, 0.24),
-      0 14px 28px color-mix(in srgb, black 28%, transparent);
-    filter: brightness(1.08) saturate(1.16);
+    filter: brightness(1.08) saturate(1.16) drop-shadow(0 0 18px rgba(255, 120, 28, 0.42));
   }
 
-  :global(.dadri-flow-orb span) {
-    pointer-events: none;
-    opacity: 0.92;
-    text-shadow: 0 0 14px rgba(255, 112, 28, 0.34);
+  :global(.dadri-flow-orb.is-firing .dragon-flame) {
+    width: 24px;
+    opacity: 0.98;
+    transform: scaleX(1.24);
+  }
+
+  @keyframes dadri-flow-burn-flicker {
+    from {
+      text-shadow:
+        0 0 calc(10px * var(--burn, 0)) var(--burn-glow, rgba(255, 124, 42, 0)),
+        0 0 calc(20px * var(--burn, 0)) var(--burn-ember, rgba(255, 82, 18, 0));
+    }
+
+    to {
+      text-shadow:
+        0 0 calc(14px * var(--burn, 0)) var(--burn-glow, rgba(255, 124, 42, 0)),
+        0 0 calc(28px * var(--burn, 0)) var(--burn-ember, rgba(255, 82, 18, 0));
+    }
   }
 
   .flow-content :global(p),
