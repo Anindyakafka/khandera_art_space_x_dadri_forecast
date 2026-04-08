@@ -105,6 +105,37 @@
     return clone.textContent?.replace(/\s+/g, ' ').trim() ?? '';
   }
 
+  function buildFlowText(nodes: HTMLElement[]) {
+    const parts: string[] = [];
+
+    for (let index = 0; index < nodes.length; index += 1) {
+      const node = nodes[index];
+      const text = extractPlainText(node);
+
+      if (text) {
+        parts.push(text);
+      }
+
+      const nextNode = nodes[index + 1];
+      if (!nextNode) {
+        continue;
+      }
+
+      const currentRect = node.getBoundingClientRect();
+      const nextRect = nextNode.getBoundingClientRect();
+      const gapPx = Math.max(0, nextRect.top - currentRect.bottom);
+      const blankLines = Math.max(2, Math.round(gapPx / Math.max(lineHeight, 1)) + 1);
+
+      parts.push('\n'.repeat(blankLines));
+    }
+
+    return parts.join('');
+  }
+
+  function clearHiddenNodes() {
+    copyNodes.forEach((node) => node.classList.remove('dadri-flow-hidden-node'));
+  }
+
   function isBigTextBlock(block: HTMLElement) {
     if (block.hasAttribute('data-flow-copy')) {
       return true;
@@ -262,10 +293,7 @@
     font = resolveFont(style);
     blockWidth = Math.max(160, maxRight - minLeft);
     blockMinHeight = Math.max(lineHeight * 2, lastRect.bottom - firstRect.top);
-    blockText = copyNodes
-      .map((node) => extractPlainText(node))
-      .filter(Boolean)
-      .join('\n\n');
+    blockText = buildFlowText(copyNodes);
 
     widthCache.clear();
 
@@ -287,7 +315,7 @@
 
   function constrainOrb() {
     const maxX = Math.max(ORB_RADIUS, blockWidth - ORB_RADIUS);
-    const maxY = Math.max(ORB_RADIUS, Math.min(Math.max(blockMinHeight, lineHeight * 3), 320) - ORB_RADIUS);
+    const maxY = Math.max(ORB_RADIUS, Math.max(blockMinHeight, originalBlockHeight - topInset - bottomInset, lineHeight * 3) - ORB_RADIUS);
 
     orbCenterX = clamp(orbCenterX, ORB_RADIUS, maxX);
     orbCenterY = clamp(orbCenterY, ORB_RADIUS, maxY);
@@ -513,6 +541,8 @@
   }
 
   function clearActiveBlock() {
+    clearHiddenNodes();
+
     if (activeBlock) {
       activeBlock.classList.remove('dadri-flow-copy-active');
       activeBlock.style.minHeight = '';
@@ -525,6 +555,7 @@
     activeSourceNode = null;
     prepared = null;
     blockText = '';
+    copyNodes = [];
   }
 
   function activateBlock(block: HTMLElement) {
@@ -546,6 +577,7 @@
     orbEl && activeBlock.append(orbEl);
 
     prepareActiveBlock();
+    copyNodes.forEach((node) => node.classList.add('dadri-flow-hidden-node'));
     renderLayout();
   }
 
@@ -638,7 +670,7 @@
 
     const rect = activeBlock.getBoundingClientRect();
     const maxX = Math.max(ORB_RADIUS, blockWidth - ORB_RADIUS);
-    const maxY = Math.max(ORB_RADIUS, Math.min(Math.max(blockMinHeight, lineHeight * 3), 320) - ORB_RADIUS);
+    const maxY = Math.max(ORB_RADIUS, Math.max(blockMinHeight, originalBlockHeight - topInset - bottomInset, lineHeight * 3) - ORB_RADIUS);
 
     const nextX = event.clientX - rect.left - leftInset - (useDragOffset ? offsetX : 0);
     const nextY = event.clientY - rect.top - topInset - (useDragOffset ? offsetY : 0);
@@ -788,17 +820,11 @@
     position: relative;
   }
 
-  :global(.dadri-flow-copy-active:is(p, li, blockquote)) {
+  :global(.dadri-flow-hidden-node) {
     color: transparent !important;
   }
 
-  :global(.dadri-flow-copy-active[data-flow-copy] p:not(.section-no):not(.kicker):not(.label)),
-  :global(.dadri-flow-copy-active[data-flow-copy] li),
-  :global(.dadri-flow-copy-active[data-flow-copy] blockquote) {
-    color: transparent !important;
-  }
-
-  :global(.dadri-flow-copy-active::marker) {
+  :global(.dadri-flow-hidden-node::marker) {
     color: color-mix(in srgb, var(--text) 86%, transparent);
   }
 
