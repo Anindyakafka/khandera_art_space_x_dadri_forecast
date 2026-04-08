@@ -101,10 +101,21 @@
     return `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
   }
 
-  function extractPlainText(block: HTMLElement) {
+  function extractStructuredText(block: HTMLElement) {
     const clone = block.cloneNode(true) as HTMLElement;
     clone.querySelectorAll('.dadri-flow-orb, .dadri-flow-line-layer').forEach((node) => node.remove());
-    return clone.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+    clone.querySelectorAll('br').forEach((node) => node.replaceWith('\n'));
+
+    return clone.textContent
+      ?.replace(/\u00a0/g, ' ')
+      .replace(/[ \t]+\n/g, '\n')
+      .replace(/\n[ \t]+/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim() ?? '';
+  }
+
+  function extractPlainText(block: HTMLElement) {
+    return extractStructuredText(block).replace(/\s+/g, ' ').trim();
   }
 
   function buildFlowText(nodes: HTMLElement[]) {
@@ -112,7 +123,7 @@
 
     for (let index = 0; index < nodes.length; index += 1) {
       const node = nodes[index];
-      const text = extractPlainText(node);
+      const text = extractStructuredText(node);
 
       if (text) {
         parts.push(text);
@@ -139,7 +150,7 @@
   }
 
   function isBigTextBlock(block: HTMLElement) {
-    if (block.hasAttribute('data-flow-copy')) {
+    if (block.hasAttribute('data-flow-copy') || block.closest('[data-flow-copy]')) {
       return true;
     }
 

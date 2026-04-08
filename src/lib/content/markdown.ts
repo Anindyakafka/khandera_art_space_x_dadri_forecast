@@ -37,6 +37,7 @@ export function parseSimpleMarkdown(markdown: string): MarkdownBlock[] {
   const lines = markdown.split(/\r?\n/);
   const blocks: MarkdownBlock[] = [];
   let currentList: MarkdownListItem[] = [];
+  let currentParagraph: string[] = [];
 
   const flushList = () => {
     if (currentList.length > 0) {
@@ -45,39 +46,70 @@ export function parseSimpleMarkdown(markdown: string): MarkdownBlock[] {
     }
   };
 
+  const flushParagraph = () => {
+    if (currentParagraph.length === 0) {
+      return;
+    }
+
+    const html = currentParagraph
+      .map((line, index) => {
+        const hasHardBreak = /\s{2,}$/.test(line);
+        const content = line.trimEnd();
+        const suffix = hasHardBreak && index < currentParagraph.length - 1 ? '<br />' : '';
+        return `${renderInline(content)}${suffix}`;
+      })
+      .join(' ');
+
+    const text = currentParagraph.map((line) => stripInlineMarkdown(line.trimEnd())).join('\n');
+
+    blocks.push({
+      type: 'paragraph',
+      html,
+      text
+    });
+
+    currentParagraph = [];
+  };
+
   for (const rawLine of lines) {
     const line = rawLine.trim();
 
     if (!line) {
+      flushParagraph();
       flushList();
       continue;
     }
 
     if (line.startsWith('### ')) {
+      flushParagraph();
       flushList();
       blocks.push({ type: 'heading', level: 3, html: renderInline(line.slice(4)) });
       continue;
     }
 
     if (line.startsWith('## ')) {
+      flushParagraph();
       flushList();
       blocks.push({ type: 'heading', level: 2, html: renderInline(line.slice(3)) });
       continue;
     }
 
     if (line.startsWith('# ')) {
+      flushParagraph();
       flushList();
       blocks.push({ type: 'heading', level: 1, html: renderInline(line.slice(2)) });
       continue;
     }
 
     if (/^(-{3,}|\*{3,}|_{3,})$/.test(line)) {
+      flushParagraph();
       flushList();
       blocks.push({ type: 'hr' });
       continue;
     }
 
     if (line.startsWith('- ')) {
+      flushParagraph();
       currentList.push({
         html: renderInline(line.slice(2)),
         text: stripInlineMarkdown(line.slice(2))
@@ -86,13 +118,10 @@ export function parseSimpleMarkdown(markdown: string): MarkdownBlock[] {
     }
 
     flushList();
-    blocks.push({
-      type: 'paragraph',
-      html: renderInline(line),
-      text: stripInlineMarkdown(line)
-    });
+    currentParagraph.push(rawLine.replace(/^\s+/, ''));
   }
 
+  flushParagraph();
   flushList();
   return blocks;
 }
