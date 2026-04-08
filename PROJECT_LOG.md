@@ -4,7 +4,9 @@ A running record of key project decisions, updates, and the reasons behind them,
 
 | Date | Area | Decision / Change | Why | Status |
 | --- | --- | --- | --- | --- |
+| 2026-04-08 | Hover stability | Reduced the Dadri orb size and narrowed active reflow to the hovered paragraph so manifesto/body text no longer pushes under headings as aggressively. | Keep the interaction readable, stop heading overlap, and reduce flicker in airy text spacing. | In progress |
 | 2026-04-08 | Deployment note | Logged another small repo update to ensure there is always a visible commit-worthy change during iteration. | Make it easier to trigger Netlify deploys while ongoing interaction refinements are still in progress. | Active |
+| 2026-04-08 | Project log maintenance | Cleaned up a merge-conflict state in `PROJECT_LOG.md` and kept the decision table current. | Maintain a readable, pushable log file while multiple iterations are happening quickly. | Active |
 | 2026-04-08 | Dadri flow debugging | Continued refining `DadriFlowField.svelte` so the orb can travel further through long-form text and preserve paragraph spacing while hovering. | Prevent the orb from feeling artificially capped and keep the reading rhythm intact during interaction. | In progress |
 | 2026-04-07 | Project documentation | Created `PROJECT_LOG.md` as an internal running log for decisions and rationale. | Keep track of design/implementation choices over time and make iteration history easier to follow. | Active |
 | 2026-04-07 | Deployment workflow | Keep at least one concrete edited file during iteration. | Ensure there is always something visible to push for Netlify-triggered deploys. | Active |

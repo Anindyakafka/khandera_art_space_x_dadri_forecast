@@ -29,7 +29,7 @@
     layoutNextLine: (prepared: unknown, start: Cursor, maxWidth: number) => LayoutLine | null;
   };
 
-  const ORB_SIZE = 58;
+  const ORB_SIZE = 52;
   const ORB_RADIUS = ORB_SIZE / 2;
   const MIN_COPY_LENGTH = 48;
   const MAX_LAYOUT_HEIGHT = 1400;
@@ -183,52 +183,7 @@
     }
 
     const source = activeSourceNode && nodes.includes(activeSourceNode) ? activeSourceNode : nodes[0];
-    const parent = source.parentElement;
-
-    if (!parent || !block.contains(parent)) {
-      return [source];
-    }
-
-    const siblings = Array.from(parent.children);
-    const sourceIndex = siblings.indexOf(source);
-
-    if (sourceIndex === -1) {
-      return [source];
-    }
-
-    const group: HTMLElement[] = [source];
-
-    for (let index = sourceIndex - 1; index >= 0; index -= 1) {
-      const node = siblings[index];
-
-      if (shouldBreakFlowGroup(node)) {
-        break;
-      }
-
-      if (isRenderableCopyNode(node)) {
-        group.unshift(node);
-        continue;
-      }
-
-      break;
-    }
-
-    for (let index = sourceIndex + 1; index < siblings.length; index += 1) {
-      const node = siblings[index];
-
-      if (shouldBreakFlowGroup(node)) {
-        break;
-      }
-
-      if (isRenderableCopyNode(node)) {
-        group.push(node);
-        continue;
-      }
-
-      break;
-    }
-
-    return group;
+    return [source];
   }
 
   function ensureArtifacts() {
