@@ -1,73 +1,48 @@
 # Khandera Art Space × Dadri Forecast
 
-## What this website is
+This is not simply a website.
 
-This website is a **living archive, public interface, and editorial space** for **Khandera Art Space** and its expanding community of artists, researchers, villagers, collaborators, and militant learners. It is not designed as a neutral portfolio or a polished institutional brochure. It is a site for gathering materials, positions, experiments, and encounters that emerge from the social and political conditions around **Khandera village and the Dadri region of Uttar Pradesh**.
+It is a weather system of memory, resistance, study, and unfinished conversation.
+A place where images, texts, names, fragments, and encounters gather around **Khandera Art Space** — and where **Dadri Forecast** remains the sharpest pulse, the dark cloud on the horizon, the warning before the storm.
 
-Khandera Art Space was shaped through collective work with villagers and collaborators in Girirajpur, Khandera, Dadri. The space takes inspiration from Dr. B. R. Ambedkar’s call to **educate, agitate, organise, stay confident, and never give up**, and understands art not as decoration but as a way to build discourse, solidarity, and forms of resistance.
+Khandera Art Space grows from collective work in and around **Girirajpur, Khandera, Dadri, Uttar Pradesh**. It is shaped by villagers, artists, students, researchers, and collaborators who understand culture not as ornament, but as a way to build relation, solidarity, and critical presence. Its spirit moves with Dr. B. R. Ambedkar’s call to **educate, agitate, organise, stay confident, and never give up**.
 
----
+But when this repository speaks in its strongest ethical voice, it turns toward **Dadri Forecast**.
 
-## Why Dadri Forecast is the ethical center
+Dadri Forecast is not a brand extension, and not an aesthetic mood. It is a collective research and cultural initiative responding to the violences that structure the region: ecological ruin, extractive development, caste and communal fracture, dispossession, and the slow theft of land, labour, and future. It refuses the lie that development must arrive as concrete, smoke, enclosure, and forgetting. It refuses the demand that people become spectators to their own erasure.
 
-While this website carries the wider identity of **Khandera Art Space**, its political and ethical pulse is **Dadri Forecast**.
+So this repository stands for:
 
-Dadri Forecast is a collective research and cultural initiative focused on the transformations of Dadri under extractive development, ecological destruction, caste and communal violence, and the dispossession of working people. The project refuses both the glossy myth of “development” and the nostalgia of a frozen past. Instead, it asks what kinds of futures are being imposed on the region, who is asked to pay for them, and how a counter-space for thought, art, and struggle can be built from below.
+- militant research rooted in community
+- counter-knowledge against extractive development
+- solidarity with villagers, children, workers, artists, and students
+- care for wetlands, memory, local history, and collective futures
+- a refusal of communalism, dispossession, and the NGO-isation of resistance
 
-In that sense, this website stands for:
+What lives here are not just pages, but traces:
 
-- **militant research rooted in community**
-- **counter-knowledge against extractive and exclusionary development**
-- **solidarity with villagers, children, workers, artists, and students**
-- **care for land, wetlands, memory, and local histories**
-- **a refusal of communalism, dispossession, and the NGO-isation of resistance**
+- long-form writing and manifesto fragments
+- artist pages and collaborative presences
+- project dossiers, workshops, and open studios
+- events, documents, images, and moving atmospheres
+- experiments in how a political archive might also breathe
 
-This is why, whenever the site speaks in its strongest voice about purpose, motto, and ethics, **Dadri Forecast remains the focus**.
-
----
-
-## What lives on the site
-
-The website brings together multiple kinds of material:
-
-- **about texts** that situate Khandera Art Space in its local and collective history
-- **manifesto writing** that frames Dadri Forecast as a long-term political and cultural practice
-- **artist pages** for collaborators and collective participants
-- **project dossiers** that document workshops, open studios, and research-based work
-- **events and public material** that trace the evolving life of the initiative
-
-Across these sections, the site tries to function as both an **archive** and an **active interface** — a place where documentation, atmosphere, memory, and experiment can coexist.
+The site tries to remain both **archive** and **threshold**:
+a record of what has been done,
+and an opening toward what still needs to be imagined, defended, and built.
 
 ---
 
-## How the website is built and maintained
+## A practical note
 
-This is a **SvelteKit** site with a content-driven structure. Most editorial updates happen through data and markdown files rather than hard-coded copy.
+The repository is built with **SvelteKit** and uses a content-driven structure.
+Most editorial changes live in:
 
-### Main content sources
+- `content/data/` for structured site content
+- `content/docs/` for long-form writing
+- `static/media/` for images, documents, and video
 
-- `content/data/site.json` — site-wide text, labels, and landing-page copy
-- `content/data/projects.json` — project cards and metadata
-- `content/data/artists.json` — artist and collaborator data
-- `content/data/events.json` — event listings
-- `content/docs/about.md` — long-form About text
-- `content/docs/manifesto.md` — long-form Dadri Forecast manifesto text
-
-### Media locations
-
-- `static/media/images/projects/`
-- `static/media/images/artists/`
-- `static/media/images/events/`
-- `static/media/docs/`
-- `static/media/video/`
-
-When linking media in JSON, use `/media/...` paths.
-
----
-
-## Working with the project
-
-If you need to run or update the site locally:
+If you need to run it locally:
 
 ```bash
 npm install
@@ -75,17 +50,4 @@ npm run dev
 npm run build
 ```
 
-Typical editorial workflow:
-
-1. add or replace media in `static/media/`
-2. update the matching records in `content/data/*.json`
-3. edit long-form texts in `content/docs/*.md`
-4. preview changes locally and verify the affected pages
-
----
-
-## Current direction
-
-The site is continuing to evolve as an experimental editorial environment. In particular, the **Dadri Forecast pages** are being treated as the most active zone for interaction, atmosphere, and long-form reading experiments.
-
-This repository therefore documents not just a website, but an ongoing attempt to build a digital space for **collective memory, political imagination, and insurgent cultural work**.
+But more than a build target, this repository is an ongoing attempt to hold open a digital space for **collective memory, insurgent pedagogy, and radical cultural work**.
