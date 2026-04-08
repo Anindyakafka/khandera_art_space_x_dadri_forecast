@@ -36,6 +36,12 @@
     gravity: number;
   };
 
+  type TrailPoint = {
+    x: number;
+    y: number;
+    size: number;
+  };
+
   type PointerRect = Pick<DOMRect, 'left' | 'right' | 'top' | 'bottom'>;
 
   type PretextApi = {
@@ -85,6 +91,7 @@
   let moveDirectionX = 1;
   let moveDirectionY = -0.12;
   let particles: FireParticle[] = [];
+  let trailPoints: TrailPoint[] = [];
   let offsetX = 0;
   let offsetY = 0;
 
@@ -388,9 +395,43 @@
     const shift = `${(Math.max(0, burn - 0.2) * moveDirectionX * 4).toFixed(2)}px`;
 
     return {
+      burn,
       className: getBurnClass(burn),
       style: `left:${segment.x}px; top:${segment.y}px; color:${warm}; --burn:${burn.toFixed(3)}; --burn-shift:${shift}; --burn-glow:${glow}; --burn-ember:${ember};`
     };
+  }
+
+  function renderSegmentText(text: string, burn: number) {
+    if (burn <= 0.12) {
+      return escapeHtml(text);
+    }
+
+    const firingBoost = orbEl?.classList.contains('is-firing') ? 0.2 : 0;
+    const length = Math.hypot(moveDirectionX, moveDirectionY) || 1;
+    const dirX = moveDirectionX / length;
+    const dirY = moveDirectionY / length;
+    const perpX = -dirY;
+    const perpY = dirX;
+    const chars = Array.from(text);
+
+    return chars
+      .map((char, index) => {
+        if (char === ' ') {
+          return '<span class="dadri-flow-char is-space">&nbsp;</span>';
+        }
+
+        const bias = chars.length > 1 ? index / (chars.length - 1) - 0.5 : 0;
+        const wave = Math.sin(index * 1.73 + orbCenterX * 0.06 + orbCenterY * 0.04);
+        const scatter = clamp(Math.max(0, burn - 0.08) * (1 + firingBoost), 0, 1.25);
+        const pushX = (dirX * 1.4 + perpX * bias * 2.8 + wave * 0.28) * scatter * 4.2;
+        const pushY = (dirY * 0.5 + perpY * bias * 4.6) * scatter * 2.2;
+        const rotate = (bias * 18 + wave * 7) * scatter;
+        const charBurn = clamp(burn * (0.86 + Math.abs(bias) * 0.45 + firingBoost), 0, 1.35);
+        const encoded = char === '<' ? '&lt;' : char === '>' ? '&gt;' : char === '&' ? '&amp;' : escapeHtml(char);
+
+        return `<span class="dadri-flow-char" style="--char-x:${pushX.toFixed(2)}px; --char-y:${pushY.toFixed(2)}px; --char-rot:${rotate.toFixed(2)}deg; --char-burn:${charBurn.toFixed(3)};">${encoded}</span>`;
+      })
+      .join('');
   }
 
   function getBlockedRange(midY: number) {
@@ -541,6 +582,7 @@
       fireBurstTimeout = window.setTimeout(() => {
         orbEl?.classList.remove('is-firing');
         fireBurstTimeout = null;
+        renderLayout();
       }, 220);
     }
   }
@@ -633,6 +675,102 @@
     renderLayout();
   }
 
+  function initializeTrail() {
+    if (trailPoints.length > 0) {
+      return;
+    }
+
+    trailPoints = Array.from({ length: 7 }, (_, index) => ({
+      x: orbCenterX - index * 4.2,
+      y: orbCenterY,
+      size: Math.max(6, 13 - index * 1.2)
+    }));
+  }
+
+  function updateTrail(delta: number) {
+    if (!activeBlock) {
+      trailPoints = [];
+      return;
+    }
+
+    initializeTrail();
+
+    const head = trailPoints[0];
+    const lead = clamp(0.34 * delta, 0, 1);
+    head.x += (orbCenterX - head.x) * lead;
+    head.y += (orbCenterY - head.y) * lead;
+
+    for (let index = 1; index < trailPoints.length; index += 1) {
+      const prev = trailPoints[index - 1];
+      const point = trailPoints[index];
+      const follow = clamp((0.24 - index * 0.018) * delta, 0.08, 0.28);
+      point.x += (prev.x - point.x) * follow;
+      point.y += (prev.y - point.y) * follow;
+    }
+  }
+
+  function renderDragonTrail() {
+    if (!particleCtx || trailPoints.length === 0) {
+      return;
+    }
+
+    const pixel = (value: number) => Math.round(value / 2) * 2;
+
+    particleCtx.save();
+    particleCtx.globalCompositeOperation = 'source-over';
+
+    for (let index = trailPoints.length - 1; index >= 0; index -= 1) {
+      const point = trailPoints[index];
+      const size = point.size;
+      const x = pixel(point.x - size * 0.5);
+      const y = pixel(point.y - size * 0.4);
+      const alpha = 0.2 + ((trailPoints.length - index) / trailPoints.length) * 0.24;
+
+      particleCtx.fillStyle = `rgba(21, 10, 8, ${Math.min(0.48, alpha)})`;
+      particleCtx.fillRect(x, y, Math.round(size), Math.max(3, Math.round(size * 0.62)));
+      particleCtx.fillStyle = `rgba(214, 96, 28, ${0.06 + alpha * 0.18})`;
+      particleCtx.fillRect(x + 2, y + 1, Math.max(1, Math.round(size * 0.42)), Math.max(2, Math.round(size * 0.22)));
+    }
+
+    particleCtx.restore();
+  }
+
+  function renderFlameCone() {
+    if (!particleCtx || !orbEl?.classList.contains('is-firing')) {
+      return;
+    }
+
+    const length = Math.hypot(moveDirectionX, moveDirectionY) || 1;
+    const dirX = moveDirectionX / length;
+    const dirY = moveDirectionY / length;
+    const angle = Math.atan2(dirY, dirX);
+    const originX = orbCenterX + dirX * (ORB_RADIUS * 0.68);
+    const originY = orbCenterY + dirY * (ORB_RADIUS * 0.14);
+
+    particleCtx.save();
+    particleCtx.translate(originX, originY);
+    particleCtx.rotate(angle);
+    particleCtx.globalCompositeOperation = 'lighter';
+
+    const gradient = particleCtx.createLinearGradient(0, 0, 26, 0);
+    gradient.addColorStop(0, 'rgba(255,247,222,0.82)');
+    gradient.addColorStop(0.3, 'rgba(255,184,72,0.78)');
+    gradient.addColorStop(0.72, 'rgba(255,90,22,0.48)');
+    gradient.addColorStop(1, 'rgba(120,18,6,0)');
+
+    particleCtx.fillStyle = gradient;
+    particleCtx.beginPath();
+    particleCtx.moveTo(0, 0);
+    particleCtx.lineTo(9, -4);
+    particleCtx.lineTo(26, -9);
+    particleCtx.quadraticCurveTo(20, 0, 26, 9);
+    particleCtx.lineTo(9, 4);
+    particleCtx.closePath();
+    particleCtx.fill();
+
+    particleCtx.restore();
+  }
+
   function renderParticles() {
     if (!particleCtx || !particleCanvasEl) {
       return;
@@ -642,6 +780,8 @@
     const cssHeight = Number.parseFloat(particleCanvasEl.style.height) || particleCanvasEl.clientHeight || 1;
 
     particleCtx.clearRect(0, 0, cssWidth, cssHeight);
+    renderDragonTrail();
+    renderFlameCone();
 
     if (particles.length === 0) {
       return;
@@ -671,6 +811,8 @@
   }
 
   function stepParticles(delta: number) {
+    updateTrail(delta);
+
     if (particles.length === 0) {
       renderParticles();
       return;
@@ -793,7 +935,7 @@
     lineLayerEl.innerHTML = layout.segments
       .map((segment) => {
         const burn = getBurnStyle(segment);
-        return `<span class="${burn.className}" style="${burn.style}">${escapeHtml(segment.text)}</span>`;
+        return `<span class="${burn.className}" style="${burn.style}">${renderSegmentText(segment.text, burn.burn)}</span>`;
       })
       .join('');
 
@@ -816,6 +958,7 @@
     orbEl?.classList.remove('is-firing');
     orbEl?.remove();
     particles = [];
+    trailPoints = [];
     activeBlock = null;
     activeSourceNode = null;
     prepared = null;
@@ -1245,7 +1388,7 @@
 
   :global(.dadri-flow-particle-layer) {
     position: absolute;
-    z-index: 2;
+    z-index: 3;
     pointer-events: none;
     mix-blend-mode: screen;
     opacity: 0.96;
@@ -1276,6 +1419,18 @@
     transition: color 120ms ease, text-shadow 120ms ease, transform 120ms ease, filter 120ms ease;
   }
 
+  :global(.dadri-flow-char) {
+    display: inline-block;
+    transform: translate(var(--char-x, 0px), var(--char-y, 0px)) rotate(var(--char-rot, 0deg));
+    transform-origin: center 72%;
+    filter: brightness(calc(1 + var(--char-burn, 0) * 0.18));
+    will-change: transform, filter;
+  }
+
+  :global(.dadri-flow-char.is-space) {
+    width: 0.32em;
+  }
+
   :global(.dadri-flow-line.is-scorched) {
     letter-spacing: 0.014em;
   }
@@ -1284,9 +1439,13 @@
     animation: dadri-flow-burn-flicker 280ms ease-in-out infinite alternate;
   }
 
+  :global(.dadri-flow-line.is-superheated .dadri-flow-char) {
+    animation: dadri-flow-char-scatter 190ms ease-in-out infinite alternate;
+  }
+
   :global(.dadri-flow-orb) {
     position: absolute;
-    z-index: 3;
+    z-index: 4;
     display: grid;
     place-items: center;
     border: 0;
@@ -1406,6 +1565,18 @@
       text-shadow:
         0 0 calc(14px * var(--burn, 0)) var(--burn-glow, rgba(255, 124, 42, 0)),
         0 0 calc(28px * var(--burn, 0)) var(--burn-ember, rgba(255, 82, 18, 0));
+    }
+  }
+
+  @keyframes dadri-flow-char-scatter {
+    from {
+      transform: translate(calc(var(--char-x, 0px) * 0.82), calc(var(--char-y, 0px) * 0.82))
+        rotate(calc(var(--char-rot, 0deg) * 0.78));
+    }
+
+    to {
+      transform: translate(calc(var(--char-x, 0px) * 1.08), calc(var(--char-y, 0px) * 1.1))
+        rotate(calc(var(--char-rot, 0deg) * 1.08));
     }
   }
 
