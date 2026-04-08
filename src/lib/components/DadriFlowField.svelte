@@ -24,6 +24,18 @@
     height: number;
   };
 
+  type FireParticle = {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    radius: number;
+    life: number;
+    decay: number;
+    alpha: number;
+    gravity: number;
+  };
+
   type PointerRect = Pick<DOMRect, 'left' | 'right' | 'top' | 'bottom'>;
 
   type PretextApi = {
@@ -46,11 +58,16 @@
   let contentEl: HTMLDivElement | null = null;
   let orbEl: HTMLButtonElement | null = null;
   let lineLayerEl: HTMLDivElement | null = null;
+  let particleCanvasEl: HTMLCanvasElement | null = null;
   let activeBlock: HTMLElement | null = null;
   let pretextApi: PretextApi | null = null;
   let prepared: unknown = null;
   let canvasCtx: CanvasRenderingContext2D | null = null;
+  let particleCtx: CanvasRenderingContext2D | null = null;
   let dragging = false;
+  let fireBurstTimeout: number | null = null;
+  let animationFrame = 0;
+  let lastFrameTime = 0;
 
   let blockText = '';
   let blockWidth = 0;
@@ -65,6 +82,9 @@
   let activeSourceNode: HTMLElement | null = null;
   let orbCenterX = ORB_RADIUS + 12;
   let orbCenterY = ORB_RADIUS + 12;
+  let moveDirectionX = 1;
+  let moveDirectionY = -0.12;
+  let particles: FireParticle[] = [];
   let offsetX = 0;
   let offsetY = 0;
 
@@ -210,9 +230,16 @@
       orbEl.className = 'dadri-flow-orb';
       orbEl.tabIndex = -1;
       orbEl.setAttribute('aria-hidden', 'true');
-      orbEl.setAttribute('aria-label', 'Drag orb to reflow text');
-      orbEl.innerHTML = '<span>flow</span>';
+      orbEl.setAttribute('aria-label', 'Drag ember to reflow text');
+      orbEl.innerHTML = '<span>burn</span>';
       orbEl.addEventListener('pointerdown', onOrbPointerDown);
+    }
+
+    if (!particleCanvasEl) {
+      particleCanvasEl = document.createElement('canvas');
+      particleCanvasEl.className = 'dadri-flow-particle-layer';
+      particleCanvasEl.setAttribute('aria-hidden', 'true');
+      particleCtx = particleCanvasEl.getContext('2d');
     }
 
     if (!lineLayerEl) {
@@ -413,6 +440,205 @@
     segments.push({ text, x, y });
   }
 
+  function syncParticleCanvas(height: number) {
+    if (!particleCanvasEl || typeof window === 'undefined') {
+      return;
+    }
+
+    const cssWidth = Math.max(1, Math.ceil(blockWidth));
+    const cssHeight = Math.max(1, Math.ceil(height));
+    const dpr = window.devicePixelRatio || 1;
+
+    particleCanvasEl.style.left = `${leftInset}px`;
+    particleCanvasEl.style.top = `${topInset}px`;
+    particleCanvasEl.style.width = `${cssWidth}px`;
+    particleCanvasEl.style.height = `${cssHeight}px`;
+
+    const nextWidth = Math.max(1, Math.round(cssWidth * dpr));
+    const nextHeight = Math.max(1, Math.round(cssHeight * dpr));
+
+    if (particleCanvasEl.width !== nextWidth || particleCanvasEl.height !== nextHeight) {
+      particleCanvasEl.width = nextWidth;
+      particleCanvasEl.height = nextHeight;
+    }
+
+    particleCtx = particleCanvasEl.getContext('2d');
+    particleCtx?.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function pulseOrbFire() {
+    orbEl?.classList.add('is-firing');
+
+    if (fireBurstTimeout !== null && typeof window !== 'undefined') {
+      window.clearTimeout(fireBurstTimeout);
+    }
+
+    if (typeof window !== 'undefined') {
+      fireBurstTimeout = window.setTimeout(() => {
+        orbEl?.classList.remove('is-firing');
+        fireBurstTimeout = null;
+      }, 220);
+    }
+  }
+
+  function addParticle(
+    x: number,
+    y: number,
+    vx: number,
+    vy: number,
+    radius: number,
+    life: number,
+    decay: number,
+    alpha: number,
+    gravity: number
+  ) {
+    particles.push({ x, y, vx, vy, radius, life, decay, alpha, gravity });
+  }
+
+  function emitTrailParticles(originX: number, originY: number, dirX: number, dirY: number, count = 4) {
+    if (!activeBlock) {
+      return;
+    }
+
+    const length = Math.hypot(dirX, dirY) || 1;
+    const nx = dirX / length;
+    const ny = dirY / length;
+
+    for (let index = 0; index < count; index += 1) {
+      const spread = (Math.random() - 0.5) * 0.85;
+      const speed = 0.45 + Math.random() * 1.25;
+
+      addParticle(
+        originX + (Math.random() - 0.5) * 8,
+        originY + (Math.random() - 0.5) * 8,
+        nx * speed + spread,
+        ny * speed + spread * 0.45 - 0.25,
+        3 + Math.random() * 4,
+        0.9,
+        0.03 + Math.random() * 0.025,
+        0.26 + Math.random() * 0.2,
+        -0.004 - Math.random() * 0.018
+      );
+    }
+  }
+
+  function emitFireBurst(strength = 1) {
+    if (!activeBlock) {
+      return;
+    }
+
+    pulseOrbFire();
+
+    const length = Math.hypot(moveDirectionX, moveDirectionY) || 1;
+    const dirX = moveDirectionX / length;
+    const dirY = moveDirectionY / length;
+    const originX = orbCenterX + dirX * (ORB_RADIUS * 0.7);
+    const originY = orbCenterY + dirY * (ORB_RADIUS * 0.18);
+
+    for (let index = 0; index < 20; index += 1) {
+      const spread = (Math.random() - 0.5) * 0.95;
+      const speed = (1.4 + Math.random() * 3.1) * strength;
+
+      addParticle(
+        originX + dirX * 4 + (Math.random() - 0.5) * 10,
+        originY + dirY * 4 + (Math.random() - 0.5) * 10,
+        dirX * speed + spread,
+        dirY * speed + spread * 0.55 - 0.25,
+        5 + Math.random() * 7,
+        1,
+        0.025 + Math.random() * 0.03,
+        0.42 + Math.random() * 0.34,
+        0.008 + Math.random() * 0.02
+      );
+    }
+
+    for (let index = 0; index < 10; index += 1) {
+      addParticle(
+        originX + (Math.random() - 0.5) * 12,
+        originY + (Math.random() - 0.5) * 12,
+        dirX * (0.4 + Math.random() * 0.8) + (Math.random() - 0.5) * 0.5,
+        dirY * (0.1 + Math.random() * 0.5) - 0.3 + (Math.random() - 0.5) * 0.35,
+        6 + Math.random() * 8,
+        0.82,
+        0.016 + Math.random() * 0.018,
+        0.14 + Math.random() * 0.12,
+        -0.01 - Math.random() * 0.012
+      );
+    }
+  }
+
+  function renderParticles() {
+    if (!particleCtx || !particleCanvasEl) {
+      return;
+    }
+
+    const cssWidth = Number.parseFloat(particleCanvasEl.style.width) || particleCanvasEl.clientWidth || 1;
+    const cssHeight = Number.parseFloat(particleCanvasEl.style.height) || particleCanvasEl.clientHeight || 1;
+
+    particleCtx.clearRect(0, 0, cssWidth, cssHeight);
+
+    if (particles.length === 0) {
+      return;
+    }
+
+    particleCtx.save();
+    particleCtx.globalCompositeOperation = 'lighter';
+
+    for (const particle of particles) {
+      const life = Math.max(0, Math.min(1, particle.life));
+      const radius = particle.radius * (0.7 + (1 - life) * 0.65);
+      const alpha = particle.alpha * life;
+      const gradient = particleCtx.createRadialGradient(particle.x, particle.y, 0, particle.x, particle.y, radius);
+
+      gradient.addColorStop(0, `rgba(255,248,225,${alpha})`);
+      gradient.addColorStop(0.34, `rgba(255,196,82,${alpha * 0.95})`);
+      gradient.addColorStop(0.7, `rgba(255,98,28,${alpha * 0.58})`);
+      gradient.addColorStop(1, 'rgba(95,18,6,0)');
+
+      particleCtx.fillStyle = gradient;
+      particleCtx.beginPath();
+      particleCtx.arc(particle.x, particle.y, radius, 0, Math.PI * 2);
+      particleCtx.fill();
+    }
+
+    particleCtx.restore();
+  }
+
+  function stepParticles(delta: number) {
+    if (particles.length === 0) {
+      renderParticles();
+      return;
+    }
+
+    const maxHeight = Math.max(blockMinHeight, originalBlockHeight, 160);
+
+    particles = particles.filter((particle) => {
+      particle.x += particle.vx * delta;
+      particle.y += particle.vy * delta;
+      particle.vx *= 0.988;
+      particle.vy = particle.vy * 0.992 + particle.gravity * delta;
+      particle.life -= particle.decay * delta;
+
+      return (
+        particle.life > 0.01 &&
+        particle.x > -80 &&
+        particle.x < blockWidth + 80 &&
+        particle.y > -120 &&
+        particle.y < maxHeight + 120
+      );
+    });
+
+    renderParticles();
+  }
+
+  function tickParticles(now = 0) {
+    animationFrame = window.requestAnimationFrame(tickParticles);
+
+    const delta = lastFrameTime ? Math.min(2.1, (now - lastFrameTime) / 16.6667) : 1;
+    lastFrameTime = now;
+    stepParticles(delta);
+  }
+
   function layoutTextFallback() {
     const segments: Segment[] = [];
     let cursor = 0;
@@ -492,6 +718,7 @@
 
     const layout = layoutTextWithPretext() ?? layoutTextFallback();
 
+    syncParticleCanvas(Math.ceil(layout.height));
     lineLayerEl.style.left = `${leftInset}px`;
     lineLayerEl.style.top = `${topInset}px`;
     lineLayerEl.style.setProperty('--flow-font', font);
@@ -506,6 +733,7 @@
 
     activeBlock.style.minHeight = `${Math.ceil(originalBlockHeight)}px`;
     syncOrbVisual();
+    renderParticles();
   }
 
   function clearActiveBlock() {
@@ -518,12 +746,16 @@
     }
 
     lineLayerEl?.remove();
+    particleCanvasEl?.remove();
+    orbEl?.classList.remove('is-firing');
     orbEl?.remove();
+    particles = [];
     activeBlock = null;
     activeSourceNode = null;
     prepared = null;
     blockText = '';
     copyNodes = [];
+    renderParticles();
   }
 
   function activateBlock(block: HTMLElement) {
@@ -543,6 +775,7 @@
     activeBlock = block;
     activeBlock.dataset.flowText = extractPlainText(block);
     activeBlock.classList.add('dadri-flow-copy-active');
+    particleCanvasEl && activeBlock.append(particleCanvasEl);
     lineLayerEl && activeBlock.append(lineLayerEl);
     orbEl && activeBlock.append(orbEl);
 
@@ -725,6 +958,8 @@
       return;
     }
 
+    const previousX = orbCenterX;
+    const previousY = orbCenterY;
     const rect = activeBlock.getBoundingClientRect();
     const maxX = Math.max(ORB_RADIUS, blockWidth - ORB_RADIUS);
     const maxY = Math.max(ORB_RADIUS, Math.max(blockMinHeight, originalBlockHeight - topInset - bottomInset, lineHeight * 3) - ORB_RADIUS);
@@ -734,6 +969,22 @@
 
     orbCenterX = clamp(nextX, ORB_RADIUS, maxX);
     orbCenterY = clamp(nextY, ORB_RADIUS, maxY);
+
+    const deltaX = orbCenterX - previousX;
+    const deltaY = orbCenterY - previousY;
+    const distance = Math.hypot(deltaX, deltaY);
+
+    if (distance > 0.8) {
+      moveDirectionX = deltaX / distance;
+      moveDirectionY = deltaY / distance;
+      emitTrailParticles(
+        orbCenterX - moveDirectionX * (ORB_RADIUS * 0.45),
+        orbCenterY - moveDirectionY * (ORB_RADIUS * 0.45),
+        -moveDirectionX,
+        -moveDirectionY,
+        clamp(Math.round(distance * 0.35), 2, 6)
+      );
+    }
 
     renderLayout();
   }
@@ -752,6 +1003,7 @@
     const rect = activeBlock.getBoundingClientRect();
     offsetX = event.clientX - rect.left - leftInset - orbCenterX;
     offsetY = event.clientY - rect.top - topInset - orbCenterY;
+    emitFireBurst(0.95);
     syncOrbVisual();
   }
 
@@ -800,6 +1052,35 @@
     }
   }
 
+  function onShellClick(event: MouseEvent) {
+    if (dragging) {
+      return;
+    }
+
+    const block = findEligibleTextBlock(event.target, event.clientX, event.clientY);
+    if (!block) {
+      return;
+    }
+
+    activateBlock(block);
+
+    if (!activeBlock) {
+      return;
+    }
+
+    const rect = activeBlock.getBoundingClientRect();
+    const dx = event.clientX - rect.left - leftInset - orbCenterX;
+    const dy = event.clientY - rect.top - topInset - orbCenterY;
+    const distance = Math.hypot(dx, dy);
+
+    if (distance > 0.001) {
+      moveDirectionX = dx / distance;
+      moveDirectionY = dy / distance;
+    }
+
+    emitFireBurst(distance > 120 ? 1.15 : 1);
+  }
+
   function onShellPointerLeave() {
     if (!dragging) {
       clearActiveBlock();
@@ -820,6 +1101,7 @@
     const canvas = document.createElement('canvas');
     canvasCtx = canvas.getContext('2d');
     ensureArtifacts();
+    animationFrame = window.requestAnimationFrame(tickParticles);
 
     void (async () => {
       try {
@@ -852,6 +1134,10 @@
 
     return () => {
       resizeObserver.disconnect();
+      window.cancelAnimationFrame(animationFrame);
+      if (fireBurstTimeout !== null) {
+        window.clearTimeout(fireBurstTimeout);
+      }
       window.removeEventListener('pointermove', onWindowPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
       window.removeEventListener('resize', constrainOnResize);
@@ -861,7 +1147,13 @@
   });
 </script>
 
-<div class="dadri-flow-field" bind:this={shell} on:pointermove={onLocalPointerMove} on:pointerleave={onShellPointerLeave}>
+<div
+  class="dadri-flow-field"
+  bind:this={shell}
+  on:pointermove={onLocalPointerMove}
+  on:pointerleave={onShellPointerLeave}
+  on:click={onShellClick}
+>
   <div class="flow-content" bind:this={contentEl}>
     <slot />
   </div>
@@ -883,6 +1175,14 @@
 
   :global(.dadri-flow-hidden-node::marker) {
     color: color-mix(in srgb, var(--text) 86%, transparent);
+  }
+
+  :global(.dadri-flow-particle-layer) {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.96;
   }
 
   :global(.dadri-flow-line-layer) {
@@ -907,34 +1207,48 @@
   :global(.dadri-flow-orb) {
     position: absolute;
     z-index: 3;
-    border: 1px solid color-mix(in srgb, var(--accent) 56%, var(--line));
+    border: 1px solid rgba(255, 178, 92, 0.42);
     border-radius: 999px;
     display: grid;
     place-items: center;
     background:
-      radial-gradient(circle at 32% 26%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 54%),
-      radial-gradient(circle at 74% 74%, color-mix(in srgb, var(--text) 14%, transparent), transparent 58%),
-      color-mix(in srgb, var(--surface) 94%, transparent);
-    color: color-mix(in srgb, var(--accent) 88%, var(--text));
-    font: 700 0.62rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
+      radial-gradient(circle at 34% 28%, rgba(255, 247, 223, 0.95), transparent 18%),
+      radial-gradient(circle at 46% 44%, rgba(255, 132, 36, 0.78), transparent 44%),
+      radial-gradient(circle at 72% 72%, rgba(122, 19, 4, 0.45), transparent 64%),
+      color-mix(in srgb, var(--surface) 82%, #260701);
+    color: color-mix(in srgb, #ffd18b 86%, var(--text));
+    font: 700 0.58rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     cursor: grab;
     user-select: none;
     touch-action: none;
     box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--line) 55%, transparent),
-      0 14px 28px color-mix(in srgb, black 21%, transparent);
+      0 0 0 1px rgba(255, 190, 112, 0.22),
+      0 0 18px rgba(255, 112, 28, 0.24),
+      0 14px 28px color-mix(in srgb, black 25%, transparent);
+    transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
   }
 
   :global(.dadri-flow-orb.is-dragging) {
     cursor: grabbing;
-    filter: brightness(1.03);
+    filter: brightness(1.05) saturate(1.08);
+    transform: scale(1.02);
+  }
+
+  :global(.dadri-flow-orb.is-firing) {
+    box-shadow:
+      0 0 0 1px rgba(255, 196, 118, 0.4),
+      0 0 28px rgba(255, 118, 28, 0.45),
+      0 0 52px rgba(255, 72, 12, 0.24),
+      0 14px 28px color-mix(in srgb, black 28%, transparent);
+    filter: brightness(1.08) saturate(1.16);
   }
 
   :global(.dadri-flow-orb span) {
     pointer-events: none;
-    opacity: 0.9;
+    opacity: 0.92;
+    text-shadow: 0 0 14px rgba(255, 112, 28, 0.34);
   }
 
   .flow-content :global(p),
