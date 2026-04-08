@@ -96,11 +96,11 @@
             'A socio-politically engaged mime practitioner whose methods are grounded in friction, not ease. His practice builds collective non-verbal vocabularies for cultural intervention and resistance.'
         },
         {
-          name: 'Collective Participants',
-          role: 'Young Artists from Khandera Village',
+          name: 'Collective Voices',
+          role: 'Young Voices from Khandera Village',
           href: '/dadri-forecast/artists/collective-participants',
           description:
-            'Young participants who, over 13 days, endured heat, blackout, and infrastructural neglect to co-author a performance vocabulary rooted in embodied experience and defiance.'
+            'Young collaborators who, over 13 days, endured heat, blackout, and infrastructural neglect to co-author a performance vocabulary rooted in embodied experience and defiance.'
         }
       ]
     },
@@ -324,7 +324,7 @@
     <section class="collab-artists" aria-labelledby="collab-heading">
       <p class="section-no" aria-hidden="true">09</p>
       <div class="collab-head">
-        <h2 id="collab-heading">Collaborating Artists</h2>
+        <h2 id="collab-heading">Collaborators</h2>
         <p>{activeProject.collaboratingArtists.length} contributor{activeProject.collaboratingArtists.length > 1 ? 's' : ''}</p>
       </div>
       <div class="collab-grid">
@@ -369,7 +369,8 @@
   <nav class="route-links" aria-label="Other pages">
     <a href="/dadri-forecast">Dadri Forecast Home</a>
     <a href="/dadri-forecast/about">About</a>
-    <a href="/dadri-forecast/artists">Artists</a>
+    <a href="/dadri-forecast/artists">Collaborators</a>
+    <a href="/dadri-forecast/support">Support</a>
     <a href="/dadri-forecast/events">Events</a>
   </nav>
 </main>

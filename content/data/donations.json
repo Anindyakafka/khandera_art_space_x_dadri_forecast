@@ -1,0 +1,52 @@
+[
+  {
+    "id": "cab-rides",
+    "title": "Cab rides & travel support",
+    "summary": "Help cover local travel for participants, facilitators, and materials moving between village sites, transit points, and event locations.",
+    "targetAmount": null,
+    "receivedAmount": 0,
+    "spentAmount": 0,
+    "lastUpdated": "Log opens with the first contribution",
+    "statusNote": "Every ride or travel expense will be documented here once this fund becomes active."
+  },
+  {
+    "id": "stationery-kits",
+    "title": "Stationery for kids",
+    "summary": "Support notebooks, pens, paper, printouts, and workshop materials used with children and young participants in Khandera.",
+    "targetAmount": null,
+    "receivedAmount": 0,
+    "spentAmount": 0,
+    "lastUpdated": "Log opens with the first contribution",
+    "statusNote": "Bills and remaining balance will be updated here after each stationery purchase."
+  },
+  {
+    "id": "art-equipment",
+    "title": "Art materials & equipment",
+    "summary": "Contribute toward paints, tools, projection needs, mime props, and other working materials for Dadri Forecast activities.",
+    "targetAmount": null,
+    "receivedAmount": 0,
+    "spentAmount": 0,
+    "lastUpdated": "Log opens with the first contribution",
+    "statusNote": "Equipment and supply use will be listed here with expense notes as the archive grows."
+  },
+  {
+    "id": "gallery-exhibition",
+    "title": "Gallery & exhibition fund",
+    "summary": "Reserve support for future exhibitions, installation needs, display material, transport, and public presentation when the rollout begins.",
+    "targetAmount": null,
+    "receivedAmount": 0,
+    "spentAmount": 0,
+    "lastUpdated": "Fund reserved for rollout",
+    "statusNote": "This section will track exhibition-specific spending once that phase opens up."
+  },
+  {
+    "id": "project-specific",
+    "title": "Project-specific donations",
+    "summary": "Direct a contribution to a particular Dadri Forecast project, residency need, emergency expense, or community-led requirement.",
+    "targetAmount": null,
+    "receivedAmount": 0,
+    "spentAmount": 0,
+    "lastUpdated": "Open for custom requests",
+    "statusNote": "Use the donor form to mention the exact project or need you want your contribution to support."
+  }
+]

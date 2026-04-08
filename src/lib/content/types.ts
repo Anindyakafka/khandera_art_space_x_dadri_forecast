@@ -44,3 +44,14 @@ export type EventContent = {
   ctaLabel?: string;
   ctaUrl?: string;
 };
+
+export type SupportFund = {
+  id: string;
+  title: string;
+  summary: string;
+  targetAmount: number | null;
+  receivedAmount: number;
+  spentAmount: number;
+  lastUpdated: string;
+  statusNote: string;
+};

@@ -20,7 +20,8 @@
     { href: '/dadri-forecast', label: 'Dadri Forecast', exact: true },
     { href: '/dadri-forecast/about', label: 'About' },
     { href: '/dadri-forecast/projects', label: 'Projects' },
-    { href: '/dadri-forecast/artists', label: 'Artists' },
+    { href: '/dadri-forecast/artists', label: 'Collaborators' },
+    { href: '/dadri-forecast/support', label: 'Support' },
     { href: '/dadri-forecast/events', label: 'Events' }
   ];
   const dadriLogoPath = '/media/images/dadri-forecast/logo.png';

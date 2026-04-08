@@ -1,14 +1,14 @@
 <main class="artist-page">
   <p class="section-no" aria-hidden="true">13</p>
-  <p class="kicker">Dadri Forecast / Artist Profile</p>
-  <h1>Collective Participants</h1>
-  <span class="warning-bar">Young Artists from Khandera Village // Collective Practice</span>
+  <p class="kicker">Dadri Forecast / Collaborator Profile</p>
+  <h1>Collective Voices</h1>
+  <span class="warning-bar">Young Voices from Khandera Village // Collective Practice</span>
 
   <div class="profile-grid" data-flow-copy>
     <article class="profile-card">
       <p class="label">Role</p>
-      <h2>Young Artists from Khandera Village</h2>
-      <p>The collective participants are the central force of the Socho Toh process, bringing lived experience into movement, rhythm, and performance.</p>
+      <h2>Collective Voices from Khandera Village</h2>
+      <p>The young collaborators are the central force of the Socho Toh process, bringing lived experience into movement, rhythm, and performance.</p>
     </article>
 
     <article class="profile-card">
@@ -26,7 +26,7 @@
 
   <nav class="profile-links" aria-label="Profile navigation">
     <a href="/dadri-forecast/projects">Back to Projects</a>
-    <a href="/dadri-forecast/artists">Back to Artists</a>
+    <a href="/dadri-forecast/artists">Back to Collaborators</a>
   </nav>
 </main>
 

@@ -1,7 +1,7 @@
 <main class="dadri-page">
   <p class="section-no" aria-hidden="true">04</p>
   <p class="kicker">Dadri Forecast</p>
-  <h1>Artists</h1>
+  <h1>Collaborators</h1>
   <span class="warning-bar">Embodied Practice // Collective Voice // Refusal</span>
 
   <div class="list">
@@ -18,9 +18,9 @@
     </a>
 
     <a class="artist-card" href="/dadri-forecast/artists/collective-participants" data-flow-copy>
-      <p class="role">Young Artists from Khandera Village</p>
-      <h2>Collective Participants</h2>
-      <p>Young participants who, over 13 days, endured heat, blackout, and infrastructural neglect to co-author a performance vocabulary rooted in embodied experience and defiance.</p>
+      <p class="role">Young Voices from Khandera Village</p>
+      <h2>Collective Voices</h2>
+      <p>Young collaborators who, over 13 days, endured heat, blackout, and infrastructural neglect to co-author a performance vocabulary rooted in embodied experience and defiance.</p>
     </a>
   </div>
 </main>

@@ -4,7 +4,6 @@ A chronological record of **what changed, when it changed, and why the decision 
 
 | Date | Area | Decision / Change | Why | Status |
 | --- | --- | --- | --- | --- |
-| 2026-04-08 | Cross-chat log sync | Reviewed this conversation and synced the Sabum-inspired dragon/fire findings into `PROJECT_LOG.md`, including the key behavior brief: snake-like body follow, directional flame breath, and per-letter disturbance rather than simple glow only. | The user is reconstructing the project history across chats and wants each conversation’s decisions reflected in the shared log. | Active |
 | 2026-03-24 | Surface texture pass | Added a site-wide grain/grunge overlay and iterated toward darker black/grey texture layers for visibility on the pale background. | Introduce a subtle tactile texture inspired by the external visual reference while preserving readability. | In progress |
 | 2026-03-24 | Ambient bird timing | Delayed `BirdFollower.svelte` activation by two minutes after load. | Reduce movement in the first impression of the homepage and keep the opening screen calmer. | Active |
 | 2026-03-24 | Homepage hero staging | Reworked the landing page so the Khandera hero occupies the first viewport and archive sections begin below the fold. | Keep the opening experience centered on the title before revealing project content on scroll. | In progress |
@@ -47,6 +46,11 @@ A chronological record of **what changed, when it changed, and why the decision 
 | 2026-04-08 | Pretext-based layout research | Added `@chenglou/pretext` and created probe/flow experiments to mimic obstacle-aware line composition more closely. | The target reference moved toward Cheng Lou / Somnai-style wrapping instead of simple one-sided CSS float displacement. | In progress |
 | 2026-04-08 | Dadri smoke prototype | Created a hero-only text-smoke experiment using `DadriSmokeField.svelte` and a compiled `smokeCorpus.ts` drawn from manifesto/archive content. | Explore a more atmospheric landing treatment built directly from the project’s own language rather than generic particles. | Paused |
 | 2026-04-08 | Dadri rollback and stabilization | Restored `src/lib/components/DadriFlowField.svelte` and `src/routes/dadri-forecast/+page.svelte` to the simpler orb/archive baseline after the smoke branch caused visibility and blank-state regressions. | Re-establish a working Dadri reading experience before attempting any further experimental overlays. | Active |
+| 2026-04-08 | Cross-chat log sync | Reviewed this conversation and synced the Sabum-inspired dragon/fire findings into `PROJECT_LOG.md`, including the key behavior brief: snake-like body follow, directional flame breath, and per-letter disturbance rather than simple glow only. | The user is reconstructing the project history across chats and wants each conversation’s decisions reflected in the shared log. | Active |
+| 2026-04-08 | Dadri collaborator terminology | Renamed the Dadri `Artists` UI label to `Collaborators`, updated profile/back-link wording, and presented the Khandera youth group as `Collective Voices`. | Better fits facilitators, participants, and collective contributors without flattening everyone into a single “artist” label. | Active |
+| 2026-04-08 | Dadri support page rollout | Added a new `/dadri-forecast/support` section with transparent fund categories, support summaries, and a donor intake workflow. | Start the donation infrastructure now so visitors can choose what to support and see how future funds will be documented. | Active |
+| 2026-04-08 | Donor intake and transparency model | Added `content/data/donations.json` plus a Netlify-ready form that records donor name, email, phone/WhatsApp, support reason, receipts/update preferences, and optional anonymity. | Every donation attempt needs contact and documentation details so bills, updates, and remaining balances can be shared later if donors opt in. | Active |
+| 2026-04-08 | Project log workflow | Confirmed that `PROJECT_LOG.md` should be updated each session and kept in old-to-new order. | Preserve a reliable running history of decisions across chats instead of letting changes remain undocumented. | Active |
 
 ---
 
@@ -56,4 +60,4 @@ A chronological record of **what changed, when it changed, and why the decision 
 - Repeated entries on the same day usually mark **distinct iteration passes** on the same problem rather than contradictions.
 - Status guide: `Active` = adopted direction, `In progress` = still being tuned, `Paused` = explored but set aside for now.
 - This log is based on the **current repo state plus reconstructed decisions from the chats available here**.
-- Future entries can be appended in the same table format.
+- Future entries should always be appended at the end of the table in the same format so the log stays in old → new order.

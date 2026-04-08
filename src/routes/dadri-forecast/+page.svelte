@@ -22,14 +22,15 @@
         <p class="section-no" aria-hidden="true">02</p>
         <h2>Militant research, collective memory, and grounded futures</h2>
         <p>
-          Dadri Forecast has its own archive system. Use the section links below to access Dadri-only about, projects, artists, and events.
+          Dadri Forecast has its own archive system. Use the section links below to access Dadri-only about, projects, collaborators, support, and events.
         </p>
       </header>
 
       <nav class="route-links" aria-label="Dadri Forecast navigation">
         <a href="/dadri-forecast/about">About</a>
         <a href="/dadri-forecast/projects">Projects</a>
-        <a href="/dadri-forecast/artists">Artists</a>
+        <a href="/dadri-forecast/artists">Collaborators</a>
+        <a href="/dadri-forecast/support">Support</a>
         <a href="/dadri-forecast/events">Events</a>
         <a href={data.site.manifestoDocumentPath} target="_blank" rel="noopener noreferrer">Manifesto Document</a>
       </nav>

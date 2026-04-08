@@ -1,6 +1,6 @@
 <main class="artist-page">
   <p class="section-no" aria-hidden="true">11</p>
-  <p class="kicker">Dadri Forecast / Artist Profile</p>
+  <p class="kicker">Dadri Forecast / Collaborator Profile</p>
   <h1>Subhankar Sengupta</h1>
   <span class="warning-bar">Visual Artist // Open Studio Lead // Lecture-Performance</span>
 
@@ -26,7 +26,7 @@
 
   <nav class="profile-links" aria-label="Profile navigation">
     <a href="/dadri-forecast/projects">Back to Projects</a>
-    <a href="/dadri-forecast/artists">Back to Artists</a>
+    <a href="/dadri-forecast/artists">Back to Collaborators</a>
   </nav>
 </main>
 
