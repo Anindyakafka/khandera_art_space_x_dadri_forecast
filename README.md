@@ -1,56 +1,91 @@
-# Khandera Art Space x Dadri Forecast
+# Khandera Art Space × Dadri Forecast
 
-## Development setup
+## What this website is
 
-1. Install dependencies:
-   - `npm install`
-2. Run dev server:
-   - `npm run dev`
-3. Build production output:
-   - `npm run build`
+This website is a **living archive, public interface, and editorial space** for **Khandera Art Space** and its expanding community of artists, researchers, villagers, collaborators, and militant learners. It is not designed as a neutral portfolio or a polished institutional brochure. It is a site for gathering materials, positions, experiments, and encounters that emerge from the social and political conditions around **Khandera village and the Dadri region of Uttar Pradesh**.
 
-## Content-driven workflow
+Khandera Art Space was shaped through collective work with villagers and collaborators in Girirajpur, Khandera, Dadri. The space takes inspiration from Dr. B. R. Ambedkar’s call to **educate, agitate, organise, stay confident, and never give up**, and understands art not as decoration but as a way to build discourse, solidarity, and forms of resistance.
 
-Website content is now controlled from the `content/` and `static/media/` folders.
+---
 
-### Content files
+## Why Dadri Forecast is the ethical center
 
-- `content/data/site.json` - global site copy (hero text, manifesto snippet, labels)
-- `content/data/projects.json` - project cards and project metadata
-- `content/data/artists.json` - artist cards and profile metadata
-- `content/data/events.json` - event listings
-- `content/docs/about.md` - about page text
-- `content/docs/manifesto.md` - manifesto page text
+While this website carries the wider identity of **Khandera Art Space**, its political and ethical pulse is **Dadri Forecast**.
 
-### Media and documents
+Dadri Forecast is a collective research and cultural initiative focused on the transformations of Dadri under extractive development, ecological destruction, caste and communal violence, and the dispossession of working people. The project refuses both the glossy myth of “development” and the nostalgia of a frozen past. Instead, it asks what kinds of futures are being imposed on the region, who is asked to pay for them, and how a counter-space for thought, art, and struggle can be built from below.
 
-- `static/media/images/projects/` - project visuals
-- `static/media/images/artists/` - artist images
-- `static/media/images/events/` - event visuals
-- `static/media/docs/` - downloadable documents
-- `static/media/video/` - hosted video files
+In that sense, this website stands for:
 
-Paths in JSON should point to `/media/...` URLs.
+- **militant research rooted in community**
+- **counter-knowledge against extractive and exclusionary development**
+- **solidarity with villagers, children, workers, artists, and students**
+- **care for land, wetlands, memory, and local histories**
+- **a refusal of communalism, dispossession, and the NGO-isation of resistance**
 
-## Editorial update guide
+This is why, whenever the site speaks in its strongest voice about purpose, motto, and ethics, **Dadri Forecast remains the focus**.
 
-1. Add/update an image in the correct `static/media/images/*` folder.
-2. Edit the matching JSON object in `content/data/*.json`.
-3. For long-form text, edit markdown files in `content/docs/`.
-4. Run `npm run dev` and verify pages.
-5. Commit and deploy.
+---
 
-## Available routes
+## What lives on the site
 
-- `/` landing
-- `/about`
-- `/manifesto`
-- `/artists`
-- `/projects`
-- `/events`
+The website brings together multiple kinds of material:
 
-## Notes
+- **about texts** that situate Khandera Art Space in its local and collective history
+- **manifesto writing** that frames Dadri Forecast as a long-term political and cultural practice
+- **artist pages** for collaborators and collective participants
+- **project dossiers** that document workshops, open studios, and research-based work
+- **events and public material** that trace the evolving life of the initiative
 
-- Placeholder media files are included so routes render out of the box.
-- Replace `static/media/docs/manifesto.md` with your public document or update `content/data/site.json` to point to a PDF.
-- Dadri Forecast long-form text reflow/orb interaction is currently being refined on Dadri pages only.
+Across these sections, the site tries to function as both an **archive** and an **active interface** — a place where documentation, atmosphere, memory, and experiment can coexist.
+
+---
+
+## How the website is built and maintained
+
+This is a **SvelteKit** site with a content-driven structure. Most editorial updates happen through data and markdown files rather than hard-coded copy.
+
+### Main content sources
+
+- `content/data/site.json` — site-wide text, labels, and landing-page copy
+- `content/data/projects.json` — project cards and metadata
+- `content/data/artists.json` — artist and collaborator data
+- `content/data/events.json` — event listings
+- `content/docs/about.md` — long-form About text
+- `content/docs/manifesto.md` — long-form Dadri Forecast manifesto text
+
+### Media locations
+
+- `static/media/images/projects/`
+- `static/media/images/artists/`
+- `static/media/images/events/`
+- `static/media/docs/`
+- `static/media/video/`
+
+When linking media in JSON, use `/media/...` paths.
+
+---
+
+## Working with the project
+
+If you need to run or update the site locally:
+
+```bash
+npm install
+npm run dev
+npm run build
+```
+
+Typical editorial workflow:
+
+1. add or replace media in `static/media/`
+2. update the matching records in `content/data/*.json`
+3. edit long-form texts in `content/docs/*.md`
+4. preview changes locally and verify the affected pages
+
+---
+
+## Current direction
+
+The site is continuing to evolve as an experimental editorial environment. In particular, the **Dadri Forecast pages** are being treated as the most active zone for interaction, atmosphere, and long-form reading experiments.
+
+This repository therefore documents not just a website, but an ongoing attempt to build a digital space for **collective memory, political imagination, and insurgent cultural work**.
