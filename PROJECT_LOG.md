@@ -4,6 +4,7 @@ A running record of key project decisions, updates, and the reasons behind them,
 
 | Date | Area | Decision / Change | Why | Status |
 | --- | --- | --- | --- | --- |
+| 2026-04-08 | Paragraph height stabilization | Kept the hovered paragraph pinned to its original box height during reflow instead of letting hover temporarily expand its spacing. | The paragraph distance shift suggested the overlay was visually increasing the paragraph footprint while active. | In progress |
 | 2026-04-08 | Paragraph anchoring fix | Switched the Dadri reflow overlay to anchor to the hovered paragraph itself rather than the whole text container, while keeping nearby lookup inside the same flow region. | The persistent flutter and jumps suggested the overlay was being rebuilt at the container level instead of staying tied to the actual paragraph under the pointer. | In progress |
 | 2026-04-08 | Paragraph gap hit-area | Treated paragraph margins as part of the hover zone so crossing a paragraph break does not immediately collapse or teleport the Dadri orb behavior. | The worst flutter was happening right at paragraph breaks, suggesting the gap itself was being treated as “no text” and causing unstable re-selection. | In progress |
 | 2026-04-08 | Paragraph flicker isolation | Narrowed hover persistence back to the active paragraph instead of the whole text container while tuning the gap tolerance. | The first paragraph was stable, but deeper paragraphs were still fluttering because nearby paragraph zones were competing during hover. | In progress |

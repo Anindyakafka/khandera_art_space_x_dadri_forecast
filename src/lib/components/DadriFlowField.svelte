@@ -493,7 +493,7 @@
       )
       .join('');
 
-    activeBlock.style.minHeight = `${Math.ceil(Math.max(originalBlockHeight, layout.height + topInset + bottomInset))}px`;
+    activeBlock.style.minHeight = `${Math.ceil(originalBlockHeight)}px`;
     syncOrbVisual();
   }
 
