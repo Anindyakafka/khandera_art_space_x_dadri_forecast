@@ -516,20 +516,12 @@
   }
 
   function activateBlock(block: HTMLElement) {
-    const flowRoot = block.closest('[data-flow-copy]');
-    const nextActiveBlock = flowRoot instanceof HTMLElement ? flowRoot : block;
-
-    if (activeBlock === nextActiveBlock && activeSourceNode === block) {
+    if (activeBlock === block && activeSourceNode === block) {
       return;
     }
 
-    if (activeBlock === nextActiveBlock) {
-      clearHiddenNodes();
+    if (activeBlock === block) {
       activeSourceNode = block;
-      activeBlock.dataset.flowText = extractPlainText(block);
-      prepareActiveBlock();
-      copyNodes.forEach((node) => node.classList.add('dadri-flow-hidden-node'));
-      renderLayout();
       return;
     }
 
@@ -537,7 +529,7 @@
     ensureArtifacts();
 
     activeSourceNode = block;
-    activeBlock = nextActiveBlock;
+    activeBlock = block;
     activeBlock.dataset.flowText = extractPlainText(block);
     activeBlock.classList.add('dadri-flow-copy-active');
     lineLayerEl && activeBlock.append(lineLayerEl);
@@ -650,7 +642,7 @@
       return null;
     }
 
-    const scope = target?.closest('article, main, section, div') ?? contentEl;
+    const scope = target?.closest('[data-flow-copy]') ?? target?.closest('article, main, section, div') ?? contentEl;
     const blocks = Array.from(scope.querySelectorAll<HTMLElement>('p, li, blockquote'));
 
     let bestBlock: HTMLElement | null = null;
