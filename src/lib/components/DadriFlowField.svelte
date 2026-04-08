@@ -566,6 +566,11 @@
       return;
     }
 
+    if (activeBlock === nextActiveBlock && copyNodes.includes(block)) {
+      activeSourceNode = block;
+      return;
+    }
+
     clearActiveBlock();
     ensureArtifacts();
 
@@ -588,6 +593,47 @@
       clientY >= rect.top - POINTER_SLOP_Y &&
       clientY <= rect.bottom + POINTER_SLOP_Y
     );
+  }
+
+  function pointNearActiveCopy(clientX: number, clientY: number) {
+    if (copyNodes.length === 0) {
+      return false;
+    }
+
+    const rects = copyNodes.map((node) => node.getBoundingClientRect());
+
+    for (const rect of rects) {
+      if (pointNearRect(clientX, clientY, rect)) {
+        return true;
+      }
+    }
+
+    for (let index = 0; index < rects.length - 1; index += 1) {
+      const current = rects[index];
+      const next = rects[index + 1];
+      const gapTop = Math.min(current.bottom, next.top) - POINTER_SLOP_Y;
+      const gapBottom = Math.max(current.bottom, next.top) + POINTER_SLOP_Y;
+      const gapLeft = Math.min(current.left, next.left) - POINTER_SLOP_X;
+      const gapRight = Math.max(current.right, next.right) + POINTER_SLOP_X;
+
+      if (clientX >= gapLeft && clientX <= gapRight && clientY >= gapTop && clientY <= gapBottom) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function isBlockedPointerTarget(element: Element | null) {
+    if (!(element instanceof HTMLElement) || !contentEl) {
+      return false;
+    }
+
+    const blocked = element.closest(
+      `${IGNORE_SELECTOR}, h1, h2, h3, h4, h5, h6, .writing-head, .panel-head, .collab-head, .archive-head, .gallery-head`
+    );
+
+    return blocked instanceof HTMLElement && contentEl.contains(blocked) && !element.closest('.dadri-flow-orb');
   }
 
   function resolveCandidateBlock(element: Element | null) {
@@ -638,26 +684,34 @@
       return null;
     }
 
+    const directTarget = target instanceof Element ? target : null;
+
+    if (isBlockedPointerTarget(directTarget)) {
+      return null;
+    }
+
     const elements = [
-      ...(target instanceof Element ? [target] : []),
+      ...(directTarget ? [directTarget] : []),
       ...(typeof clientX === 'number' && typeof clientY === 'number' ? document.elementsFromPoint(clientX, clientY) : [])
     ];
 
     for (const element of elements) {
+      if (isBlockedPointerTarget(element)) {
+        return null;
+      }
+
       const candidate = resolveCandidateBlock(element);
       if (candidate) {
         return candidate;
       }
     }
 
-    if (activeBlock && typeof clientX === 'number' && typeof clientY === 'number') {
-      if (pointNearRect(clientX, clientY, activeBlock.getBoundingClientRect())) {
-        return activeBlock;
-      }
+    if (typeof clientX === 'number' && typeof clientY === 'number' && pointNearActiveCopy(clientX, clientY)) {
+      return activeSourceNode ?? activeBlock;
     }
 
     if (typeof clientX === 'number' && typeof clientY === 'number') {
-      return findNearbyTextBlock(target instanceof Element ? target : null, clientX, clientY);
+      return findNearbyTextBlock(directTarget, clientX, clientY);
     }
 
     return null;
