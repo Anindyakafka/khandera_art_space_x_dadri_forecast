@@ -4,6 +4,7 @@ A running record of key project decisions, updates, and the reasons behind them,
 
 | Date | Area | Decision / Change | Why | Status |
 | --- | --- | --- | --- | --- |
+| 2026-04-08 | Flicker refinement | Expanded hover tolerance across normal paragraph gaps and increased heading/body separation in the Dadri manifesto area. | Reduce orb flicker in line spacing while keeping text from creeping too close to headings. | In progress |
 | 2026-04-08 | Hover stability | Reduced the Dadri orb size and narrowed active reflow to the hovered paragraph so manifesto/body text no longer pushes under headings as aggressively. | Keep the interaction readable, stop heading overlap, and reduce flicker in airy text spacing. | In progress |
 | 2026-04-08 | Deployment note | Logged another small repo update to ensure there is always a visible commit-worthy change during iteration. | Make it easier to trigger Netlify deploys while ongoing interaction refinements are still in progress. | Active |
 | 2026-04-08 | Project log maintenance | Cleaned up a merge-conflict state in `PROJECT_LOG.md` and kept the decision table current. | Maintain a readable, pushable log file while multiple iterations are happening quickly. | Active |

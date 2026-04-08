@@ -172,9 +172,15 @@
   .doc-card :global(h2),
   .doc-card :global(h3) {
     letter-spacing: 0.012em;
-    margin-top: 1rem;
-    margin-bottom: 0.45rem;
+    margin-top: 1.1rem;
+    margin-bottom: 0.8rem;
     font-size: clamp(1.28rem, 3.4vw, 2.4rem);
+  }
+
+  .doc-card :global(h1 + p),
+  .doc-card :global(h2 + p),
+  .doc-card :global(h3 + p) {
+    margin-top: 0.2rem;
   }
 
   .doc-card :global(p),

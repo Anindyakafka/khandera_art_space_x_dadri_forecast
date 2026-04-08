@@ -37,8 +37,8 @@
   const COPY_NODE_SELECTOR = 'p:not(.section-no):not(.kicker):not(.label), li, blockquote';
   const IGNORE_SELECTOR =
     '[data-flow-ignore], .section-no, .kicker, .warning-bar, .label, .jump-link, .download-row';
-  const POINTER_SLOP_X = 18;
-  const POINTER_SLOP_Y = 18;
+  const POINTER_SLOP_X = 20;
+  const POINTER_SLOP_Y = 28;
 
   let shell: HTMLDivElement | null = null;
   let contentEl: HTMLDivElement | null = null;
@@ -550,12 +550,35 @@
     );
   }
 
+  function getActiveStabilityNodes() {
+    if (!activeBlock) {
+      return copyNodes;
+    }
+
+    if (!activeBlock.hasAttribute('data-flow-copy')) {
+      return copyNodes;
+    }
+
+    const nodes = Array.from(activeBlock.querySelectorAll<HTMLElement>(COPY_NODE_SELECTOR)).filter((node) => {
+      if (node.matches(IGNORE_SELECTOR) || node.closest(`nav, ${IGNORE_SELECTOR}`)) {
+        return false;
+      }
+
+      return extractPlainText(node).length > 0;
+    });
+
+    return nodes.length > 0 ? nodes : copyNodes;
+  }
+
   function pointNearActiveCopy(clientX: number, clientY: number) {
-    if (copyNodes.length === 0) {
+    const nodes = getActiveStabilityNodes();
+    if (nodes.length === 0) {
       return false;
     }
 
-    const rects = copyNodes.map((node) => node.getBoundingClientRect());
+    const rects = nodes
+      .map((node) => node.getBoundingClientRect())
+      .sort((a, b) => (a.top === b.top ? a.left - b.left : a.top - b.top));
 
     for (const rect of rects) {
       if (pointNearRect(clientX, clientY, rect)) {
@@ -566,8 +589,14 @@
     for (let index = 0; index < rects.length - 1; index += 1) {
       const current = rects[index];
       const next = rects[index + 1];
-      const gapTop = Math.min(current.bottom, next.top) - POINTER_SLOP_Y;
-      const gapBottom = Math.max(current.bottom, next.top) + POINTER_SLOP_Y;
+      const gapSize = next.top - current.bottom;
+
+      if (gapSize < 0 || gapSize > lineHeight * 2.4) {
+        continue;
+      }
+
+      const gapTop = current.bottom - POINTER_SLOP_Y;
+      const gapBottom = next.top + POINTER_SLOP_Y;
       const gapLeft = Math.min(current.left, next.left) - POINTER_SLOP_X;
       const gapRight = Math.max(current.right, next.right) + POINTER_SLOP_X;
 
