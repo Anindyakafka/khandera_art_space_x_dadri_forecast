@@ -24,6 +24,8 @@
     height: number;
   };
 
+  type PointerRect = Pick<DOMRect, 'left' | 'right' | 'top' | 'bottom'>;
+
   type PretextApi = {
     prepareWithSegments: (text: string, font: string, options?: { whiteSpace?: 'normal' | 'pre-wrap' }) => unknown;
     layoutNextLine: (prepared: unknown, start: Cursor, maxWidth: number) => LayoutLine | null;
@@ -546,13 +548,29 @@
     renderLayout();
   }
 
-  function pointNearRect(clientX: number, clientY: number, rect: DOMRect) {
+  function pointNearRect(clientX: number, clientY: number, rect: PointerRect) {
     return (
       clientX >= rect.left - POINTER_SLOP_X &&
       clientX <= rect.right + POINTER_SLOP_X &&
       clientY >= rect.top - POINTER_SLOP_Y &&
       clientY <= rect.bottom + POINTER_SLOP_Y
     );
+  }
+
+  function getHoverRect(node: HTMLElement): PointerRect {
+    const rect = node.getBoundingClientRect();
+    const style = getComputedStyle(node);
+    const marginTop = Number.parseFloat(style.marginTop) || 0;
+    const marginBottom = Number.parseFloat(style.marginBottom) || 0;
+    const marginLeft = Number.parseFloat(style.marginLeft) || 0;
+    const marginRight = Number.parseFloat(style.marginRight) || 0;
+
+    return {
+      left: rect.left - Math.min(marginLeft * 0.5, POINTER_SLOP_X),
+      right: rect.right + Math.min(marginRight * 0.5, POINTER_SLOP_X),
+      top: rect.top - Math.min(marginTop * 0.6, lineHeight * 0.9),
+      bottom: rect.bottom + Math.min(marginBottom * 0.6, lineHeight * 0.9)
+    };
   }
 
   function pointNearActiveCopy(clientX: number, clientY: number) {
@@ -562,7 +580,7 @@
     }
 
     const rects = nodes
-      .map((node) => node.getBoundingClientRect())
+      .map((node) => getHoverRect(node))
       .sort((a, b) => (a.top === b.top ? a.left - b.left : a.top - b.top));
 
     for (const rect of rects) {
@@ -643,7 +661,7 @@
         continue;
       }
 
-      const rect = block.getBoundingClientRect();
+      const rect = getHoverRect(block);
       if (!pointNearRect(clientX, clientY, rect)) {
         continue;
       }
