@@ -1,6 +1,5 @@
 <script lang="ts">
   import { tick } from 'svelte';
-  import CherryBlossomQrCard from '$lib/components/CherryBlossomQrCard.svelte';
   import type { DonationSettings, SupportFund } from '$lib/content/types';
 
   type PaymentMethod = 'upi' | 'bank';
@@ -89,7 +88,7 @@
     <p class="section-no" aria-hidden="true">14</p>
     <p class="kicker">Dadri Forecast / Support</p>
     <h1>Support the Work</h1>
-    <span class="warning-bar">Transparent donations // UPI + bank transfer // creative QR to follow</span>
+    <span class="warning-bar">Transparent donations // UPI + bank transfer // scannable QR enabled</span>
     <p>
       Every contribution can be tagged to a specific need and tracked here as the work grows — from cab rides and stationery to equipment,
       exhibitions, and project-specific support.
@@ -272,18 +271,24 @@
                       </div>
                     </dl>
                     <p class="status-note">{settings?.payment.upi.note}</p>
+                    <p class="status-note">Use the static QR below or open the UPI link directly.</p>
                     {#if upiIntentUrl}
                       <a class="upi-open-link" href={upiIntentUrl}>Open in UPI app</a>
                     {/if}
                   </div>
 
                   {#if settings?.payment.upi.qrPath}
-                    <CherryBlossomQrCard
-                      src={settings.payment.upi.qrPath}
-                      alt={`UPI QR for ${settings.payment.upi.payeeName}`}
-                      payeeName={settings.payment.upi.payeeName}
-                      upiId={settings.payment.upi.id}
-                    />
+                    <figure class="qr-stage">
+                      <div class="qr-frame">
+                        <img
+                          class="qr-image"
+                          src={settings.payment.upi.qrPath}
+                          alt={`UPI QR for ${settings.payment.upi.payeeName}`}
+                          loading="lazy"
+                        />
+                      </div>
+                      <figcaption>Static scan-ready QR</figcaption>
+                    </figure>
                   {/if}
                 </div>
               </article>
@@ -336,8 +341,8 @@
         </ol>
 
         <div class="qr-placeholder">
-          <p class="kicker">UPI block reserved</p>
-          <p>The custom UPI QR artwork can be dropped here once you share the visual reference.</p>
+          <p class="kicker">UPI QR live</p>
+          <p>The unlocked payment step now includes a static scan-ready QR along with the UPI ID and bank transfer fallback.</p>
         </div>
       </aside>
     </div>
@@ -392,7 +397,6 @@
   }
 
   .funds,
-  .payment-panel,
   .donor-panel {
     margin-top: clamp(1.2rem, 3vw, 2rem);
   }
@@ -440,18 +444,16 @@
   }
 
   .upi-card {
-    overflow: hidden;
-    position: relative;
     background:
-      radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 22%, transparent), transparent 42%),
-      linear-gradient(145deg, color-mix(in srgb, var(--surface-solid) 92%, transparent), color-mix(in srgb, var(--surface) 82%, transparent));
+      radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 16%, transparent), transparent 42%),
+      linear-gradient(145deg, color-mix(in srgb, var(--surface-solid) 92%, transparent), color-mix(in srgb, var(--surface) 84%, transparent));
   }
 
   .upi-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(220px, 320px);
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
     gap: 1rem;
-    align-items: center;
+    align-items: start;
   }
 
   .upi-copy {
@@ -526,6 +528,37 @@
     margin: 0.2rem 0 0;
     font-size: 0.95rem;
     word-break: break-word;
+  }
+
+  .qr-stage {
+    margin: 0;
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .qr-frame {
+    padding: 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+    background: #f4efe7;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  .qr-image {
+    width: 100%;
+    display: block;
+    aspect-ratio: 1;
+    object-fit: cover;
+    object-position: center 78%;
+    transform: scale(1.12);
+    border: 1px solid rgba(67, 44, 34, 0.14);
+    background: white;
+  }
+
+  .qr-stage figcaption {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
   }
 
   .upi-open-link {

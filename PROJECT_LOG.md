@@ -60,6 +60,7 @@ A chronological record of **what changed, when it changed, and why the decision 
 | 2026-04-10 | Gated payment reveal flow | Hid the UPI/bank payment details from the main support page and changed the donation flow so those options only appear after the donor information form is filled. | Keep sensitive-looking payment information off the landing view and make the support flow feel more intentional and step-based. | Active |
 | 2026-04-10 | QR artwork integration pass | Wired the uploaded UPI QR image into the revealed payment step and styled it as a web-friendly holographic/glass card inspired by the external demo references, cropping the image focus toward the scannable QR zone. | The payment step now needs a usable QR that feels designed, not just a raw placeholder block. | In progress |
 | 2026-04-10 | Cherry blossom QR adaptation | Reworked the UPI payment block toward the `reactiive.io` cherry blossom reference with a blossom/flat view toggle, sakura palette cues, and a direct UPI deep-link built from the existing payment details. | The QR experience should feel intentional and reference-led while still preserving a cleaner scan mode for actual payment use. | Active |
+| 2026-04-10 | QR simplification rollback | Dropped the animated QR idea, removed the live blossom-style component usage, and kept a plain scan-ready QR in the payment step so the current website flow remains stable. | Donation reliability matters more than experimental motion here, and the static QR is less likely to interfere with the existing infrastructure. | Active |
 
 ---
 
