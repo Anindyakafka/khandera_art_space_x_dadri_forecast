@@ -1,0 +1,25 @@
+{
+  "contact": {
+    "displayName": "Dadri Forecast Support",
+    "primaryEmail": "anindya.econ@gmail.com",
+    "backupEmail": "anindya2232@gmail.com",
+    "transparencyEmail": "anindya.econ@gmail.com",
+    "usePrimaryForTransparency": true
+  },
+  "payment": {
+    "mode": "both",
+    "upi": {
+      "id": "9831147983@jupiteraxis",
+      "payeeName": "Anindya Singh",
+      "note": "If possible, mention your name and donation reason while sending the payment.",
+      "qrPath": null
+    },
+    "bank": {
+      "accountHolder": "ANINDYA SINGH",
+      "bankName": "FEDERAL Bank",
+      "accountNumber": "77770101811988",
+      "ifsc": "FDRL0007777",
+      "branch": "Neo Banking - Jupiter"
+    }
+  }
+}

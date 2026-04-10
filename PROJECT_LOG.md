@@ -51,6 +51,9 @@ A chronological record of **what changed, when it changed, and why the decision 
 | 2026-04-08 | Dadri support page rollout | Added a new `/dadri-forecast/support` section with transparent fund categories, support summaries, and a donor intake workflow. | Start the donation infrastructure now so visitors can choose what to support and see how future funds will be documented. | Active |
 | 2026-04-08 | Donor intake and transparency model | Added `content/data/donations.json` plus a Netlify-ready form that records donor name, email, phone/WhatsApp, support reason, receipts/update preferences, and optional anonymity. | Every donation attempt needs contact and documentation details so bills, updates, and remaining balances can be shared later if donors opt in. | Active |
 | 2026-04-08 | Project log workflow | Confirmed that `PROJECT_LOG.md` should be updated each session and kept in old-to-new order. | Preserve a reliable running history of decisions across chats instead of letting changes remain undocumented. | Active |
+| 2026-04-10 | Donation contact routing | Added a dedicated donation settings config with `anindya.econ@gmail.com` as the primary support/transparency inbox and `anindya2232@gmail.com` as backup. | Centralize who receives donation-related mail and keep the communication path easy to update later. | Active |
+| 2026-04-10 | Payment method selector | Enabled `Both` payment mode on the Dadri support page with a user-facing toggle between UPI and bank transfer. | Donors need a clear choice of payment route before the creative UPI QR artwork is finalized. | Active |
+| 2026-04-10 | Donation account details rollout | Filled the support page/config with the current UPI ID, payee name, and Federal Bank transfer details while keeping the QR slot reserved for a future artwork pass. | Make the donation flow usable now without waiting for the custom QR visual direction. | Active |
 
 ---
 

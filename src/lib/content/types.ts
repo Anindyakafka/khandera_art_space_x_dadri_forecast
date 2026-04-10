@@ -55,3 +55,38 @@ export type SupportFund = {
   lastUpdated: string;
   statusNote: string;
 };
+
+export type DonationPaymentMode = 'upi' | 'bank' | 'both';
+
+export type DonationContact = {
+  displayName: string;
+  primaryEmail: string;
+  backupEmail?: string;
+  transparencyEmail: string;
+  usePrimaryForTransparency: boolean;
+};
+
+export type DonationUpiDetails = {
+  id: string;
+  payeeName: string;
+  note?: string;
+  qrPath?: string | null;
+};
+
+export type DonationBankDetails = {
+  accountHolder: string;
+  bankName: string;
+  accountNumber: string;
+  ifsc: string;
+  branch?: string;
+  accountType?: string;
+};
+
+export type DonationSettings = {
+  contact: DonationContact;
+  payment: {
+    mode: DonationPaymentMode;
+    upi: DonationUpiDetails;
+    bank: DonationBankDetails;
+  };
+};

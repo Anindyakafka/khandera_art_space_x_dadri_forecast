@@ -1,11 +1,18 @@
 <script lang="ts">
-  import type { SupportFund } from '$lib/content/types';
+  import type { DonationSettings, SupportFund } from '$lib/content/types';
 
-  export let data: { funds?: SupportFund[] };
+  type PaymentMethod = 'upi' | 'bank';
+
+  export let data: { funds?: SupportFund[]; settings?: DonationSettings };
 
   const funds: SupportFund[] = data.funds ?? [];
+  const settings = data.settings;
+  const paymentMode = settings?.payment.mode ?? 'both';
+  const contactEmail = settings?.contact.primaryEmail ?? '';
+  const transparencyEmail = settings?.contact.transparencyEmail ?? contactEmail;
   const defaultReason = funds[0]?.title ?? 'General support';
   let selectedReason = defaultReason;
+  let selectedPaymentMethod: PaymentMethod = paymentMode === 'bank' ? 'bank' : 'upi';
 
   function formatCurrency(value: number | null) {
     if (value === null) {
@@ -39,6 +46,18 @@
       block: 'start'
     });
   }
+
+  function choosePaymentMethod(method: PaymentMethod) {
+    selectedPaymentMethod = method;
+  }
+
+  $: if (paymentMode === 'bank' && selectedPaymentMethod !== 'bank') {
+    selectedPaymentMethod = 'bank';
+  }
+
+  $: if (paymentMode === 'upi' && selectedPaymentMethod !== 'upi') {
+    selectedPaymentMethod = 'upi';
+  }
 </script>
 
 <main class="support-page">
@@ -46,7 +65,7 @@
     <p class="section-no" aria-hidden="true">14</p>
     <p class="kicker">Dadri Forecast / Support</p>
     <h1>Support the Work</h1>
-    <span class="warning-bar">Transparent donations // documented spending // future UPI QR</span>
+    <span class="warning-bar">Transparent donations // UPI + bank transfer // creative QR to follow</span>
     <p>
       Every contribution can be tagged to a specific need and tracked here as the work grows — from cab rides and stationery to equipment,
       exhibitions, and project-specific support.
@@ -94,6 +113,89 @@
         </article>
       {/each}
     </div>
+  </section>
+
+  <section class="payment-panel" aria-labelledby="payment-heading">
+    <div class="section-head">
+      <h2 id="payment-heading">Choose a payment route</h2>
+      <p>
+        {#if paymentMode === 'both'}
+          UPI and bank transfer are both available right now.
+        {:else if paymentMode === 'upi'}
+          UPI is currently active for this support flow.
+        {:else}
+          Bank transfer is currently active for this support flow.
+        {/if}
+      </p>
+    </div>
+
+    {#if paymentMode === 'both'}
+      <div class="method-switch" role="tablist" aria-label="Payment method selector">
+        <button
+          type="button"
+          class:selected={selectedPaymentMethod === 'upi'}
+          on:click={() => choosePaymentMethod('upi')}
+          aria-pressed={selectedPaymentMethod === 'upi'}
+        >
+          UPI
+        </button>
+        <button
+          type="button"
+          class:selected={selectedPaymentMethod === 'bank'}
+          on:click={() => choosePaymentMethod('bank')}
+          aria-pressed={selectedPaymentMethod === 'bank'}
+        >
+          Bank transfer
+        </button>
+      </div>
+    {/if}
+
+    {#if selectedPaymentMethod === 'upi'}
+      <article class="payment-card">
+        <p class="fund-kicker">UPI payment</p>
+        <h3>{settings?.payment.upi.payeeName}</h3>
+        <dl class="payment-details">
+          <div>
+            <dt>UPI ID</dt>
+            <dd>{settings?.payment.upi.id}</dd>
+          </div>
+          <div>
+            <dt>Payee name</dt>
+            <dd>{settings?.payment.upi.payeeName}</dd>
+          </div>
+        </dl>
+        <p class="status-note">{settings?.payment.upi.note}</p>
+        <p class="status-note">Creative QR artwork will appear here once it is finalized.</p>
+      </article>
+    {:else}
+      <article class="payment-card">
+        <p class="fund-kicker">Bank transfer</p>
+        <h3>{settings?.payment.bank.accountHolder}</h3>
+        <dl class="payment-details">
+          <div>
+            <dt>Bank</dt>
+            <dd>{settings?.payment.bank.bankName}</dd>
+          </div>
+          <div>
+            <dt>Account number</dt>
+            <dd>{settings?.payment.bank.accountNumber}</dd>
+          </div>
+          <div>
+            <dt>IFSC</dt>
+            <dd>{settings?.payment.bank.ifsc}</dd>
+          </div>
+          <div>
+            <dt>Branch</dt>
+            <dd>{settings?.payment.bank.branch}</dd>
+          </div>
+        </dl>
+      </article>
+    {/if}
+
+    <p class="contact-line">
+      For payment confirmation, receipt requests, or donation-use updates, write to
+      <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
+    </p>
   </section>
 
   <section class="donor-panel" id="donor-intake">
@@ -153,6 +255,18 @@
         </label>
 
         <label class="field">
+          <span>Preferred payment route</span>
+          <select name="payment_method" bind:value={selectedPaymentMethod} required>
+            {#if paymentMode !== 'bank'}
+              <option value="upi">UPI</option>
+            {/if}
+            {#if paymentMode !== 'upi'}
+              <option value="bank">Bank transfer</option>
+            {/if}
+          </select>
+        </label>
+
+        <label class="field">
           <span>Amount (INR)</span>
           <input name="amount_inr" type="number" min="1" step="1" placeholder="Optional" />
         </label>
@@ -169,6 +283,9 @@
           <label><input type="checkbox" name="anonymous_donor" value="yes" /> Keep my donation publicly anonymous</label>
         </fieldset>
 
+        <input type="hidden" name="admin_contact_email" value={contactEmail} />
+        <input type="hidden" name="transparency_contact_email" value={transparencyEmail} />
+
         <label class="field field-full">
           <span>Message</span>
           <textarea
@@ -184,9 +301,9 @@
       <aside class="support-note" data-flow-copy>
         <h2>What happens next</h2>
         <ol>
-          <li>Your preferred support reason is logged with your details.</li>
-          <li>The team can follow up with payment details and, later, the creative UPI QR.</li>
-          <li>If you opt in, receipts, bills, or spending updates can be shared back with you.</li>
+          <li>Your preferred support reason and payment route are logged with your details.</li>
+          <li>You can use the selected UPI or bank details shown above and then share confirmation if needed.</li>
+          <li>If you opt in, receipts, bills, or spending updates can be shared back with you at <a href={`mailto:${transparencyEmail}`}>{transparencyEmail}</a>.</li>
           <li>The public log on this page can be updated to show how much has been spent and what remains.</li>
         </ol>
 
@@ -247,6 +364,7 @@
   }
 
   .funds,
+  .payment-panel,
   .donor-panel {
     margin-top: clamp(1.2rem, 3vw, 2rem);
   }
@@ -279,6 +397,7 @@
   }
 
   .fund-card,
+  .payment-card,
   .support-note {
     border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
     border-top: 2px solid color-mix(in srgb, var(--accent) 48%, var(--line));
@@ -286,12 +405,37 @@
     padding: 0.95rem 1rem;
   }
 
-  .fund-card {
+  .fund-card,
+  .payment-card {
     display: grid;
     gap: 0.7rem;
   }
 
+  .method-switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .method-switch button {
+    border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+    background: color-mix(in srgb, var(--surface) 84%, transparent);
+    color: inherit;
+    padding: 0.55rem 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.76rem;
+    cursor: pointer;
+  }
+
+  .method-switch button.selected {
+    border-color: color-mix(in srgb, var(--accent) 72%, var(--line));
+    color: var(--accent);
+  }
+
   .fund-card h3,
+  .payment-card h3,
   .support-note h2 {
     margin: 0;
     font-size: clamp(1.05rem, 2.2vw, 1.35rem);
@@ -306,29 +450,45 @@
     color: color-mix(in srgb, var(--text) 90%, transparent);
   }
 
-  .fund-stats {
+  .fund-stats,
+  .payment-details {
     margin: 0;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.55rem;
   }
 
-  .fund-stats div {
+  .fund-stats div,
+  .payment-details div {
     border: 1px solid color-mix(in srgb, var(--line) 62%, transparent);
     padding: 0.45rem 0.55rem;
     background: color-mix(in srgb, var(--bg) 68%, transparent);
   }
 
-  .fund-stats dt {
+  .fund-stats dt,
+  .payment-details dt {
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--muted);
   }
 
-  .fund-stats dd {
+  .fund-stats dd,
+  .payment-details dd {
     margin: 0.2rem 0 0;
     font-size: 0.95rem;
+    word-break: break-word;
+  }
+
+  .contact-line {
+    margin: 0.8rem 0 0;
+    line-height: 1.7;
+  }
+
+  .contact-line a,
+  .support-note a {
+    color: var(--accent);
+    text-decoration: none;
   }
 
   .select-button,
