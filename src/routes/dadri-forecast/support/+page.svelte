@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tick } from 'svelte';
+  import CherryBlossomQrCard from '$lib/components/CherryBlossomQrCard.svelte';
   import type { DonationSettings, SupportFund } from '$lib/content/types';
 
   type PaymentMethod = 'upi' | 'bank';
@@ -11,6 +12,9 @@
   const paymentMode = settings?.payment.mode ?? 'both';
   const contactEmail = settings?.contact.primaryEmail ?? '';
   const transparencyEmail = settings?.contact.transparencyEmail ?? contactEmail;
+  const upiIntentUrl = settings?.payment.upi?.id
+    ? `upi://pay?pa=${encodeURIComponent(settings.payment.upi.id)}&pn=${encodeURIComponent(settings.payment.upi.payeeName)}&cu=INR&tn=${encodeURIComponent('Dadri Forecast Support')}`
+    : '';
   const defaultReason = funds[0]?.title ?? 'General support';
   let selectedReason = defaultReason;
   let selectedPaymentMethod: PaymentMethod = paymentMode === 'bank' ? 'bank' : 'upi';
@@ -268,21 +272,18 @@
                       </div>
                     </dl>
                     <p class="status-note">{settings?.payment.upi.note}</p>
+                    {#if upiIntentUrl}
+                      <a class="upi-open-link" href={upiIntentUrl}>Open in UPI app</a>
+                    {/if}
                   </div>
 
                   {#if settings?.payment.upi.qrPath}
-                    <figure class="qr-stage">
-                      <div class="qr-stage-glow" aria-hidden="true"></div>
-                      <div class="qr-crop-frame">
-                        <img
-                          class="qr-crop-image"
-                          src={settings.payment.upi.qrPath}
-                          alt={`UPI QR for ${settings.payment.upi.payeeName}`}
-                          loading="lazy"
-                        />
-                      </div>
-                      <figcaption>Scan to donate via UPI</figcaption>
-                    </figure>
+                    <CherryBlossomQrCard
+                      src={settings.payment.upi.qrPath}
+                      alt={`UPI QR for ${settings.payment.upi.payeeName}`}
+                      payeeName={settings.payment.upi.payeeName}
+                      upiId={settings.payment.upi.id}
+                    />
                   {/if}
                 </div>
               </article>
@@ -527,56 +528,23 @@
     word-break: break-word;
   }
 
-  .qr-stage {
-    position: relative;
-    margin: 0;
-    padding: 0.9rem;
-    border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
-      color-mix(in srgb, var(--bg) 78%, transparent);
-    backdrop-filter: blur(8px);
-    overflow: hidden;
-  }
-
-  .qr-stage-glow {
-    position: absolute;
-    inset: -18% auto auto -12%;
-    width: 70%;
-    aspect-ratio: 1;
-    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 42%, transparent), transparent 70%);
-    opacity: 0.85;
-    pointer-events: none;
-    filter: blur(18px);
-  }
-
-  .qr-crop-frame {
-    position: relative;
-    z-index: 1;
-    aspect-ratio: 1;
-    overflow: hidden;
-    border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
-    background: #f2f0ea;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);
-  }
-
-  .qr-crop-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 78%;
-    transform: scale(1.16);
-    display: block;
-  }
-
-  .qr-stage figcaption {
-    position: relative;
-    z-index: 1;
-    margin-top: 0.65rem;
-    font-size: 0.74rem;
+  .upi-open-link {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--line));
+    background: color-mix(in srgb, var(--surface-solid) 88%, transparent);
+    color: inherit;
+    padding: 0.55rem 0.8rem;
+    text-decoration: none;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--muted);
+    font-size: 0.74rem;
+  }
+
+  .upi-open-link:hover {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 78%, var(--line));
   }
 
   .contact-line {
