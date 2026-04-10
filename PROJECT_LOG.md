@@ -57,6 +57,7 @@ A chronological record of **what changed, when it changed, and why the decision 
 | 2026-04-10 | Netlify form redirect fix | Changed the support form to submit to a dedicated thank-you page at `/dadri-forecast/support/thanks` and added a confirmation route for successful submissions. | Prevent donors from hitting a Netlify 404 after submitting the form on the static site. | Active |
 | 2026-04-10 | Netlify form detection fallback | Added a hidden static `dadri-support` form and aligned the success path to `/dadri-forecast/support/thanks/` so Netlify can register the submission endpoint reliably. | On static sites, a visible framework-rendered form can still POST to a 404 unless Netlify detects the form during build. | Active |
 | 2026-04-10 | Static confirmation-page fallback | Switched the form success destination to `/dadri-support-thanks/` under `static/` and added redirects from the earlier nested `/dadri-forecast/support/thanks` path. | A plain static confirmation page is more reliable on Netlify than a nested framework route for form success handling. | Active |
+| 2026-04-10 | Gated payment reveal flow | Hid the UPI/bank payment details from the main support page and changed the donation flow so those options only appear after the donor information form is filled. | Keep sensitive-looking payment information off the landing view and make the support flow feel more intentional and step-based. | Active |
 
 ---
 

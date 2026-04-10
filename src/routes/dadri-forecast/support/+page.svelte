@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { tick } from 'svelte';
   import type { DonationSettings, SupportFund } from '$lib/content/types';
 
   type PaymentMethod = 'upi' | 'bank';
@@ -13,6 +14,8 @@
   const defaultReason = funds[0]?.title ?? 'General support';
   let selectedReason = defaultReason;
   let selectedPaymentMethod: PaymentMethod = paymentMode === 'bank' ? 'bank' : 'upi';
+  let showPaymentStep = false;
+  let supportFormElement: HTMLFormElement | null = null;
 
   function formatCurrency(value: number | null) {
     if (value === null) {
@@ -49,6 +52,23 @@
 
   function choosePaymentMethod(method: PaymentMethod) {
     selectedPaymentMethod = method;
+  }
+
+  async function revealPaymentDetails() {
+    if (!supportFormElement) {
+      return;
+    }
+
+    if (!supportFormElement.reportValidity()) {
+      return;
+    }
+
+    showPaymentStep = true;
+    await tick();
+    document.getElementById('payment-step')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   }
 
   $: if (paymentMode === 'bank' && selectedPaymentMethod !== 'bank') {
@@ -115,89 +135,6 @@
     </div>
   </section>
 
-  <section class="payment-panel" aria-labelledby="payment-heading">
-    <div class="section-head">
-      <h2 id="payment-heading">Choose a payment route</h2>
-      <p>
-        {#if paymentMode === 'both'}
-          UPI and bank transfer are both available right now.
-        {:else if paymentMode === 'upi'}
-          UPI is currently active for this support flow.
-        {:else}
-          Bank transfer is currently active for this support flow.
-        {/if}
-      </p>
-    </div>
-
-    {#if paymentMode === 'both'}
-      <div class="method-switch" role="tablist" aria-label="Payment method selector">
-        <button
-          type="button"
-          class:selected={selectedPaymentMethod === 'upi'}
-          on:click={() => choosePaymentMethod('upi')}
-          aria-pressed={selectedPaymentMethod === 'upi'}
-        >
-          UPI
-        </button>
-        <button
-          type="button"
-          class:selected={selectedPaymentMethod === 'bank'}
-          on:click={() => choosePaymentMethod('bank')}
-          aria-pressed={selectedPaymentMethod === 'bank'}
-        >
-          Bank transfer
-        </button>
-      </div>
-    {/if}
-
-    {#if selectedPaymentMethod === 'upi'}
-      <article class="payment-card">
-        <p class="fund-kicker">UPI payment</p>
-        <h3>{settings?.payment.upi.payeeName}</h3>
-        <dl class="payment-details">
-          <div>
-            <dt>UPI ID</dt>
-            <dd>{settings?.payment.upi.id}</dd>
-          </div>
-          <div>
-            <dt>Payee name</dt>
-            <dd>{settings?.payment.upi.payeeName}</dd>
-          </div>
-        </dl>
-        <p class="status-note">{settings?.payment.upi.note}</p>
-        <p class="status-note">Creative QR artwork will appear here once it is finalized.</p>
-      </article>
-    {:else}
-      <article class="payment-card">
-        <p class="fund-kicker">Bank transfer</p>
-        <h3>{settings?.payment.bank.accountHolder}</h3>
-        <dl class="payment-details">
-          <div>
-            <dt>Bank</dt>
-            <dd>{settings?.payment.bank.bankName}</dd>
-          </div>
-          <div>
-            <dt>Account number</dt>
-            <dd>{settings?.payment.bank.accountNumber}</dd>
-          </div>
-          <div>
-            <dt>IFSC</dt>
-            <dd>{settings?.payment.bank.ifsc}</dd>
-          </div>
-          <div>
-            <dt>Branch</dt>
-            <dd>{settings?.payment.bank.branch}</dd>
-          </div>
-        </dl>
-      </article>
-    {/if}
-
-    <p class="contact-line">
-      For payment confirmation, receipt requests, or donation-use updates, write to
-      <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
-    </p>
-  </section>
-
   <section class="donor-panel" id="donor-intake">
     <div class="section-head">
       <h2>Donor information</h2>
@@ -207,6 +144,7 @@
     <div class="donor-grid">
       <form
         class="support-form"
+        bind:this={supportFormElement}
         name="dadri-support"
         method="POST"
         data-netlify="true"
@@ -256,18 +194,6 @@
         </label>
 
         <label class="field">
-          <span>Preferred payment route</span>
-          <select name="payment_method" bind:value={selectedPaymentMethod} required>
-            {#if paymentMode !== 'bank'}
-              <option value="upi">UPI</option>
-            {/if}
-            {#if paymentMode !== 'upi'}
-              <option value="bank">Bank transfer</option>
-            {/if}
-          </select>
-        </label>
-
-        <label class="field">
           <span>Amount (INR)</span>
           <input name="amount_inr" type="number" min="1" step="1" placeholder="Optional" />
         </label>
@@ -284,6 +210,7 @@
           <label><input type="checkbox" name="anonymous_donor" value="yes" /> Keep my donation publicly anonymous</label>
         </fieldset>
 
+        <input type="hidden" name="payment_method" value={selectedPaymentMethod} />
         <input type="hidden" name="admin_contact_email" value={contactEmail} />
         <input type="hidden" name="transparency_contact_email" value={transparencyEmail} />
 
@@ -296,16 +223,95 @@
           ></textarea>
         </label>
 
-        <p class="form-note">After submitting, you’ll be redirected to a confirmation page instead of a blank or missing route.</p>
+        {#if showPaymentStep}
+          <div class="payment-step" id="payment-step">
+            <div class="payment-step-head">
+              <h3>Choose a payment route</h3>
+              <p>Now that the donor form is filled, the payment details are unlocked below.</p>
+            </div>
 
-        <button class="submit-button" type="submit">Register this support</button>
+            {#if paymentMode === 'both'}
+              <div class="method-switch" role="tablist" aria-label="Payment method selector">
+                <button
+                  type="button"
+                  class:selected={selectedPaymentMethod === 'upi'}
+                  on:click={() => choosePaymentMethod('upi')}
+                  aria-pressed={selectedPaymentMethod === 'upi'}
+                >
+                  UPI
+                </button>
+                <button
+                  type="button"
+                  class:selected={selectedPaymentMethod === 'bank'}
+                  on:click={() => choosePaymentMethod('bank')}
+                  aria-pressed={selectedPaymentMethod === 'bank'}
+                >
+                  Bank transfer
+                </button>
+              </div>
+            {/if}
+
+            {#if selectedPaymentMethod === 'upi'}
+              <article class="payment-card">
+                <p class="fund-kicker">UPI payment</p>
+                <h3>{settings?.payment.upi.payeeName}</h3>
+                <dl class="payment-details">
+                  <div>
+                    <dt>UPI ID</dt>
+                    <dd>{settings?.payment.upi.id}</dd>
+                  </div>
+                  <div>
+                    <dt>Payee name</dt>
+                    <dd>{settings?.payment.upi.payeeName}</dd>
+                  </div>
+                </dl>
+                <p class="status-note">{settings?.payment.upi.note}</p>
+                <p class="status-note">Creative QR artwork will appear here once it is finalized.</p>
+              </article>
+            {:else}
+              <article class="payment-card">
+                <p class="fund-kicker">Bank transfer</p>
+                <h3>{settings?.payment.bank.accountHolder}</h3>
+                <dl class="payment-details">
+                  <div>
+                    <dt>Bank</dt>
+                    <dd>{settings?.payment.bank.bankName}</dd>
+                  </div>
+                  <div>
+                    <dt>Account number</dt>
+                    <dd>{settings?.payment.bank.accountNumber}</dd>
+                  </div>
+                  <div>
+                    <dt>IFSC</dt>
+                    <dd>{settings?.payment.bank.ifsc}</dd>
+                  </div>
+                  <div>
+                    <dt>Branch</dt>
+                    <dd>{settings?.payment.bank.branch}</dd>
+                  </div>
+                </dl>
+              </article>
+            {/if}
+
+            <p class="contact-line">
+              For payment confirmation, receipt requests, or donation-use updates, write to
+              <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
+            </p>
+
+            <p class="form-note">After reviewing the payment route, submit below to move to the confirmation page.</p>
+            <button class="submit-button" type="submit">Open confirmation page</button>
+          </div>
+        {:else}
+          <p class="form-note">Fill the donor information above to unlock the UPI QR and bank transfer details.</p>
+          <button class="submit-button" type="button" on:click={revealPaymentDetails}>Continue to payment details</button>
+        {/if}
       </form>
 
       <aside class="support-note" data-flow-copy>
         <h2>What happens next</h2>
         <ol>
-          <li>Your preferred support reason and payment route are logged with your details.</li>
-          <li>You can use the selected UPI or bank details shown above and then share confirmation if needed.</li>
+          <li>Fill the donor form first to unlock the payment step.</li>
+          <li>Choose between UPI and bank transfer only after those details are submitted.</li>
           <li>If you opt in, receipts, bills, or spending updates can be shared back with you at <a href={`mailto:${transparencyEmail}`}>{transparencyEmail}</a>.</li>
           <li>The public log on this page can be updated to show how much has been spent and what remains.</li>
         </ol>
@@ -557,6 +563,30 @@
 
   .field textarea {
     resize: vertical;
+  }
+
+  .payment-step {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 0.75rem;
+    border-top: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+    padding-top: 0.9rem;
+  }
+
+  .payment-step-head {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .payment-step-head h3 {
+    margin: 0;
+    font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+  }
+
+  .payment-step-head p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.88rem;
   }
 
   .form-note {
