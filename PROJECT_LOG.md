@@ -58,6 +58,7 @@ A chronological record of **what changed, when it changed, and why the decision 
 | 2026-04-10 | Netlify form detection fallback | Added a hidden static `dadri-support` form and aligned the success path to `/dadri-forecast/support/thanks/` so Netlify can register the submission endpoint reliably. | On static sites, a visible framework-rendered form can still POST to a 404 unless Netlify detects the form during build. | Active |
 | 2026-04-10 | Static confirmation-page fallback | Switched the form success destination to `/dadri-support-thanks/` under `static/` and added redirects from the earlier nested `/dadri-forecast/support/thanks` path. | A plain static confirmation page is more reliable on Netlify than a nested framework route for form success handling. | Active |
 | 2026-04-10 | Gated payment reveal flow | Hid the UPI/bank payment details from the main support page and changed the donation flow so those options only appear after the donor information form is filled. | Keep sensitive-looking payment information off the landing view and make the support flow feel more intentional and step-based. | Active |
+| 2026-04-10 | QR artwork integration pass | Wired the uploaded UPI QR image into the revealed payment step and styled it as a web-friendly holographic/glass card inspired by the external demo references, cropping the image focus toward the scannable QR zone. | The payment step now needs a usable QR that feels designed, not just a raw placeholder block. | In progress |
 
 ---
 

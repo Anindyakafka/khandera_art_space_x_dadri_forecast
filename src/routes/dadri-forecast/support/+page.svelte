@@ -252,21 +252,39 @@
             {/if}
 
             {#if selectedPaymentMethod === 'upi'}
-              <article class="payment-card">
-                <p class="fund-kicker">UPI payment</p>
-                <h3>{settings?.payment.upi.payeeName}</h3>
-                <dl class="payment-details">
-                  <div>
-                    <dt>UPI ID</dt>
-                    <dd>{settings?.payment.upi.id}</dd>
+              <article class="payment-card upi-card">
+                <div class="upi-layout">
+                  <div class="upi-copy">
+                    <p class="fund-kicker">UPI payment</p>
+                    <h3>{settings?.payment.upi.payeeName}</h3>
+                    <dl class="payment-details">
+                      <div>
+                        <dt>UPI ID</dt>
+                        <dd>{settings?.payment.upi.id}</dd>
+                      </div>
+                      <div>
+                        <dt>Payee name</dt>
+                        <dd>{settings?.payment.upi.payeeName}</dd>
+                      </div>
+                    </dl>
+                    <p class="status-note">{settings?.payment.upi.note}</p>
                   </div>
-                  <div>
-                    <dt>Payee name</dt>
-                    <dd>{settings?.payment.upi.payeeName}</dd>
-                  </div>
-                </dl>
-                <p class="status-note">{settings?.payment.upi.note}</p>
-                <p class="status-note">Creative QR artwork will appear here once it is finalized.</p>
+
+                  {#if settings?.payment.upi.qrPath}
+                    <figure class="qr-stage">
+                      <div class="qr-stage-glow" aria-hidden="true"></div>
+                      <div class="qr-crop-frame">
+                        <img
+                          class="qr-crop-image"
+                          src={settings.payment.upi.qrPath}
+                          alt={`UPI QR for ${settings.payment.upi.payeeName}`}
+                          loading="lazy"
+                        />
+                      </div>
+                      <figcaption>Scan to donate via UPI</figcaption>
+                    </figure>
+                  {/if}
+                </div>
               </article>
             {:else}
               <article class="payment-card">
@@ -420,6 +438,26 @@
     gap: 0.7rem;
   }
 
+  .upi-card {
+    overflow: hidden;
+    position: relative;
+    background:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 22%, transparent), transparent 42%),
+      linear-gradient(145deg, color-mix(in srgb, var(--surface-solid) 92%, transparent), color-mix(in srgb, var(--surface) 82%, transparent));
+  }
+
+  .upi-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(220px, 320px);
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .upi-copy {
+    display: grid;
+    gap: 0.7rem;
+  }
+
   .method-switch {
     display: flex;
     flex-wrap: wrap;
@@ -487,6 +525,58 @@
     margin: 0.2rem 0 0;
     font-size: 0.95rem;
     word-break: break-word;
+  }
+
+  .qr-stage {
+    position: relative;
+    margin: 0;
+    padding: 0.9rem;
+    border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+      color-mix(in srgb, var(--bg) 78%, transparent);
+    backdrop-filter: blur(8px);
+    overflow: hidden;
+  }
+
+  .qr-stage-glow {
+    position: absolute;
+    inset: -18% auto auto -12%;
+    width: 70%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 42%, transparent), transparent 70%);
+    opacity: 0.85;
+    pointer-events: none;
+    filter: blur(18px);
+  }
+
+  .qr-crop-frame {
+    position: relative;
+    z-index: 1;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+    background: #f2f0ea;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);
+  }
+
+  .qr-crop-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 78%;
+    transform: scale(1.16);
+    display: block;
+  }
+
+  .qr-stage figcaption {
+    position: relative;
+    z-index: 1;
+    margin-top: 0.65rem;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
   }
 
   .contact-line {
@@ -671,7 +761,8 @@
 
   @media (max-width: 900px) {
     .donor-grid,
-    .support-form {
+    .support-form,
+    .upi-layout {
       grid-template-columns: 1fr;
     }
   }
