@@ -212,7 +212,7 @@
         data-netlify="true"
         netlify
         netlify-honeypot="bot-field"
-        action="/dadri-forecast/support/thanks/"
+        action="/dadri-support-thanks/"
       >
         <input type="hidden" name="form-name" value="dadri-support" />
         <p class="sr-only">

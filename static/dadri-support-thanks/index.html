@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dadri Forecast Support — Thank you</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0b0d0c;
+        --surface: #131816;
+        --text: #f3ede2;
+        --muted: #c6bba8;
+        --accent: #d7894b;
+        --line: #3a3f3c;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
+        padding: 1rem;
+      }
+
+      main {
+        width: min(900px, 95vw);
+        border-top: 2px solid var(--accent);
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+        padding: clamp(1rem, 2.8vw, 2rem);
+      }
+
+      .kicker {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.75rem;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 0.5rem 0 0.75rem;
+        font-size: clamp(1.8rem, 5vw, 3.2rem);
+        line-height: 1;
+      }
+
+      .bar {
+        display: inline-block;
+        margin-bottom: 0.9rem;
+        padding: 0.28rem 0.5rem;
+        border: 1px solid var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+      }
+
+      p {
+        margin: 0 0 0.85rem;
+        line-height: 1.7;
+        color: var(--text);
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      nav {
+        margin-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+      }
+
+      nav a {
+        border: 1px solid var(--line);
+        padding: 0.5rem 0.78rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="kicker">Dadri Forecast / Support</p>
+      <h1>Thank you for registering your support</h1>
+      <span class="bar">Your donation intent has been received</span>
+      <p>
+        Your support form has been submitted. You can now complete the payment through the UPI or bank route shown on the Dadri Forecast support page.
+      </p>
+      <p>
+        For payment confirmation, receipts, or donation-use updates, email
+        <a href="mailto:anindya.econ@gmail.com">anindya.econ@gmail.com</a>.
+      </p>
+      <nav>
+        <a href="/dadri-forecast/support">Back to Support</a>
+        <a href="/dadri-forecast">Dadri Forecast Home</a>
+      </nav>
+    </main>
+  </body>
+</html>
