@@ -54,6 +54,7 @@ A chronological record of **what changed, when it changed, and why the decision 
 | 2026-04-10 | Donation contact routing | Added a dedicated donation settings config with `anindya.econ@gmail.com` as the primary support/transparency inbox and `anindya2232@gmail.com` as backup. | Centralize who receives donation-related mail and keep the communication path easy to update later. | Active |
 | 2026-04-10 | Payment method selector | Enabled `Both` payment mode on the Dadri support page with a user-facing toggle between UPI and bank transfer. | Donors need a clear choice of payment route before the creative UPI QR artwork is finalized. | Active |
 | 2026-04-10 | Donation account details rollout | Filled the support page/config with the current UPI ID, payee name, and Federal Bank transfer details while keeping the QR slot reserved for a future artwork pass. | Make the donation flow usable now without waiting for the custom QR visual direction. | Active |
+| 2026-04-10 | Netlify form redirect fix | Changed the support form to submit to a dedicated thank-you page at `/dadri-forecast/support/thanks` and added a confirmation route for successful submissions. | Prevent donors from hitting a Netlify 404 after submitting the form on the static site. | Active |
 
 ---
 

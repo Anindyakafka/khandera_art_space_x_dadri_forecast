@@ -210,8 +210,9 @@
         name="dadri-support"
         method="POST"
         data-netlify="true"
+        netlify
         netlify-honeypot="bot-field"
-        action="/dadri-forecast/support"
+        action="/dadri-forecast/support/thanks"
       >
         <input type="hidden" name="form-name" value="dadri-support" />
         <p class="sr-only">
@@ -294,6 +295,8 @@
             placeholder="Mention the exact project, a question, or anything you want the team to know."
           ></textarea>
         </label>
+
+        <p class="form-note">After submitting, you’ll be redirected to a confirmation page instead of a blank or missing route.</p>
 
         <button class="submit-button" type="submit">Register this support</button>
       </form>
@@ -554,6 +557,14 @@
 
   .field textarea {
     resize: vertical;
+  }
+
+  .form-note {
+    margin: 0;
+    grid-column: 1 / -1;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: color-mix(in srgb, var(--text) 88%, transparent);
   }
 
   .field-full,
